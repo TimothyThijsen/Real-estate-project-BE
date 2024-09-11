@@ -1,12 +1,13 @@
 package nl.fontys.realestateproject.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.*;
 
-@Getter
+@Data
+@Builder
 @AllArgsConstructor
-public class Property {
-    private int id;
+@NoArgsConstructor
+ public class Property {
+    private long id;
     private String name;
     private String description;
 

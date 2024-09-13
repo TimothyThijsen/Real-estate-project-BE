@@ -2,12 +2,8 @@ package nl.fontys.realestateproject.controller;
 
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import nl.fontys.realestateproject.business.CreatePropertyUseCase;
-import nl.fontys.realestateproject.business.GetPropertiesUseCase;
-import nl.fontys.realestateproject.domain.CreatePropertyRequest;
-import nl.fontys.realestateproject.domain.CreatePropertyResponse;
-import nl.fontys.realestateproject.domain.GetAllPropertiesResponse;
-import org.apache.coyote.Response;
+import nl.fontys.realestateproject.business.PropertyService;
+import nl.fontys.realestateproject.domain.Property.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,18 +12,27 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/properties")
 @AllArgsConstructor
 public class PropertyController {
-    private final CreatePropertyUseCase createPropertyUseCase;
-    private final GetPropertiesUseCase getPropertiesUseCase;
+    private final PropertyService propertyService;
 
     @PostMapping()
-    public ResponseEntity<CreatePropertyResponse> createStudent(@RequestBody @Valid CreatePropertyRequest request) {
-        CreatePropertyResponse response = createPropertyUseCase.CreateProperty(request);
+    public ResponseEntity<CreatePropertyResponse> createProperty(@RequestBody @Valid CreatePropertyRequest request) {
+        CreatePropertyResponse response = propertyService.createProperty(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @GetMapping()
     public ResponseEntity<GetAllPropertiesResponse>  getAllProperties() {
-        GetAllPropertiesResponse response = getPropertiesUseCase.getAllProperties();
+        GetAllPropertiesResponse response = propertyService.getAllProperties();
+        return ResponseEntity.ok(response);
+    }
+    @GetMapping("{propertyId}")
+    public ResponseEntity<GetPropertyResponse>  getProperty(@PathVariable int propertyId) {
+        GetPropertyResponse response = propertyService.getProperty(propertyId);
+        return ResponseEntity.ok(response);
+    }
+    @DeleteMapping("{propertyId}")
+    public ResponseEntity<DeletePropertyResponse>  deleteProperty(@PathVariable int propertyId) {
+        DeletePropertyResponse response = propertyService.deleteProperty(propertyId);
         return ResponseEntity.ok(response);
     }
 }

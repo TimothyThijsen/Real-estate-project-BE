@@ -1,26 +1,28 @@
 package nl.fontys.realestateproject.persistence.implementations;
 
-import nl.fontys.realestateproject.domain.Property;
-import nl.fontys.realestateproject.persistence.IPropertyRepository;
+import com.fasterxml.jackson.databind.annotation.JsonAppend;
+import nl.fontys.realestateproject.domain.Property.Property;
 import nl.fontys.realestateproject.persistence.entity.PropertyEntity;
-import org.springframework.boot.env.RandomValuePropertySourceEnvironmentPostProcessor;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
-public class PropertyRepository implements IPropertyRepository {
+public class PropertyRepositoryImpl implements nl.fontys.realestateproject.persistence.PropertyRepository {
     private static long NEXT_ID = 1;
     private final List<PropertyEntity> savedProperties;
 
-    public PropertyRepository() {
+    public PropertyRepositoryImpl() {
         this.savedProperties = new ArrayList<>();
     }
     @Override
-    public Property GetProperty(int id) {
-        return null;
+    public Optional<PropertyEntity> GetProperty(long propertyId) {
+        return savedProperties.stream()
+                .filter(propertyEntity -> propertyEntity.getId().equals(propertyId))
+                .findFirst();
     }
 
     @Override
@@ -39,8 +41,8 @@ public class PropertyRepository implements IPropertyRepository {
     }
 
     @Override
-    public void DeleteProperty(Property property) {
-
+    public boolean DeleteProperty(long propertyId) {
+        return savedProperties.removeIf(propertyEntity -> propertyEntity.getId().equals(propertyId));
     }
 
     @Override

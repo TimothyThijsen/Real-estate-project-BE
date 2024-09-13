@@ -1,19 +1,20 @@
 package nl.fontys.realestateproject.persistence;
 
-import nl.fontys.realestateproject.domain.Property;
+import nl.fontys.realestateproject.domain.Property.Property;
 import nl.fontys.realestateproject.persistence.entity.PropertyEntity;
 
 import java.util.List;
+import java.util.Optional;
 
-public interface IPropertyRepository {
+public interface PropertyRepository {
 
-    Property GetProperty(int id);
+    Optional<PropertyEntity> GetProperty(long id);
 
     PropertyEntity CreateProperty(PropertyEntity property);
 
     void UpdateProperty(Property property);
 
-    void DeleteProperty(Property property);
+    boolean DeleteProperty(long propertyId);
 
     List<PropertyEntity> GetProperties();
 }

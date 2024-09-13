@@ -5,6 +5,7 @@ import lombok.Data;
 
 @Data
 @Builder
+
 public class PropertyEntity {
     private Long id;
     private String name;

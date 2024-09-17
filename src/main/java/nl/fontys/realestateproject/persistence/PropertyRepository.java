@@ -1,6 +1,5 @@
 package nl.fontys.realestateproject.persistence;
 
-import nl.fontys.realestateproject.domain.Property.Property;
 import nl.fontys.realestateproject.persistence.entity.PropertyEntity;
 
 import java.util.List;
@@ -12,7 +11,7 @@ public interface PropertyRepository {
 
     PropertyEntity CreateProperty(PropertyEntity property);
 
-    void UpdateProperty(Property property);
+    boolean UpdateProperty(PropertyEntity property);
 
     boolean DeleteProperty(long propertyId);
 

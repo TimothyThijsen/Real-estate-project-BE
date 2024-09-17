@@ -12,6 +12,11 @@ final class PropertyConverter {
                 .id(propertyEntity.getId())
                 .name(propertyEntity.getName())
                 .description(propertyEntity.getDescription())
+                .price(propertyEntity.getPrice())
+                .propertyType(propertyEntity.getPropertyType())
+                .listingType(propertyEntity.getListingType())
+                .surfaceAreas(propertyEntity.getSurfaceAreas())
+                .address(propertyEntity.getAddress())
                 .build();
     }
 }

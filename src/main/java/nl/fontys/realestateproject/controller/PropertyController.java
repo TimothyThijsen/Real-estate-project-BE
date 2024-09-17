@@ -35,4 +35,10 @@ public class PropertyController {
         DeletePropertyResponse response = propertyService.deleteProperty(propertyId);
         return ResponseEntity.ok(response);
     }
+
+    @PutMapping()
+    public ResponseEntity<UpdatePropertyResponse> updateProperty(@RequestBody @Valid UpdatePropertyRequest request) {
+        UpdatePropertyResponse response = propertyService.updateProperty(request);
+        return ResponseEntity.ok(response);
+    }
 }

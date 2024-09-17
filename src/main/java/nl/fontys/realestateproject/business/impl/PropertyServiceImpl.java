@@ -2,13 +2,20 @@ package nl.fontys.realestateproject.business.impl;
 
 import lombok.AllArgsConstructor;
 import nl.fontys.realestateproject.business.PropertyService;
+import nl.fontys.realestateproject.domain.Address;
+import nl.fontys.realestateproject.domain.ListingType;
 import nl.fontys.realestateproject.domain.Property.*;
+import nl.fontys.realestateproject.domain.PropertySurfaceArea;
+import nl.fontys.realestateproject.domain.PropertyType;
 import nl.fontys.realestateproject.persistence.PropertyRepository;
 import nl.fontys.realestateproject.persistence.entity.PropertyEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+
+
+
 
 @Service
 @AllArgsConstructor
@@ -24,9 +31,21 @@ public class PropertyServiceImpl implements PropertyService {
                 .build();
     }
     private PropertyEntity createNewProperty(CreatePropertyRequest request) {
+        Address address = Address.builder()
+                .city(request.getCity())
+                .Country(request.getCountry())
+                .PostalCode(request.getPostalCode())
+                .street(request.getStreet())
+                .build();
+
         PropertyEntity newProperty = PropertyEntity.builder()
                 .name(request.getName())
                 .description(request.getDescription())
+                .price(request.getPrice())
+                .address(address)
+                .propertyType(PropertyType.valueOf(request.getPropertyType()))
+                .listingType(ListingType.valueOf(request.getListingType()))
+                .surfaceAreas(request.getSurfaceAreas())
                 .build();
         return propertyRepository.CreateProperty(newProperty);
     }
@@ -52,8 +71,18 @@ public class PropertyServiceImpl implements PropertyService {
 
     @Override
     public UpdatePropertyResponse updateProperty(UpdatePropertyRequest request) {
+        PropertyEntity updatedProperty = updateFields(request);
 
-        return null;
+        return UpdatePropertyResponse.builder()
+                .isUpdated(propertyRepository.UpdateProperty(updatedProperty))
+                .build();
+    }
+    private PropertyEntity updateFields(UpdatePropertyRequest request) {
+        return PropertyEntity.builder()
+                .id(request.getId())
+                .name(request.getName())
+                .description(request.getDescription())
+                .build();
     }
 
     @Override

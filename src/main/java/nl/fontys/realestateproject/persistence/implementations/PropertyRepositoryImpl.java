@@ -1,7 +1,5 @@
 package nl.fontys.realestateproject.persistence.implementations;
 
-import com.fasterxml.jackson.databind.annotation.JsonAppend;
-import nl.fontys.realestateproject.domain.Property.Property;
 import nl.fontys.realestateproject.persistence.entity.PropertyEntity;
 import org.springframework.stereotype.Repository;
 
@@ -20,6 +18,7 @@ public class PropertyRepositoryImpl implements nl.fontys.realestateproject.persi
     }
     @Override
     public Optional<PropertyEntity> GetProperty(long propertyId) {
+
         return savedProperties.stream()
                 .filter(propertyEntity -> propertyEntity.getId().equals(propertyId))
                 .findFirst();
@@ -36,8 +35,15 @@ public class PropertyRepositoryImpl implements nl.fontys.realestateproject.persi
     }
 
     @Override
-    public void UpdateProperty(Property property) {
-
+    public boolean UpdateProperty(PropertyEntity updatedProperty) {
+        for (PropertyEntity property : savedProperties) {
+            if (property.getId().equals(updatedProperty.getId())) {
+                property = updatedProperty;
+                //property.setName(updatedProperty.getName());
+                //property.setDescription(updatedProperty.getDescription());
+            }
+        }
+        return true;
     }
 
     @Override

@@ -1,11 +1,11 @@
 package nl.fontys.realestateproject.business.impl;
 
+import jakarta.el.PropertyNotFoundException;
 import lombok.AllArgsConstructor;
 import nl.fontys.realestateproject.business.PropertyService;
 import nl.fontys.realestateproject.domain.Address;
 import nl.fontys.realestateproject.domain.ListingType;
 import nl.fontys.realestateproject.domain.Property.*;
-import nl.fontys.realestateproject.domain.PropertySurfaceArea;
 import nl.fontys.realestateproject.domain.PropertyType;
 import nl.fontys.realestateproject.persistence.PropertyRepository;
 import nl.fontys.realestateproject.persistence.entity.PropertyEntity;
@@ -13,8 +13,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-
-
 
 
 @Service
@@ -71,18 +69,33 @@ public class PropertyServiceImpl implements PropertyService {
 
     @Override
     public UpdatePropertyResponse updateProperty(UpdatePropertyRequest request) {
-        PropertyEntity updatedProperty = updateFields(request);
+        Optional<PropertyEntity> propertyEntityOptional = propertyRepository.GetProperty(request.getId());
+        if(propertyEntityOptional.isEmpty()) {
+            throw new PropertyNotFoundException("PROPERTY_ID_INVALID");
+        }
+        PropertyEntity property = propertyEntityOptional.get();
+        updateFields(request, property);
 
         return UpdatePropertyResponse.builder()
-                .isUpdated(propertyRepository.UpdateProperty(updatedProperty))
+                .isUpdated(propertyRepository.UpdateProperty(property))
                 .build();
     }
-    private PropertyEntity updateFields(UpdatePropertyRequest request) {
-        return PropertyEntity.builder()
-                .id(request.getId())
-                .name(request.getName())
-                .description(request.getDescription())
+    private void updateFields(UpdatePropertyRequest request, PropertyEntity property) {
+
+        Address address = Address.builder()
+                .city(request.getCity())
+                .Country(request.getCountry())
+                .PostalCode(request.getPostalCode())
+                .street(request.getStreet())
                 .build();
+
+        property.setName(request.getName());
+        property.setDescription(request.getDescription());
+        property.setPrice(request.getPrice());
+        property.setPropertyType(PropertyType.valueOf(request.getPropertyType()));
+        property.setListingType(ListingType.valueOf(request.getListingType()));
+        property.setSurfaceAreas(request.getSurfaceAreas());
+        property.setAddress(address);
     }
 
     @Override

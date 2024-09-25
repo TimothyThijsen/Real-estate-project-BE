@@ -1,6 +1,7 @@
 package nl.fontys.realestateproject.business.impl;
 
 import jakarta.el.PropertyNotFoundException;
+import nl.fontys.realestateproject.business.exceptions.InvalidPropertyException;
 import nl.fontys.realestateproject.domain.Property.*;
 import nl.fontys.realestateproject.persistence.PropertyRepository;
 import nl.fontys.realestateproject.persistence.entity.PropertyEntity;
@@ -77,7 +78,7 @@ class PropertyServiceImplTest {
     void getProperty_ShouldThrowException_WhenPropertyNotFound() {
         when(propertyRepositoryMock.GetProperty(99L)).thenReturn(Optional.empty());
 
-        assertThrows(PropertyNotFoundException.class, () -> propertyService.getProperty(99L));
+        assertThrows(InvalidPropertyException.class, () -> propertyService.getProperty(99L));
     }
 
     @Test
@@ -118,7 +119,7 @@ class PropertyServiceImplTest {
 
         when(propertyRepositoryMock.GetProperty(99L)).thenReturn(Optional.empty());
 
-        assertThrows(PropertyNotFoundException.class, () -> propertyService.updateProperty(request));
+        assertThrows(InvalidPropertyException.class, () -> propertyService.updateProperty(request));
     }
 
     @Test

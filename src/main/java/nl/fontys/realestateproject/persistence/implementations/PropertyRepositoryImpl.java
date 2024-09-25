@@ -39,8 +39,6 @@ public class PropertyRepositoryImpl implements nl.fontys.realestateproject.persi
         for (PropertyEntity property : savedProperties) {
             if (property.getId().equals(updatedProperty.getId())) {
                 property = updatedProperty;
-                //property.setName(updatedProperty.getName());
-                //property.setDescription(updatedProperty.getDescription());
             }
         }
         return true;

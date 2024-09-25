@@ -23,22 +23,22 @@ public class PropertyController {
     @GetMapping()
     public ResponseEntity<GetAllPropertiesResponse>  getAllProperties() {
         GetAllPropertiesResponse response = propertyService.getAllProperties();
-        return ResponseEntity.ok(response);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
     @GetMapping("{propertyId}")
     public ResponseEntity<GetPropertyResponse>  getProperty(@PathVariable int propertyId) {
         GetPropertyResponse response = propertyService.getProperty(propertyId);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
     @DeleteMapping("{propertyId}")
     public ResponseEntity<DeletePropertyResponse>  deleteProperty(@PathVariable int propertyId) {
         DeletePropertyResponse response = propertyService.deleteProperty(propertyId);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @PutMapping()
     public ResponseEntity<UpdatePropertyResponse> updateProperty(@RequestBody @Valid UpdatePropertyRequest request) {
         UpdatePropertyResponse response = propertyService.updateProperty(request);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 }

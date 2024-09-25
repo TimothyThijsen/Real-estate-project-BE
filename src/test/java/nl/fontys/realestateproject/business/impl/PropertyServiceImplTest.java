@@ -1,6 +1,5 @@
 package nl.fontys.realestateproject.business.impl;
 
-import jakarta.el.PropertyNotFoundException;
 import nl.fontys.realestateproject.business.exceptions.InvalidPropertyException;
 import nl.fontys.realestateproject.domain.Property.*;
 import nl.fontys.realestateproject.persistence.PropertyRepository;
@@ -98,11 +97,9 @@ class PropertyServiceImplTest {
         PropertyEntity propertyEntity = PropertyEntity.builder().id(1L).build();
 
         when(propertyRepositoryMock.GetProperty(1L)).thenReturn(Optional.of(propertyEntity));
-        when(propertyRepositoryMock.UpdateProperty(any(PropertyEntity.class))).thenReturn(true);
+        doNothing().when(propertyRepositoryMock).UpdateProperty(any(PropertyEntity.class));
+        propertyService.updateProperty(request);
 
-        UpdatePropertyResponse actual = propertyService.updateProperty(request);
-
-        assertTrue(actual.isUpdated());
         verify(propertyRepositoryMock).UpdateProperty(any(PropertyEntity.class));
     }
 
@@ -124,21 +121,20 @@ class PropertyServiceImplTest {
 
     @Test
     void deleteProperty_ShouldDeleteProperty_WhenIdIsValid() {
-        when(propertyRepositoryMock.DeleteProperty(1)).thenReturn(true);
+        doNothing().when(propertyRepositoryMock).DeleteProperty(1);
 
-        DeletePropertyResponse actual = propertyService.deleteProperty(1);
+        propertyService.deleteProperty(1);
 
-        assertTrue(actual.isPropertyRemoved());
         verify(propertyRepositoryMock).DeleteProperty(1);
     }
 
     @Test
-    void deleteProperty_ShouldReturnFalse_WhenIdIsInvalid() {
-        when(propertyRepositoryMock.DeleteProperty(99)).thenReturn(false);
+    void deleteProperty_ShouldReturnNotFound_WhenIdIsInvalid() {
+        doThrow(new InvalidPropertyException("PROPERTY_NOT_FOUND")).when(propertyRepositoryMock).DeleteProperty(99);
 
-        DeletePropertyResponse actual = propertyService.deleteProperty(99);
+        InvalidPropertyException exception = assertThrows(InvalidPropertyException.class, () -> propertyService.deleteProperty(99));
 
-        assertFalse(actual.isPropertyRemoved());
+        assertEquals("PROPERTY_NOT_FOUND", exception.getReason());
         verify(propertyRepositoryMock).DeleteProperty(99);
     }
 }

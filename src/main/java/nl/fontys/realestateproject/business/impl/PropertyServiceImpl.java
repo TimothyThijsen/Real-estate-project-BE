@@ -72,20 +72,10 @@ public class PropertyServiceImpl implements PropertyService {
     }
 
     @Override
-    public UpdatePropertyResponse updateProperty(UpdatePropertyRequest request) {
-        Optional<PropertyEntity> propertyEntityOptional = propertyRepository.GetProperty(request.getId());
-        if(propertyEntityOptional.isEmpty()) {
-            throw new InvalidPropertyException("PROPERTY_ID_INVALID");
-        }
-        PropertyEntity property = propertyEntityOptional.get();
-        updateFields(request, property);
-
-        return UpdatePropertyResponse.builder()
-                .isUpdated(propertyRepository.UpdateProperty(property))
-                .build();
+    public void updateProperty(UpdatePropertyRequest request) {
+        propertyRepository.UpdateProperty(getUpdatedPropertyEntity(request));
     }
-    private void updateFields(UpdatePropertyRequest request, PropertyEntity property) {
-
+    private PropertyEntity getUpdatedPropertyEntity(UpdatePropertyRequest request) {
         Address address = Address.builder()
                 .city(request.getCity())
                 .Country(request.getCountry())
@@ -93,18 +83,20 @@ public class PropertyServiceImpl implements PropertyService {
                 .street(request.getStreet())
                 .build();
 
-        property.setName(request.getName());
-        property.setDescription(request.getDescription());
-        property.setPrice(request.getPrice());
-        property.setPropertyType(PropertyType.valueOf(request.getPropertyType()));
-        property.setListingType(ListingType.valueOf(request.getListingType()));
-        property.setSurfaceAreas(request.getSurfaceAreas());
-        property.setAddress(address);
+        return PropertyEntity.builder()
+                .id(request.getId())
+                .name(request.getName())
+                .description(request.getDescription())
+                .price(request.getPrice())
+                .address(address)
+                .propertyType(PropertyType.valueOf(request.getPropertyType()))
+                .listingType(ListingType.valueOf(request.getListingType()))
+                .surfaceAreas(request.getSurfaceAreas())
+                .build();
     }
-
     @Override
-    public DeletePropertyResponse deleteProperty(int id) {
-       return DeletePropertyResponse.builder().propertyRemoved(propertyRepository.DeleteProperty(id)).build();
+    public void deleteProperty(int id) {
+       propertyRepository.DeleteProperty(id);
     }
 
 }

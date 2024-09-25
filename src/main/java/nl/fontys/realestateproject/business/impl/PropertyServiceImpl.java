@@ -1,6 +1,5 @@
 package nl.fontys.realestateproject.business.impl;
 
-import jakarta.el.PropertyNotFoundException;
 import lombok.AllArgsConstructor;
 import nl.fontys.realestateproject.business.PropertyService;
 import nl.fontys.realestateproject.business.exceptions.InvalidPropertyException;

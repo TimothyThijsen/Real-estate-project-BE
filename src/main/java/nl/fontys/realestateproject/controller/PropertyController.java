@@ -3,7 +3,6 @@ package nl.fontys.realestateproject.controller;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import nl.fontys.realestateproject.business.PropertyService;
-import nl.fontys.realestateproject.business.exceptions.EmailAlreadyInUse;
 import nl.fontys.realestateproject.business.exceptions.InvalidPropertyException;
 import nl.fontys.realestateproject.domain.Property.*;
 import org.springframework.http.HttpStatus;

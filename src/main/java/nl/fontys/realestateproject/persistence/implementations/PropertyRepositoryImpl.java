@@ -43,13 +43,10 @@ public class PropertyRepositoryImpl implements nl.fontys.realestateproject.persi
                 return;
             }
         }
-        throw new InvalidPropertyException("PROPERTY_ID_INVALID");
     }
 
     @Override
     public void DeleteProperty(long propertyId) {
-        savedProperties.stream().filter(propertyEntity -> propertyEntity.getId().equals(propertyId)).findFirst()
-                .orElseThrow(() -> new InvalidPropertyException("PROPERTY_ID_INVALID"));
         savedProperties.removeIf(propertyEntity -> propertyEntity.getId().equals(propertyId));
     }
 

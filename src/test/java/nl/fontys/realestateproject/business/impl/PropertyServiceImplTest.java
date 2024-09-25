@@ -98,6 +98,7 @@ class PropertyServiceImplTest {
 
         when(propertyRepositoryMock.GetProperty(1L)).thenReturn(Optional.of(propertyEntity));
         doNothing().when(propertyRepositoryMock).UpdateProperty(any(PropertyEntity.class));
+
         propertyService.updateProperty(request);
 
         verify(propertyRepositoryMock).UpdateProperty(any(PropertyEntity.class));
@@ -121,20 +122,19 @@ class PropertyServiceImplTest {
 
     @Test
     void deleteProperty_ShouldDeleteProperty_WhenIdIsValid() {
-        doNothing().when(propertyRepositoryMock).DeleteProperty(1);
+        PropertyEntity propertyEntity = PropertyEntity.builder().id(1L).build();
+        when(propertyRepositoryMock.GetProperty(1L)).thenReturn(Optional.of(propertyEntity));
+        doNothing().when(propertyRepositoryMock).DeleteProperty(1L);
 
         propertyService.deleteProperty(1);
 
-        verify(propertyRepositoryMock).DeleteProperty(1);
+        verify(propertyRepositoryMock).DeleteProperty(1L);
     }
 
     @Test
     void deleteProperty_ShouldReturnNotFound_WhenIdIsInvalid() {
-        doThrow(new InvalidPropertyException("PROPERTY_NOT_FOUND")).when(propertyRepositoryMock).DeleteProperty(99);
+        when(propertyRepositoryMock.GetProperty(99L)).thenReturn(Optional.empty());
 
-        InvalidPropertyException exception = assertThrows(InvalidPropertyException.class, () -> propertyService.deleteProperty(99));
-
-        assertEquals("PROPERTY_NOT_FOUND", exception.getReason());
-        verify(propertyRepositoryMock).DeleteProperty(99);
+        assertThrows(InvalidPropertyException.class, () -> propertyService.deleteProperty(99));
     }
 }

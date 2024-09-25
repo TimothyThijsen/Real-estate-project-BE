@@ -73,6 +73,10 @@ public class PropertyServiceImpl implements PropertyService {
 
     @Override
     public void updateProperty(UpdatePropertyRequest request) {
+        Optional<PropertyEntity> existingProperty = propertyRepository.GetProperty(request.getId());
+        if (existingProperty.isEmpty()) {
+            throw new InvalidPropertyException("PROPERTY_NOT_FOUND");
+        }
         propertyRepository.UpdateProperty(getUpdatedPropertyEntity(request));
     }
     private PropertyEntity getUpdatedPropertyEntity(UpdatePropertyRequest request) {
@@ -96,6 +100,10 @@ public class PropertyServiceImpl implements PropertyService {
     }
     @Override
     public void deleteProperty(int id) {
+        Optional<PropertyEntity> existingProperty = propertyRepository.GetProperty(id);
+        if (existingProperty.isEmpty()) {
+            throw new InvalidPropertyException("PROPERTY_NOT_FOUND");
+        }
        propertyRepository.DeleteProperty(id);
     }
 

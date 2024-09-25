@@ -1,4 +1,4 @@
-package nl.fontys.realestateproject.domain;
+package nl.fontys.realestateproject.domain.Property;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -2,9 +2,8 @@ package nl.fontys.realestateproject.domain.Property;
 
 import lombok.*;
 import nl.fontys.realestateproject.domain.Address;
-import nl.fontys.realestateproject.domain.ListingType;
-import nl.fontys.realestateproject.domain.PropertySurfaceArea;
-import nl.fontys.realestateproject.domain.PropertyType;
+import nl.fontys.realestateproject.domain.Property.Enums.ListingType;
+import nl.fontys.realestateproject.domain.Property.Enums.PropertyType;
 
 import java.util.*;
 
@@ -19,6 +18,6 @@ import java.util.*;
     private double price;
     private ListingType listingType;
     private PropertyType propertyType;
-   private List<PropertySurfaceArea> surfaceAreas;
+    private List<PropertySurfaceArea> surfaceAreas;
     private Address address;
 }

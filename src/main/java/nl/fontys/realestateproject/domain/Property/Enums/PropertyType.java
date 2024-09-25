@@ -1,6 +1,4 @@
-package nl.fontys.realestateproject.domain;
-
-import com.fasterxml.jackson.databind.annotation.EnumNaming;
+package nl.fontys.realestateproject.domain.Property.Enums;
 
 
 public enum PropertyType {

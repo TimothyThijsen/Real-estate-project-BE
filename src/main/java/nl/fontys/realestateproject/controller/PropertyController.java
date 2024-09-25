@@ -33,12 +33,18 @@ public class PropertyController {
     @DeleteMapping("{propertyId}")
     public ResponseEntity<DeletePropertyResponse>  deleteProperty(@PathVariable int propertyId) {
         DeletePropertyResponse response = propertyService.deleteProperty(propertyId);
+        if(!response.isPropertyRemoved()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        }
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @PutMapping()
     public ResponseEntity<UpdatePropertyResponse> updateProperty(@RequestBody @Valid UpdatePropertyRequest request) {
         UpdatePropertyResponse response = propertyService.updateProperty(request);
+        if(!response.isUpdated()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        }
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 }

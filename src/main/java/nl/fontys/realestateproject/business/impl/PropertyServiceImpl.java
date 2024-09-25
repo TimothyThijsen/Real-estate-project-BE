@@ -66,7 +66,7 @@ public class PropertyServiceImpl implements PropertyService {
     public GetPropertyResponse getProperty(long id) {
         Optional<PropertyEntity> result = propertyRepository.GetProperty(id);
         if(result.isEmpty()) {
-            throw new PropertyNotFoundException("PROPERTY_NOT_FOUND");
+            throw new InvalidPropertyException("PROPERTY_NOT_FOUND");
         }
         return GetPropertyResponse.builder().property(PropertyConverter.convert(result.get())).build();
     }

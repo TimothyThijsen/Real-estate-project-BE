@@ -78,7 +78,7 @@ class PropertyServiceImplTest {
     void getProperty_ShouldThrowException_WhenPropertyNotFound() {
         when(propertyRepositoryMock.GetProperty(99L)).thenReturn(Optional.empty());
 
-        assertThrows(PropertyNotFoundException.class, () -> propertyService.getProperty(99L));
+        assertThrows(InvalidPropertyException.class, () -> propertyService.getProperty(99L));
     }
 
     @Test

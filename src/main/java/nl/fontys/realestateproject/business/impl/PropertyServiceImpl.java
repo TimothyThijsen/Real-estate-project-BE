@@ -3,6 +3,7 @@ package nl.fontys.realestateproject.business.impl;
 import jakarta.el.PropertyNotFoundException;
 import lombok.AllArgsConstructor;
 import nl.fontys.realestateproject.business.PropertyService;
+import nl.fontys.realestateproject.business.exceptions.InvalidPropertyException;
 import nl.fontys.realestateproject.domain.Address;
 import nl.fontys.realestateproject.domain.Property.Enums.ListingType;
 import nl.fontys.realestateproject.domain.Property.*;
@@ -74,7 +75,7 @@ public class PropertyServiceImpl implements PropertyService {
     public UpdatePropertyResponse updateProperty(UpdatePropertyRequest request) {
         Optional<PropertyEntity> propertyEntityOptional = propertyRepository.GetProperty(request.getId());
         if(propertyEntityOptional.isEmpty()) {
-            throw new PropertyNotFoundException("PROPERTY_ID_INVALID");
+            throw new InvalidPropertyException("PROPERTY_ID_INVALID");
         }
         PropertyEntity property = propertyEntityOptional.get();
         updateFields(request, property);

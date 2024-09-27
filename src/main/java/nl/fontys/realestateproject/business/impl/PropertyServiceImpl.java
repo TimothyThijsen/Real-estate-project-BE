@@ -68,7 +68,9 @@ public class PropertyServiceImpl implements PropertyService {
         if(result.isEmpty()) {
             throw new InvalidPropertyException("PROPERTY_NOT_FOUND");
         }
-        return GetPropertyResponse.builder().property(PropertyConverter.convert(result.get())).build();
+        return GetPropertyResponse.builder()
+                .property(PropertyConverter.convert(result.get()))
+                .build();
     }
 
     @Override

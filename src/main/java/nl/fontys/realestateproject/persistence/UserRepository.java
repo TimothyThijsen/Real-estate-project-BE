@@ -16,4 +16,6 @@ public interface UserRepository {
     boolean DeleteAccount(long accountId);
 
     List<AccountEntity> GetAllAccounts();
+
+    boolean AccountExists(String email);
 }

@@ -2,20 +2,19 @@ package nl.fontys.realestateproject.business.impl;
 
 import lombok.AllArgsConstructor;
 import nl.fontys.realestateproject.business.AccountService;
-import nl.fontys.realestateproject.business.PropertyService;
-import nl.fontys.realestateproject.domain.Property.GetAllPropertiesResponse;
-import nl.fontys.realestateproject.domain.Property.Property;
-import nl.fontys.realestateproject.domain.User.Account;
-import nl.fontys.realestateproject.domain.User.CreateAccountRequest;
-import nl.fontys.realestateproject.domain.User.CreateAccountResponse;
+import nl.fontys.realestateproject.business.exceptions.EmailAlreadyInUse;
+import nl.fontys.realestateproject.business.exceptions.InvalidPropertyException;
+import nl.fontys.realestateproject.business.exceptions.InvalidUserException;
+import nl.fontys.realestateproject.domain.Property.GetPropertyResponse;
+import nl.fontys.realestateproject.domain.User.*;
 import nl.fontys.realestateproject.domain.User.Enums.UserRole;
-import nl.fontys.realestateproject.domain.User.GetAllAccountsResponse;
 import nl.fontys.realestateproject.persistence.UserRepository;
 import nl.fontys.realestateproject.persistence.entity.AccountEntity;
 import nl.fontys.realestateproject.persistence.entity.PropertyEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -24,6 +23,9 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public CreateAccountResponse createAccount(CreateAccountRequest createAccountRequest) {
+        if(userRepository.AccountExists(createAccountRequest.getEmail())) {
+            throw new EmailAlreadyInUse();
+        }
         AccountEntity savedAccount = SaveAccountToRepository(createAccountRequest);
         return new CreateAccountResponse(savedAccount.getId());
     }
@@ -52,4 +54,32 @@ public class AccountServiceImpl implements AccountService {
         response.setAccountsList(accounts);
         return response;
     }
+
+    @Override
+    public void updateAccount(UpdateAccountRequest request) {
+
+    }
+
+    @Override
+    public void deleteAccount(long id) {
+
+    }
+
+    @Override
+    public GetUserAccountResponse getAccount(long id) {
+        Optional<AccountEntity> result = userRepository.GetAccount(id);
+        if(result.isEmpty()) {
+            throw new InvalidUserException("USER_NOT_FOUND");
+        }
+        return GetUserAccountResponse.builder()
+                .account(AccountConverter.convert(result.get()))
+                .build();
+    }
+
+    @Override
+    public GetUserAccountResponse login(LoginRequest request) {
+        return null;
+    }
+
+
 }

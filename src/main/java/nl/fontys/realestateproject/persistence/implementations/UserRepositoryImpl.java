@@ -22,7 +22,9 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public Optional<AccountEntity> GetAccount(long id) {
-        return Optional.empty();
+        return savedAccounts.stream()
+                .filter(accountEntity -> accountEntity.getId() == id)
+                .findFirst();
     }
 
     @Override
@@ -46,5 +48,10 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public List<AccountEntity> GetAllAccounts() {
         return savedAccounts;
+    }
+
+    @Override
+    public boolean AccountExists(String email) {
+        return savedAccounts.stream().anyMatch(accountEntity -> accountEntity.getEmail().equals(email));
     }
 }

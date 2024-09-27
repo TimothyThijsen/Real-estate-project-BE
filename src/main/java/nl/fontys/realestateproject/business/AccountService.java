@@ -1,11 +1,13 @@
 package nl.fontys.realestateproject.business;
 
 
-import nl.fontys.realestateproject.domain.User.CreateAccountRequest;
-import nl.fontys.realestateproject.domain.User.CreateAccountResponse;
-import nl.fontys.realestateproject.domain.User.GetAllAccountsResponse;
+import nl.fontys.realestateproject.domain.User.*;
 
 public interface AccountService {
-    public CreateAccountResponse createAccount(CreateAccountRequest createAccountRequest);
-    public GetAllAccountsResponse getAllAccounts();
+    CreateAccountResponse createAccount(CreateAccountRequest createAccountRequest);
+    GetAllAccountsResponse getAllAccounts();
+    void updateAccount(UpdateAccountRequest request);
+    void deleteAccount(long id);
+    GetUserAccountResponse getAccount(long id);
+    GetUserAccountResponse login(LoginRequest request);
 }

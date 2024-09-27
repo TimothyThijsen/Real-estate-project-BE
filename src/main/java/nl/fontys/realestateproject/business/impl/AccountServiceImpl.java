@@ -3,14 +3,11 @@ package nl.fontys.realestateproject.business.impl;
 import lombok.AllArgsConstructor;
 import nl.fontys.realestateproject.business.AccountService;
 import nl.fontys.realestateproject.business.exceptions.EmailAlreadyInUse;
-import nl.fontys.realestateproject.business.exceptions.InvalidPropertyException;
 import nl.fontys.realestateproject.business.exceptions.InvalidUserException;
-import nl.fontys.realestateproject.domain.Property.GetPropertyResponse;
 import nl.fontys.realestateproject.domain.User.*;
 import nl.fontys.realestateproject.domain.User.Enums.UserRole;
 import nl.fontys.realestateproject.persistence.UserRepository;
 import nl.fontys.realestateproject.persistence.entity.AccountEntity;
-import nl.fontys.realestateproject.persistence.entity.PropertyEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -57,12 +54,31 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public void updateAccount(UpdateAccountRequest request) {
+        Optional<AccountEntity> result = userRepository.GetAccount(request.getId());
+        if(result.isEmpty()) {
+            throw new InvalidUserException("USER_NOT_FOUND");
+        }
+        AccountEntity account = GetUpdatedAccount(request);
+        userRepository.UpdateAccount(account);
+    }
 
+    private AccountEntity GetUpdatedAccount(UpdateAccountRequest request) {
+        return AccountEntity.builder()
+                .email(request.getEmail())
+                .firstName(request.getFirstName())
+                .lastName(request.getLastName())
+                .password(request.getPassword())
+                .role(UserRole.valueOf(request.getRole()))
+                .build();
     }
 
     @Override
     public void deleteAccount(long id) {
-
+        Optional<AccountEntity> result = userRepository.GetAccount(id);
+        if(result.isEmpty()) {
+            throw new InvalidUserException("USER_NOT_FOUND");
+        }
+        userRepository.DeleteAccount(id);
     }
 
     @Override
@@ -78,8 +94,15 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public GetUserAccountResponse login(LoginRequest request) {
-        return null;
+        Optional<AccountEntity> result = userRepository.GetAccountByEmail(request.getEmail());
+        if(result.isEmpty()) {
+            throw new InvalidUserException("USER_NOT_FOUND");
+        }
+        if(!result.get().getPassword().equals(request.getPassword())) {
+            throw new InvalidUserException("INVALID_PASSWORD");
+        }
+        return GetUserAccountResponse.builder()
+                .account(AccountConverter.convert(result.get()))
+                .build();
     }
-
-
 }

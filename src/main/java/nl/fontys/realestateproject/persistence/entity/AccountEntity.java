@@ -12,7 +12,6 @@ public class AccountEntity {
     private String email;
     private String firstName;
     private String lastName;
-    @JsonIgnore
     private String password;
     private UserRole role;
 }

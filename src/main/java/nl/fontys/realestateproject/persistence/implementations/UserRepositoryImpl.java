@@ -36,13 +36,19 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public boolean UpdateAccount(AccountEntity property) {
-        return false;
+    public void UpdateAccount(AccountEntity property) {
+
+        for (int i = 0; i < savedAccounts.size(); i++) {
+            if (savedAccounts.get(i).getId() == (property.getId())) {
+                savedAccounts.set(i, property);
+                return;
+            }
+        }
     }
 
     @Override
-    public boolean DeleteAccount(long accountId) {
-        return false;
+    public void DeleteAccount(long accountId) {
+        savedAccounts.removeIf(accountEntity -> accountEntity.getId() == (accountId));
     }
 
     @Override
@@ -53,5 +59,12 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public boolean AccountExists(String email) {
         return savedAccounts.stream().anyMatch(accountEntity -> accountEntity.getEmail().equals(email));
+    }
+
+    @Override
+    public Optional<AccountEntity> GetAccountByEmail(String email) {
+        return savedAccounts.stream()
+                .filter(accountEntity -> accountEntity.getEmail().equals(email))
+                .findFirst();
     }
 }

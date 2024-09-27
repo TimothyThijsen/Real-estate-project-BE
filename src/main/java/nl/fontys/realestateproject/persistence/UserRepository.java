@@ -11,11 +11,12 @@ public interface UserRepository {
 
     AccountEntity CreateAccount(AccountEntity property);
 
-    boolean UpdateAccount(AccountEntity property);
+    void UpdateAccount(AccountEntity property);
 
-    boolean DeleteAccount(long accountId);
+    void DeleteAccount(long accountId);
 
     List<AccountEntity> GetAllAccounts();
 
     boolean AccountExists(String email);
+    Optional<AccountEntity> GetAccountByEmail(String email);
 }

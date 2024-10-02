@@ -15,6 +15,7 @@ import java.util.List;
 @NoArgsConstructor
 public class CreateAccountRequest {
     @Email
+    @NotBlank
     private String email;
     @NotBlank
     private String firstName;

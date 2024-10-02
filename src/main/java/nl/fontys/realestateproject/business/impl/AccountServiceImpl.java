@@ -64,6 +64,7 @@ public class AccountServiceImpl implements AccountService {
 
     private AccountEntity GetUpdatedAccount(UpdateAccountRequest request) {
         return AccountEntity.builder()
+                .id(request.getId())
                 .email(request.getEmail())
                 .firstName(request.getFirstName())
                 .lastName(request.getLastName())

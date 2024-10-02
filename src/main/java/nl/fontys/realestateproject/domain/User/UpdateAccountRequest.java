@@ -1,9 +1,6 @@
 package nl.fontys.realestateproject.domain.User;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,9 +11,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UpdateAccountRequest {
-    @NotBlank
+    @NotNull
     private long id;
     @Email
+    @NotBlank
     private String email;
     @NotBlank
     private String firstName;

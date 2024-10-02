@@ -37,7 +37,6 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public void UpdateAccount(AccountEntity property) {
-
         for (int i = 0; i < savedAccounts.size(); i++) {
             if (savedAccounts.get(i).getId() == (property.getId())) {
                 savedAccounts.set(i, property);

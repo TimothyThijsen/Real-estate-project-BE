@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/properties")
+@CrossOrigin(origins = "http://localhost:5173")
 @AllArgsConstructor
 public class PropertyController {
     private final PropertyService propertyService;

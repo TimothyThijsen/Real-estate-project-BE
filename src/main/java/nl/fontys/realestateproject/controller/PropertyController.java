@@ -2,9 +2,9 @@ package nl.fontys.realestateproject.controller;
 
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import nl.fontys.realestateproject.business.DTO.Property.*;
 import nl.fontys.realestateproject.business.PropertyService;
 import nl.fontys.realestateproject.business.exceptions.InvalidPropertyException;
-import nl.fontys.realestateproject.domain.Property.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

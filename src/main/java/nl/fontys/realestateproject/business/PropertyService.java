@@ -1,6 +1,6 @@
 package nl.fontys.realestateproject.business;
 
-import nl.fontys.realestateproject.domain.Property.*;
+import nl.fontys.realestateproject.business.DTO.Property.*;
 
 public interface PropertyService {
     CreatePropertyResponse createProperty(CreatePropertyRequest request);

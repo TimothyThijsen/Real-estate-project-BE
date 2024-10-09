@@ -1,13 +1,13 @@
 package nl.fontys.realestateproject.business.impl;
 
-import jakarta.el.PropertyNotFoundException;
 import lombok.AllArgsConstructor;
+import nl.fontys.realestateproject.business.DTO.Property.*;
 import nl.fontys.realestateproject.business.PropertyService;
 import nl.fontys.realestateproject.business.exceptions.InvalidPropertyException;
 import nl.fontys.realestateproject.domain.Address;
-import nl.fontys.realestateproject.domain.Property.Enums.ListingType;
-import nl.fontys.realestateproject.domain.Property.*;
-import nl.fontys.realestateproject.domain.Property.Enums.PropertyType;
+import nl.fontys.realestateproject.domain.Property;
+import nl.fontys.realestateproject.domain.Enums.ListingType;
+import nl.fontys.realestateproject.domain.Enums.PropertyType;
 import nl.fontys.realestateproject.persistence.PropertyRepository;
 import nl.fontys.realestateproject.persistence.entity.PropertyEntity;
 import org.springframework.stereotype.Service;

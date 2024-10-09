@@ -1,7 +1,7 @@
 package nl.fontys.realestateproject.business;
 
 
-import nl.fontys.realestateproject.domain.User.*;
+import nl.fontys.realestateproject.business.DTO.User.*;
 
 public interface AccountService {
     CreateAccountResponse createAccount(CreateAccountRequest createAccountRequest);

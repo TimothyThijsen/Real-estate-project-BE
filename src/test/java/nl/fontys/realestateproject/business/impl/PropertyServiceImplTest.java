@@ -1,7 +1,7 @@
 package nl.fontys.realestateproject.business.impl;
 
+import nl.fontys.realestateproject.business.DTO.Property.*;
 import nl.fontys.realestateproject.business.exceptions.InvalidPropertyException;
-import nl.fontys.realestateproject.domain.Property.*;
 import nl.fontys.realestateproject.persistence.PropertyRepository;
 import nl.fontys.realestateproject.persistence.entity.PropertyEntity;
 import org.junit.jupiter.api.Test;

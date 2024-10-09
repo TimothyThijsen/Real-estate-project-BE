@@ -1,9 +1,8 @@
 package nl.fontys.realestateproject.persistence.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Builder;
 import lombok.Data;
-import nl.fontys.realestateproject.domain.User.Enums.UserRole;
+import nl.fontys.realestateproject.domain.Enums.UserRole;
 
 @Data
 @Builder

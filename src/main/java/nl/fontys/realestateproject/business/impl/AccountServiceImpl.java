@@ -2,10 +2,11 @@ package nl.fontys.realestateproject.business.impl;
 
 import lombok.AllArgsConstructor;
 import nl.fontys.realestateproject.business.AccountService;
+import nl.fontys.realestateproject.business.DTO.User.*;
 import nl.fontys.realestateproject.business.exceptions.EmailAlreadyInUse;
 import nl.fontys.realestateproject.business.exceptions.InvalidUserException;
-import nl.fontys.realestateproject.domain.User.*;
-import nl.fontys.realestateproject.domain.User.Enums.UserRole;
+import nl.fontys.realestateproject.domain.Account;
+import nl.fontys.realestateproject.domain.Enums.UserRole;
 import nl.fontys.realestateproject.persistence.UserRepository;
 import nl.fontys.realestateproject.persistence.entity.AccountEntity;
 import org.springframework.stereotype.Service;

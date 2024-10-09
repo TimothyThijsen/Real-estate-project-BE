@@ -1,4 +1,4 @@
-package nl.fontys.realestateproject.domain.User;
+package nl.fontys.realestateproject.business.DTO.User;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

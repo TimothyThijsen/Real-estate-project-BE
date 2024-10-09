@@ -1,10 +1,7 @@
 package nl.fontys.realestateproject.persistence.implementations;
 
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import nl.fontys.realestateproject.persistence.UserRepository;
 import nl.fontys.realestateproject.persistence.entity.AccountEntity;
-import nl.fontys.realestateproject.persistence.entity.PropertyEntity;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;

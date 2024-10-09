@@ -1,5 +1,6 @@
 package nl.fontys.realestateproject.persistence.implementations;
 
+import nl.fontys.realestateproject.business.exceptions.InvalidPropertyException;
 import nl.fontys.realestateproject.persistence.entity.PropertyEntity;
 import org.springframework.stereotype.Repository;
 
@@ -35,18 +36,18 @@ public class PropertyRepositoryImpl implements nl.fontys.realestateproject.persi
     }
 
     @Override
-    public boolean UpdateProperty(PropertyEntity updatedProperty) {
-        for (PropertyEntity property : savedProperties) {
-            if (property.getId().equals(updatedProperty.getId())) {
-                property = updatedProperty;
+    public void UpdateProperty(PropertyEntity updatedProperty) {
+        for (int i = 0; i < savedProperties.size(); i++) {
+            if (savedProperties.get(i).getId().equals(updatedProperty.getId())) {
+                savedProperties.set(i, updatedProperty);
+                return;
             }
         }
-        return true;
     }
 
     @Override
-    public boolean DeleteProperty(long propertyId) {
-        return savedProperties.removeIf(propertyEntity -> propertyEntity.getId().equals(propertyId));
+    public void DeleteProperty(long propertyId) {
+        savedProperties.removeIf(propertyEntity -> propertyEntity.getId().equals(propertyId));
     }
 
     @Override

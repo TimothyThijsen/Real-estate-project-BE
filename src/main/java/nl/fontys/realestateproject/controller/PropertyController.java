@@ -2,15 +2,16 @@ package nl.fontys.realestateproject.controller;
 
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import nl.fontys.realestateproject.business.DTO.Property.*;
 import nl.fontys.realestateproject.business.PropertyService;
 import nl.fontys.realestateproject.business.exceptions.InvalidPropertyException;
-import nl.fontys.realestateproject.domain.Property.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/properties")
+@CrossOrigin(origins = "http://localhost:5173")
 @AllArgsConstructor
 public class PropertyController {
     private final PropertyService propertyService;
@@ -35,20 +36,14 @@ public class PropertyController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
     @DeleteMapping("{propertyId}")
-    public ResponseEntity<DeletePropertyResponse>  deleteProperty(@PathVariable int propertyId) {
-        DeletePropertyResponse response = propertyService.deleteProperty(propertyId);
-        if(!response.isPropertyRemoved()){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
-        }
-        return ResponseEntity.status(HttpStatus.OK).body(response);
+    public ResponseEntity<Void>  deleteProperty(@PathVariable int propertyId) {
+        propertyService.deleteProperty(propertyId);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @PutMapping()
-    public ResponseEntity<UpdatePropertyResponse> updateProperty(@RequestBody @Valid UpdatePropertyRequest request) {
-        UpdatePropertyResponse response = propertyService.updateProperty(request);
-        if(!response.isUpdated()){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
-        }
-        return ResponseEntity.status(HttpStatus.OK).body(response);
+    public ResponseEntity<Void> updateProperty(@RequestBody @Valid UpdatePropertyRequest request) {
+        propertyService.updateProperty(request);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

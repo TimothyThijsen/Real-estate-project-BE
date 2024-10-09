@@ -1,20 +1,20 @@
-package nl.fontys.realestateproject.domain.User;
+package nl.fontys.realestateproject.business.DTO.User;
 
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import nl.fontys.realestateproject.domain.Property.PropertySurfaceArea;
-import nl.fontys.realestateproject.domain.User.Enums.UserRole;
 
-import java.util.List;
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CreateAccountRequest {
+public class UpdateAccountRequest {
+    @NotNull
+    private long id;
     @Email
+    @NotBlank
     private String email;
     @NotBlank
     private String firstName;
@@ -29,4 +29,3 @@ public class CreateAccountRequest {
     @NotBlank
     private String role;
 }
-

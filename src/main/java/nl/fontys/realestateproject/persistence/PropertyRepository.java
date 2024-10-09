@@ -11,9 +11,9 @@ public interface PropertyRepository {
 
     PropertyEntity CreateProperty(PropertyEntity property);
 
-    boolean UpdateProperty(PropertyEntity property);
+    void UpdateProperty(PropertyEntity property);
 
-    boolean DeleteProperty(long propertyId);
+    void DeleteProperty(long propertyId);
 
     List<PropertyEntity> GetProperties();
 }

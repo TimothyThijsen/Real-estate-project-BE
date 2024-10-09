@@ -2,9 +2,9 @@ package nl.fontys.realestateproject.persistence.entity;
 
 import lombok.*;
 import nl.fontys.realestateproject.domain.Address;
-import nl.fontys.realestateproject.domain.Property.Enums.ListingType;
-import nl.fontys.realestateproject.domain.Property.PropertySurfaceArea;
-import nl.fontys.realestateproject.domain.Property.Enums.PropertyType;
+import nl.fontys.realestateproject.domain.Enums.ListingType;
+import nl.fontys.realestateproject.domain.PropertySurfaceArea;
+import nl.fontys.realestateproject.domain.Enums.PropertyType;
 
 import java.util.List;
 

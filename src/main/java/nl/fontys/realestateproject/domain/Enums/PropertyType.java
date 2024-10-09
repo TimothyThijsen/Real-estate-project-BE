@@ -1,4 +1,4 @@
-package nl.fontys.realestateproject.domain.Property.Enums;
+package nl.fontys.realestateproject.domain.Enums;
 
 
 public enum PropertyType {

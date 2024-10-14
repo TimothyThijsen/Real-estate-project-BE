@@ -9,8 +9,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+/*
 @Repository
-public class PropertyRepositoryImpl implements nl.fontys.realestateproject.persistence.PropertyRepository {
+public class PropertyRepositoryImpl  {
     private static long NEXT_ID = 1;
     private final List<PropertyEntity> savedProperties;
 
@@ -55,3 +56,4 @@ public class PropertyRepositoryImpl implements nl.fontys.realestateproject.persi
         return Collections.unmodifiableList(this.savedProperties);
     }
 }
+*/

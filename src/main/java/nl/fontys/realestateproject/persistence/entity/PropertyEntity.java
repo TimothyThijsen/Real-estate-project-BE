@@ -51,6 +51,10 @@ public class PropertyEntity {
     @JoinColumn(name = "address_id")
     private AddressEntity address;
 
+    @OneToOne
+    @JoinColumn(name = "account_id")
+    private AccountEntity account;
+
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "property")
     private List<PropertySurfaceAreaEntity> surfaceAreas;
 }

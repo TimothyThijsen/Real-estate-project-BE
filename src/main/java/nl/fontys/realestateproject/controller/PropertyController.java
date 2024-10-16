@@ -5,13 +5,14 @@ import lombok.AllArgsConstructor;
 import nl.fontys.realestateproject.business.DTO.Property.*;
 import nl.fontys.realestateproject.business.PropertyService;
 import nl.fontys.realestateproject.business.exceptions.InvalidPropertyException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/properties")
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = "${cors.allowedOrigins}")
 @AllArgsConstructor
 public class PropertyController {
     private final PropertyService propertyService;

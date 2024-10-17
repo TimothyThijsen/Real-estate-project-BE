@@ -13,6 +13,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("/accounts")
+@CrossOrigin(origins = "${cors.allowedOrigins}")
 @AllArgsConstructor
 public class AccountController {
     private final AccountService accountService;
@@ -23,7 +24,7 @@ public class AccountController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    @ExceptionHandler({EmailAlreadyInUse.class, InvalidUserException.class})
+    @ExceptionHandler({EmailAlreadyInUse.class, InvalidUserException.class, Exception.class})
     public ResponseEntity<String> handleEmailAlreadyInUseException(ResponseStatusException ex) {
         return new ResponseEntity<>(ex.getReason(), HttpStatus.BAD_REQUEST);
     }

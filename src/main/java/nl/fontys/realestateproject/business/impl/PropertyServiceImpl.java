@@ -1,6 +1,5 @@
 package nl.fontys.realestateproject.business.impl;
 
-import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import nl.fontys.realestateproject.business.DTO.Property.*;
 import nl.fontys.realestateproject.business.PropertyService;
@@ -16,6 +15,7 @@ import nl.fontys.realestateproject.persistence.entity.AddressEntity;
 import nl.fontys.realestateproject.persistence.entity.PropertyEntity;
 import nl.fontys.realestateproject.persistence.entity.PropertySurfaceAreaEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -24,10 +24,9 @@ import java.util.Optional;
 @Service
 @AllArgsConstructor
 public class PropertyServiceImpl implements PropertyService {
-    private final PropertySurfaceAreaRepository propertySurfaceAreaRepository;
     PropertyRepository propertyRepository;
     AddressRepository addressRepository;
-    PropertySurfaceAreaRepository SurfaceAreaRepository;
+    PropertySurfaceAreaRepository surfaceAreaRepository;
     @Override
     @Transactional
     public CreatePropertyResponse createProperty(CreatePropertyRequest request) {
@@ -38,7 +37,7 @@ public class PropertyServiceImpl implements PropertyService {
                 .build();
     }
     private PropertyEntity createNewProperty(CreatePropertyRequest request) {
-        AddressEntity address = SaveAddress(request.getCity(), request.getCountry(), request.getPostalCode(), request.getStreet());
+        AddressEntity address = saveAddress(request.getCity(), request.getCountry(), request.getPostalCode(), request.getStreet());
         addressRepository.save(address);
 
         PropertyEntity newProperty = PropertyEntity.builder()
@@ -58,13 +57,12 @@ public class PropertyServiceImpl implements PropertyService {
                 .toList();
 
        newProperty.setSurfaceAreas(surfaceAreas);
-       /*PropertyEntity savedProperty = propertyRepository.save(newProperty);*/
-       SurfaceAreaRepository.saveAll(surfaceAreas);
+        surfaceAreaRepository.saveAll(surfaceAreas);
 
         return propertyRepository.save(newProperty);
     }
-    private AddressEntity SaveAddress(String city, String country, String postalCode, String street) {
-        return AddressEntity.builder()
+    private AddressEntity saveAddress(String city, String country, String postalCode, String street) {
+return AddressEntity.builder()
                 .city(city)
                 .country(country)
                 .postalCode(postalCode)
@@ -79,7 +77,7 @@ public class PropertyServiceImpl implements PropertyService {
         final GetAllPropertiesResponse response = new GetAllPropertiesResponse();
         List<Property> properties = results
                 .stream()
-                .map(propertyEntity -> PropertyConverter.convert(propertyEntity))
+                .map(PropertyConverter::convert)
                 .toList();
         response.setProperties(properties);
         return response;
@@ -105,7 +103,7 @@ public class PropertyServiceImpl implements PropertyService {
         propertyRepository.save(getUpdatedPropertyEntity(request));
     }
     private PropertyEntity getUpdatedPropertyEntity(UpdatePropertyRequest request) {
-        AddressEntity address = SaveAddress(request.getCity(), request.getCountry(), request.getPostalCode(), request.getStreet());
+        AddressEntity address = saveAddress(request.getCity(), request.getCountry(), request.getPostalCode(), request.getStreet());
         addressRepository.save(address);//change so that street is key
 
         List<PropertySurfaceAreaEntity> surfaceAreas = request.getSurfaceAreas().stream()
@@ -115,7 +113,7 @@ public class PropertyServiceImpl implements PropertyService {
                         .build())
                 .toList();
 
-        SurfaceAreaRepository.saveAll(surfaceAreas);
+        surfaceAreaRepository.saveAll(surfaceAreas);
         return PropertyEntity.builder()
                 .id(request.getId())
                 .description(request.getDescription())
@@ -133,7 +131,7 @@ public class PropertyServiceImpl implements PropertyService {
         if (propertyEntity.isEmpty()) {
             throw new InvalidPropertyException("PROPERTY_NOT_FOUND");
         }
-        propertySurfaceAreaRepository.deleteAllByPropertyId(id);
+        surfaceAreaRepository.deleteAllByPropertyId(id);
         propertyRepository.deleteById(id);
         addressRepository.deleteById(propertyEntity.get().getAddress().getId());
     }

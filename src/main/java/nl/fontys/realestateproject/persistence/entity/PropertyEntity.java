@@ -1,22 +1,60 @@
 package nl.fontys.realestateproject.persistence.entity;
 
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
-import nl.fontys.realestateproject.domain.Address;
 import nl.fontys.realestateproject.domain.Enums.ListingType;
-import nl.fontys.realestateproject.domain.PropertySurfaceArea;
 import nl.fontys.realestateproject.domain.Enums.PropertyType;
+import org.hibernate.validator.constraints.Length;
 
+import java.math.BigDecimal;
 import java.util.List;
-
+@Entity
+@Table(name = "property")
 @Data
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class PropertyEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
-    private String name;
+
+  /*  @NotBlank
+    @Length(min = 2, max = 100)
+    @Column(name = "name")
+    private String name;*/
+
+    @NotBlank
+    @Length(min = 2, max = 250)
+    @Column(name = "description")
     private String description;
-    private double price;
+
+    @NotNull
+    @Column(name = "price")
+    private BigDecimal price;
+
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    @Column(name = "listing_type")
     private ListingType listingType;
+
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    @Column(name = "property_type")
     private PropertyType propertyType;
-    private Address address;
-    private List<PropertySurfaceArea> surfaceAreas;
+
+    @OneToOne
+    @NotNull
+    @JoinColumn(name = "address_id")
+    private AddressEntity address;
+
+    @OneToOne
+    @JoinColumn(name = "account_id")
+    private AccountEntity account;
+
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "property")
+    private List<PropertySurfaceAreaEntity> surfaceAreas;
 }

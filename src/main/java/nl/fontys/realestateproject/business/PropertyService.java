@@ -7,5 +7,5 @@ public interface PropertyService {
     GetAllPropertiesResponse getAllProperties();
     GetPropertyResponse getProperty(long id);
     void updateProperty(UpdatePropertyRequest request);
-    void deleteProperty(int id);
+    void deleteProperty(long id);
 }

@@ -1,15 +1,20 @@
 package nl.fontys.realestateproject.business.impl;
 
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import nl.fontys.realestateproject.business.DTO.Property.*;
 import nl.fontys.realestateproject.business.PropertyService;
 import nl.fontys.realestateproject.business.exceptions.InvalidPropertyException;
-import nl.fontys.realestateproject.domain.Address;
 import nl.fontys.realestateproject.domain.Property;
 import nl.fontys.realestateproject.domain.Enums.ListingType;
 import nl.fontys.realestateproject.domain.Enums.PropertyType;
+import nl.fontys.realestateproject.domain.PropertySurfaceArea;
+import nl.fontys.realestateproject.persistence.AddressRepository;
 import nl.fontys.realestateproject.persistence.PropertyRepository;
+import nl.fontys.realestateproject.persistence.PropertySurfaceAreaRepository;
+import nl.fontys.realestateproject.persistence.entity.AddressEntity;
 import nl.fontys.realestateproject.persistence.entity.PropertyEntity;
+import nl.fontys.realestateproject.persistence.entity.PropertySurfaceAreaEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,9 +24,12 @@ import java.util.Optional;
 @Service
 @AllArgsConstructor
 public class PropertyServiceImpl implements PropertyService {
-    private final PropertyRepository propertyRepository;
-
+    private final PropertySurfaceAreaRepository propertySurfaceAreaRepository;
+    PropertyRepository propertyRepository;
+    AddressRepository addressRepository;
+    PropertySurfaceAreaRepository SurfaceAreaRepository;
     @Override
+    @Transactional
     public CreatePropertyResponse createProperty(CreatePropertyRequest request) {
         PropertyEntity savedProperty = createNewProperty(request);
 
@@ -30,28 +38,43 @@ public class PropertyServiceImpl implements PropertyService {
                 .build();
     }
     private PropertyEntity createNewProperty(CreatePropertyRequest request) {
-        Address address = Address.builder()
-                .city(request.getCity())
-                .Country(request.getCountry())
-                .PostalCode(request.getPostalCode())
-                .street(request.getStreet())
-                .build();
+        AddressEntity address = SaveAddress(request.getCity(), request.getCountry(), request.getPostalCode(), request.getStreet());
+        addressRepository.save(address);
 
         PropertyEntity newProperty = PropertyEntity.builder()
-                .name(request.getName())
                 .description(request.getDescription())
                 .price(request.getPrice())
                 .address(address)
                 .propertyType(PropertyType.valueOf(request.getPropertyType()))
                 .listingType(ListingType.valueOf(request.getListingType()))
-                .surfaceAreas(request.getSurfaceAreas())
                 .build();
-        return propertyRepository.CreateProperty(newProperty);
+
+        List<PropertySurfaceAreaEntity> surfaceAreas = request.getSurfaceAreas().stream()
+                .map(surfaceArea -> PropertySurfaceAreaEntity.builder()
+                        .nameOfSurfaceArea(surfaceArea.getNameOfSurfaceArea())
+                        .areaInSquareMetre(surfaceArea.getAreaInSquareMetre())
+                        .property(newProperty)
+                        .build())
+                .toList();
+
+       newProperty.setSurfaceAreas(surfaceAreas);
+       /*PropertyEntity savedProperty = propertyRepository.save(newProperty);*/
+       SurfaceAreaRepository.saveAll(surfaceAreas);
+
+        return propertyRepository.save(newProperty);
+    }
+    private AddressEntity SaveAddress(String city, String country, String postalCode, String street) {
+        return AddressEntity.builder()
+                .city(city)
+                .country(country)
+                .postalCode(postalCode)
+                .street(street)
+                .build();
     }
 
     @Override
     public GetAllPropertiesResponse getAllProperties() {
-        List<PropertyEntity> results = propertyRepository.GetProperties();
+        List<PropertyEntity> results = propertyRepository.findAll();
 
         final GetAllPropertiesResponse response = new GetAllPropertiesResponse();
         List<Property> properties = results
@@ -64,7 +87,7 @@ public class PropertyServiceImpl implements PropertyService {
 
     @Override
     public GetPropertyResponse getProperty(long id) {
-        Optional<PropertyEntity> result = propertyRepository.GetProperty(id);
+        Optional<PropertyEntity> result = propertyRepository.findById(id);
         if(result.isEmpty()) {
             throw new InvalidPropertyException("PROPERTY_NOT_FOUND");
         }
@@ -74,39 +97,45 @@ public class PropertyServiceImpl implements PropertyService {
     }
 
     @Override
+    @Transactional
     public void updateProperty(UpdatePropertyRequest request) {
-        Optional<PropertyEntity> existingProperty = propertyRepository.GetProperty(request.getId());
-        if (existingProperty.isEmpty()) {
+        if (!propertyRepository.existsById(request.getId())) {
             throw new InvalidPropertyException("PROPERTY_NOT_FOUND");
         }
-        propertyRepository.UpdateProperty(getUpdatedPropertyEntity(request));
+        propertyRepository.save(getUpdatedPropertyEntity(request));
     }
     private PropertyEntity getUpdatedPropertyEntity(UpdatePropertyRequest request) {
-        Address address = Address.builder()
-                .city(request.getCity())
-                .Country(request.getCountry())
-                .PostalCode(request.getPostalCode())
-                .street(request.getStreet())
-                .build();
+        AddressEntity address = SaveAddress(request.getCity(), request.getCountry(), request.getPostalCode(), request.getStreet());
+        addressRepository.save(address);//change so that street is key
 
+        List<PropertySurfaceAreaEntity> surfaceAreas = request.getSurfaceAreas().stream()
+                .map(surfaceArea -> PropertySurfaceAreaEntity.builder()
+                        .nameOfSurfaceArea(surfaceArea.getNameOfSurfaceArea())
+                        .areaInSquareMetre(surfaceArea.getAreaInSquareMetre())
+                        .build())
+                .toList();
+
+        SurfaceAreaRepository.saveAll(surfaceAreas);
         return PropertyEntity.builder()
                 .id(request.getId())
-                .name(request.getName())
                 .description(request.getDescription())
                 .price(request.getPrice())
                 .address(address)
                 .propertyType(PropertyType.valueOf(request.getPropertyType()))
                 .listingType(ListingType.valueOf(request.getListingType()))
-                .surfaceAreas(request.getSurfaceAreas())
+                .surfaceAreas(surfaceAreas)
                 .build();
     }
     @Override
-    public void deleteProperty(int id) {
-        Optional<PropertyEntity> existingProperty = propertyRepository.GetProperty(id);
-        if (existingProperty.isEmpty()) {
+    @Transactional
+    public void deleteProperty(long id) {
+        Optional<PropertyEntity> propertyEntity = propertyRepository.findById(id);
+        if (propertyEntity.isEmpty()) {
             throw new InvalidPropertyException("PROPERTY_NOT_FOUND");
         }
-       propertyRepository.DeleteProperty(id);
+        propertySurfaceAreaRepository.deleteAllByPropertyId(id);
+        propertyRepository.deleteById(id);
+        addressRepository.deleteById(propertyEntity.get().getAddress().getId());
     }
 
 }

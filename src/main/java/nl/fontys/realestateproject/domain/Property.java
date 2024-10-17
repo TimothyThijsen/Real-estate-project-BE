@@ -4,6 +4,7 @@ import lombok.*;
 import nl.fontys.realestateproject.domain.Enums.ListingType;
 import nl.fontys.realestateproject.domain.Enums.PropertyType;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 @Data
@@ -12,9 +13,8 @@ import java.util.*;
 @NoArgsConstructor
  public class Property {
     private long id;
-    private String name;
     private String description;
-    private double price;
+    private BigDecimal price;
     private ListingType listingType;
     private PropertyType propertyType;
     private List<PropertySurfaceArea> surfaceAreas;

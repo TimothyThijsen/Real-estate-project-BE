@@ -5,10 +5,6 @@ import nl.fontys.realestateproject.persistence.entity.AddressEntity;
 
 
 final class AddressConverter {
-
-    public AddressConverter() {
-    }
-
     public static Address convert(AddressEntity addressEntity) {
         return Address.builder()
                 .street(addressEntity.getStreet())

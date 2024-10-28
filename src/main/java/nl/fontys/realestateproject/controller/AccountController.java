@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import nl.fontys.realestateproject.business.AccountService;
 import nl.fontys.realestateproject.business.DTO.User.*;
+import nl.fontys.realestateproject.business.exceptions.CredentialsException;
 import nl.fontys.realestateproject.business.exceptions.EmailAlreadyInUse;
 import nl.fontys.realestateproject.business.exceptions.InvalidUserException;
 import org.springframework.http.HttpStatus;
@@ -24,7 +25,7 @@ public class AccountController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    @ExceptionHandler({EmailAlreadyInUse.class, InvalidUserException.class, Exception.class})
+    @ExceptionHandler({EmailAlreadyInUse.class, InvalidUserException.class, CredentialsException.class, Exception.class})
     public ResponseEntity<String> handleEmailAlreadyInUseException(ResponseStatusException ex) {
         return new ResponseEntity<>(ex.getReason(), HttpStatus.BAD_REQUEST);
     }

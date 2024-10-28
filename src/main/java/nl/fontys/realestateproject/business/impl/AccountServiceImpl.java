@@ -36,12 +36,10 @@ public class AccountServiceImpl implements AccountService {
             if (cause instanceof DataException dataException) {
 
                 int errorCode = dataException.getErrorCode();
-                switch (errorCode) {
-                    case 1406:
-                        throw new InvalidUserException("Limit exceeded");
-                    default:
-                        throw new InvalidUserException(cause.getMessage());
+                if (errorCode == 1406) {
+                    throw new InvalidUserException("Limit exceeded");
                 }
+                throw new InvalidUserException(cause.getMessage());
             }
             if(e instanceof DataIntegrityViolationException) {
                 throw new EmailAlreadyInUse();
@@ -91,12 +89,10 @@ public class AccountServiceImpl implements AccountService {
             if (cause instanceof DataException dataException) {
 
                 int errorCode = dataException.getErrorCode();
-                switch (errorCode) {
-                    case 1406:
-                        throw new InvalidUserException("Limit exceeded");
-                    default:
-                        throw new InvalidUserException(cause.getMessage());
+                if (errorCode == 1406) {
+                    throw new InvalidUserException("Limit exceeded");
                 }
+                throw new InvalidUserException(cause.getMessage());
             }
             if(e instanceof DataIntegrityViolationException) {
                 throw new EmailAlreadyInUse();

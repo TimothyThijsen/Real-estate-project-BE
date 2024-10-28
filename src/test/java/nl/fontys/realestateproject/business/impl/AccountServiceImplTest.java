@@ -1,6 +1,7 @@
 package nl.fontys.realestateproject.business.impl;
 
 import nl.fontys.realestateproject.business.DTO.User.CreateAccountRequest;
+import nl.fontys.realestateproject.business.DTO.User.GetAllAccountsResponse;
 import nl.fontys.realestateproject.business.DTO.User.LoginRequest;
 import nl.fontys.realestateproject.business.DTO.User.UpdateAccountRequest;
 import nl.fontys.realestateproject.business.exceptions.CredentialsException;
@@ -8,26 +9,66 @@ import nl.fontys.realestateproject.business.exceptions.EmailAlreadyInUse;
 import nl.fontys.realestateproject.business.exceptions.InvalidUserException;
 import nl.fontys.realestateproject.persistence.UserRepository;
 import nl.fontys.realestateproject.persistence.entity.AccountEntity;
+import org.hibernate.exception.DataException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.dao.DataIntegrityViolationException;
 
+import java.sql.SQLException;
+import java.util.List;
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class AccountSeviceImplTest {
+class AccountServiceImplTest {
     @Mock
     private UserRepository userRepository;
 
     @InjectMocks
     private AccountServiceImpl accountService;
 
+    @Test
+    void createAccount_ShouldThrowEmailAlreadyInUse_WhenEmailAlreadyExists() {
+        new CreateAccountRequest();
+        CreateAccountRequest request = CreateAccountRequest.builder()
+                .email("fake@fake.com")
+                .firstName("name")
+                .lastName("last")
+                .role("CLIENT")
+                .password("12345").build();
 
+        when(userRepository.save(any(AccountEntity.class))).thenThrow(new DataIntegrityViolationException("Duplicate email"));
+        assertThrows(EmailAlreadyInUse.class, () -> accountService.createAccount(request));
+    }
+    @Test
+    void createAccount_ShouldThrowInvalidUserException_WhenCharacterLimitExceeded() {
+        new CreateAccountRequest();
+        CreateAccountRequest request = CreateAccountRequest.builder()
+                .email("fake@fake.com")
+                .firstName("nameaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+                .lastName("last")
+                .role("CLIENT")
+                .password("12345").build();
+        SQLException sqlException = new SQLException("Error message", "SQLState", 1406);
+        DataException exception = new DataException("Error message", sqlException);
+        when(userRepository.save(any(AccountEntity.class))).thenThrow(exception);
+        assertThrows(InvalidUserException.class, () -> accountService.createAccount(request));}
+
+    @Test
+    void getAllAccounts_ShouldReturnAllAccounts() {
+        when(userRepository.findAll()).thenReturn(List.of(new AccountEntity(), new AccountEntity()));
+
+        GetAllAccountsResponse response = accountService.getAllAccounts();
+
+        assertEquals(2, response.getAccountsList().size());
+    }
     @Test
     void updateAccount_ShouldThrowInvalidUserException_WhenUserNotFound() {
         UpdateAccountRequest request = new UpdateAccountRequest();
@@ -36,7 +77,19 @@ public class AccountSeviceImplTest {
 
         assertThrows(InvalidUserException.class, () -> accountService.updateAccount(request));
     }
-
+    @Test
+    void updateAccount_ShouldThrowEmailAlreadyInUse_WhenEmailAlreadyExists() {
+        new UpdateAccountRequest();
+        UpdateAccountRequest request = UpdateAccountRequest.builder()
+                .email("fake@fake.com")
+                .firstName("name")
+                .lastName("last")
+                .role("CLIENT")
+                .password("12345").build();
+        when(userRepository.existsById(request.getId())).thenReturn(true);
+        when(userRepository.save(any(AccountEntity.class))).thenThrow(new DataIntegrityViolationException("Duplicate email"));
+        assertThrows(EmailAlreadyInUse.class, () -> accountService.updateAccount(request));
+        }
     @Test
     void deleteAccount_ShouldThrowInvalidUserException_WhenUserNotFound() {
         long userId = 1L;

@@ -25,8 +25,8 @@ public class AccountController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    @ExceptionHandler({EmailAlreadyInUse.class, InvalidUserException.class, CredentialsException.class, Exception.class})
-    public ResponseEntity<String> handleEmailAlreadyInUseException(ResponseStatusException ex) {
+    @ExceptionHandler({EmailAlreadyInUse.class, InvalidUserException.class, CredentialsException.class})
+    public ResponseEntity<String> handleExceptions(ResponseStatusException ex) {
         return new ResponseEntity<>(ex.getReason(), HttpStatus.BAD_REQUEST);
     }
 
@@ -35,13 +35,13 @@ public class AccountController {
         GetAllAccountsResponse response = accountService.getAllAccounts();
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
-    @GetMapping("{accountId}")
+    @GetMapping("/{accountId}")
     public ResponseEntity<GetUserAccountResponse> getAccount(@PathVariable int accountId) {
         GetUserAccountResponse response = accountService.getAccount(accountId);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @GetMapping("/login")
+    @PostMapping("/login")
     public ResponseEntity<GetUserAccountResponse> login(@RequestBody @Valid LoginRequest request) {
         GetUserAccountResponse response = accountService.login(request);
         return ResponseEntity.status(HttpStatus.OK).body(response);

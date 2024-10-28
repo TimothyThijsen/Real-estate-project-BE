@@ -1,7 +1,10 @@
 package nl.fontys.realestateproject.business.exceptions;
 
-public class CredentialsException extends RuntimeException {
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
+
+public class CredentialsException extends ResponseStatusException {
     public CredentialsException() {
-        super("Invalid login credentials");
+        super(HttpStatus.BAD_REQUEST, "Invalid login credentials");
     }
 }

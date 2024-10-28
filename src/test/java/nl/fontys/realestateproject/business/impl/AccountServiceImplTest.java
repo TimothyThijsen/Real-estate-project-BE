@@ -21,9 +21,9 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -56,11 +56,25 @@ class AccountServiceImplTest {
                 .lastName("last")
                 .role("CLIENT")
                 .password("12345").build();
-        SQLException sqlException = new SQLException("Error message", "SQLState", 1406);
+        SQLException sqlException = new SQLException("Error", "SQLState", 1406);
         DataException exception = new DataException("Error message", sqlException);
-        when(userRepository.save(any(AccountEntity.class))).thenThrow(exception);
+        DataIntegrityViolationException e = new DataIntegrityViolationException("Error", exception);
+        when(userRepository.save(any(AccountEntity.class))).thenThrow(e);
         assertThrows(InvalidUserException.class, () -> accountService.createAccount(request));}
-
+    @Test
+    void createAccount_ShouldReturnId_WhenAccountIsCreated() {
+        new CreateAccountRequest();
+        CreateAccountRequest request = CreateAccountRequest.builder()
+                .email("fake@fake.com")
+                .firstName("name")
+                .lastName("last")
+                .role("CLIENT")
+                .password("12345").build();
+        AccountEntity accountEntity = new AccountEntity();
+        accountEntity.setId(1L);
+        when(userRepository.save(any(AccountEntity.class))).thenReturn(accountEntity);
+       assertEquals(1L, accountService.createAccount(request).getAccountId());
+    }
     @Test
     void getAllAccounts_ShouldReturnAllAccounts() {
         when(userRepository.findAll()).thenReturn(List.of(new AccountEntity(), new AccountEntity()));
@@ -77,6 +91,38 @@ class AccountServiceImplTest {
 
         assertThrows(InvalidUserException.class, () -> accountService.updateAccount(request));
     }
+    @Test
+    void updateAccount_ShouldThrowInvalidUserException_WhenCharacterLimitExceeded() {
+        new UpdateAccountRequest();
+        UpdateAccountRequest request = UpdateAccountRequest.builder()
+                .email("fake@fake.com")
+                .firstName("nameaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+                .lastName("last")
+                .role("CLIENT")
+                .password("12345").build();
+        SQLException sqlException = new SQLException("Error", "SQLState", 1406);
+        DataException exception = new DataException("Error message", sqlException);
+        DataIntegrityViolationException e = new DataIntegrityViolationException("Error", exception);
+        when(userRepository.existsById(request.getId())).thenReturn(true);
+        when(userRepository.save(any(AccountEntity.class))).thenThrow(e);
+
+        assertThrows(InvalidUserException.class, () -> accountService.updateAccount(request));
+    }
+    @Test
+    void updateAccount_ShouldReturnUpdatedAccount_WhenAccountIsUpdated() {
+        UpdateAccountRequest request = UpdateAccountRequest.builder()
+                .email("fake@fake.com")
+                .firstName("name")
+                .lastName("last")
+                .role("CLIENT")
+                .password("12345").build();
+        AccountEntity accountEntity = new AccountEntity();
+        accountEntity.setId(1L);
+        when(userRepository.existsById(request.getId())).thenReturn(true);
+        when(userRepository.save(any(AccountEntity.class))).thenReturn(accountEntity);
+        assertDoesNotThrow(() -> accountService.updateAccount(request));
+        verify(userRepository).save(any(AccountEntity.class));
+        }
     @Test
     void updateAccount_ShouldThrowEmailAlreadyInUse_WhenEmailAlreadyExists() {
         new UpdateAccountRequest();
@@ -97,6 +143,14 @@ class AccountServiceImplTest {
 
         assertThrows(InvalidUserException.class, () -> accountService.deleteAccount(userId));
     }
+    @Test
+    void deleteAccount_ShouldDeleteAccount_WhenUserFound() {
+        long userId = 1L;
+        when(userRepository.existsById(userId)).thenReturn(true);
+
+        assertDoesNotThrow(() -> accountService.deleteAccount(userId));
+        verify(userRepository).deleteById(userId);
+    }
 
     @Test
     void getAccount_ShouldThrowInvalidUserException_WhenUserNotFound() {
@@ -104,6 +158,15 @@ class AccountServiceImplTest {
         when(userRepository.findById(userId)).thenReturn(Optional.empty());
 
         assertThrows(InvalidUserException.class, () -> accountService.getAccount(userId));
+    }
+    @Test
+    void getAccount_ShouldReturnAccount_WhenUserFound() {
+        long userId = 1L;
+        AccountEntity accountEntity = new AccountEntity();
+        accountEntity.setId(userId);
+        when(userRepository.findById(userId)).thenReturn(Optional.of(accountEntity));
+
+        assertEquals(userId, accountService.getAccount(userId).getAccount().getId());
     }
 
     @Test
@@ -125,5 +188,16 @@ class AccountServiceImplTest {
         when(userRepository.findByEmail(request.getEmail())).thenReturn(Optional.of(accountEntity));
 
         assertThrows(CredentialsException.class, () -> accountService.login(request));
+    }
+    @Test
+    void login_ShouldReturnAccount_WhenCredentialsAreCorrect() {
+        LoginRequest request = new LoginRequest();
+        request.setEmail("john.doe@fake.com");
+        request.setPassword("12345");
+        AccountEntity accountEntity = new AccountEntity();
+        accountEntity.setId(1L);
+        accountEntity.setPassword("12345");
+        when(userRepository.findByEmail(request.getEmail())).thenReturn(Optional.of(accountEntity));
+        assertEquals(1L, accountService.login(request).getAccount().getId());
     }
 }

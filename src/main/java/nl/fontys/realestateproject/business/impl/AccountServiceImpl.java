@@ -26,28 +26,29 @@ public class AccountServiceImpl implements AccountService {
     @Override
     @Transactional
     public CreateAccountResponse createAccount(CreateAccountRequest createAccountRequest) {
-        AccountEntity savedAccount;
+        AccountEntity savedAccount = null;
         try {
             savedAccount = saveAccountToRepository(createAccountRequest);
         }
         catch (Exception e) {
-
-            Throwable cause = e.getCause();
-            if (cause instanceof DataException dataException) {
-
-                int errorCode = dataException.getErrorCode();
-                if (errorCode == 1406) {
-                    throw new InvalidUserException("Limit exceeded");
-                }
-                throw new InvalidUserException(cause.getMessage());
-            }
-            if(e instanceof DataIntegrityViolationException) {
-                throw new EmailAlreadyInUse();
-            }
-            throw new InvalidUserException(e.getMessage());
+            handleException(e);
         }
 
         return new CreateAccountResponse(savedAccount.getId());
+    }
+    private void handleException(Exception e) {
+        Throwable cause = e.getCause();
+        if (cause instanceof DataException dataException) {
+
+            int errorCode = dataException.getErrorCode();
+            if (errorCode == 1406) {
+                throw new InvalidUserException("Limit exceeded");
+            }
+        }
+        if(e instanceof DataIntegrityViolationException) {
+            throw new EmailAlreadyInUse();
+        }
+        throw new InvalidUserException(e.getMessage());
     }
 
     private AccountEntity saveAccountToRepository(CreateAccountRequest createAccountRequest) {
@@ -84,20 +85,7 @@ public class AccountServiceImpl implements AccountService {
         try{
             userRepository.save(account);
         }catch (Exception e) {
-
-            Throwable cause = e.getCause();
-            if (cause instanceof DataException dataException) {
-
-                int errorCode = dataException.getErrorCode();
-                if (errorCode == 1406) {
-                    throw new InvalidUserException("Limit exceeded");
-                }
-                throw new InvalidUserException(cause.getMessage());
-            }
-            if(e instanceof DataIntegrityViolationException) {
-                throw new EmailAlreadyInUse();
-            }
-            throw new InvalidUserException(e.getMessage());
+            handleException(e);
         }
     }
 

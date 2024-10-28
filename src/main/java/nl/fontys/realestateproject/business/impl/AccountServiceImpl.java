@@ -3,13 +3,17 @@ package nl.fontys.realestateproject.business.impl;
 import lombok.AllArgsConstructor;
 import nl.fontys.realestateproject.business.AccountService;
 import nl.fontys.realestateproject.business.DTO.User.*;
+import nl.fontys.realestateproject.business.exceptions.CredentialsException;
 import nl.fontys.realestateproject.business.exceptions.EmailAlreadyInUse;
 import nl.fontys.realestateproject.business.exceptions.InvalidUserException;
 import nl.fontys.realestateproject.domain.Account;
 import nl.fontys.realestateproject.domain.Enums.UserRole;
 import nl.fontys.realestateproject.persistence.UserRepository;
 import nl.fontys.realestateproject.persistence.entity.AccountEntity;
+import org.hibernate.exception.DataException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -17,18 +21,38 @@ import java.util.Optional;
 @Service
 @AllArgsConstructor
 public class AccountServiceImpl implements AccountService {
-    private final UserRepository userRepository;
+    UserRepository userRepository;
 
     @Override
+    @Transactional
     public CreateAccountResponse createAccount(CreateAccountRequest createAccountRequest) {
-        if(userRepository.AccountExists(createAccountRequest.getEmail())) {
-            throw new EmailAlreadyInUse();
+        AccountEntity savedAccount;
+        try {
+            savedAccount = saveAccountToRepository(createAccountRequest);
         }
-        AccountEntity savedAccount = SaveAccountToRepository(createAccountRequest);
+        catch (Exception e) {
+
+            Throwable cause = e.getCause();
+            if (cause instanceof DataException dataException) {
+
+                int errorCode = dataException.getErrorCode();
+                switch (errorCode) {
+                    case 1406:
+                        throw new InvalidUserException("Limit exceeded");
+                    default:
+                        throw new InvalidUserException(cause.getMessage());
+                }
+            }
+            if(e instanceof DataIntegrityViolationException) {
+                throw new EmailAlreadyInUse();
+            }
+            throw new InvalidUserException(e.getMessage());
+        }
+
         return new CreateAccountResponse(savedAccount.getId());
     }
 
-    private AccountEntity SaveAccountToRepository(CreateAccountRequest createAccountRequest) {
+    private AccountEntity saveAccountToRepository(CreateAccountRequest createAccountRequest) {
         AccountEntity newAccount = AccountEntity.builder()
                 .email(createAccountRequest.getEmail())
                 .firstName(createAccountRequest.getFirstName())
@@ -37,17 +61,17 @@ public class AccountServiceImpl implements AccountService {
                 .role(UserRole.valueOf(createAccountRequest.getRole()))
                 .build();
 
-        return userRepository.CreateAccount(newAccount);
+        return userRepository.save(newAccount);
     }
 
     @Override
     public GetAllAccountsResponse getAllAccounts() {
-        List<AccountEntity> results = userRepository.GetAllAccounts();
+        List<AccountEntity> results = userRepository.findAll();
 
         final GetAllAccountsResponse response = new GetAllAccountsResponse();
         List<Account> accounts = results
                 .stream()
-                .map(accountEntity -> AccountConverter.convert(accountEntity))
+                .map(AccountConverter::convert)
                 .toList();
         response.setAccountsList(accounts);
         return response;
@@ -55,15 +79,33 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public void updateAccount(UpdateAccountRequest request) {
-        Optional<AccountEntity> result = userRepository.GetAccount(request.getId());
-        if(result.isEmpty()) {
-            throw new InvalidUserException("USER_NOT_FOUND");
+        if(!userRepository.existsById(request.getId())) {
+            throw new InvalidUserException();
         }
-        AccountEntity account = GetUpdatedAccount(request);
-        userRepository.UpdateAccount(account);
+        AccountEntity account = getUpdatedAccount(request);
+        try{
+            userRepository.save(account);
+        }catch (Exception e) {
+
+            Throwable cause = e.getCause();
+            if (cause instanceof DataException dataException) {
+
+                int errorCode = dataException.getErrorCode();
+                switch (errorCode) {
+                    case 1406:
+                        throw new InvalidUserException("Limit exceeded");
+                    default:
+                        throw new InvalidUserException(cause.getMessage());
+                }
+            }
+            if(e instanceof DataIntegrityViolationException) {
+                throw new EmailAlreadyInUse();
+            }
+            throw new InvalidUserException(e.getMessage());
+        }
     }
 
-    private AccountEntity GetUpdatedAccount(UpdateAccountRequest request) {
+    private AccountEntity getUpdatedAccount(UpdateAccountRequest request) {
         return AccountEntity.builder()
                 .id(request.getId())
                 .email(request.getEmail())
@@ -76,18 +118,17 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public void deleteAccount(long id) {
-        Optional<AccountEntity> result = userRepository.GetAccount(id);
-        if(result.isEmpty()) {
-            throw new InvalidUserException("USER_NOT_FOUND");
+        if(!userRepository.existsById(id)) {
+            throw new InvalidUserException();
         }
-        userRepository.DeleteAccount(id);
+        userRepository.deleteById(id);
     }
 
     @Override
     public GetUserAccountResponse getAccount(long id) {
-        Optional<AccountEntity> result = userRepository.GetAccount(id);
+        Optional<AccountEntity> result = userRepository.findById(id);
         if(result.isEmpty()) {
-            throw new InvalidUserException("USER_NOT_FOUND");
+            throw new InvalidUserException();
         }
         return GetUserAccountResponse.builder()
                 .account(AccountConverter.convert(result.get()))
@@ -96,12 +137,12 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public GetUserAccountResponse login(LoginRequest request) {
-        Optional<AccountEntity> result = userRepository.GetAccountByEmail(request.getEmail());
+        Optional<AccountEntity> result = userRepository.findByEmail(request.getEmail());
         if(result.isEmpty()) {
-            throw new InvalidUserException("USER_NOT_FOUND");
+            throw new CredentialsException();
         }
         if(!result.get().getPassword().equals(request.getPassword())) {
-            throw new InvalidUserException("INVALID_PASSWORD");
+            throw new CredentialsException();
         }
         return GetUserAccountResponse.builder()
                 .account(AccountConverter.convert(result.get()))

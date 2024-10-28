@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import nl.fontys.realestateproject.business.AccountService;
 import nl.fontys.realestateproject.business.DTO.User.*;
+import nl.fontys.realestateproject.business.exceptions.CredentialsException;
 import nl.fontys.realestateproject.business.exceptions.EmailAlreadyInUse;
 import nl.fontys.realestateproject.business.exceptions.InvalidUserException;
 import org.springframework.http.HttpStatus;
@@ -13,6 +14,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("/accounts")
+@CrossOrigin(origins = "${cors.allowedOrigins}")
 @AllArgsConstructor
 public class AccountController {
     private final AccountService accountService;
@@ -23,8 +25,8 @@ public class AccountController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    @ExceptionHandler({EmailAlreadyInUse.class, InvalidUserException.class})
-    public ResponseEntity<String> handleEmailAlreadyInUseException(ResponseStatusException ex) {
+    @ExceptionHandler({EmailAlreadyInUse.class, InvalidUserException.class, CredentialsException.class})
+    public ResponseEntity<String> handleExceptions(ResponseStatusException ex) {
         return new ResponseEntity<>(ex.getReason(), HttpStatus.BAD_REQUEST);
     }
 
@@ -33,13 +35,13 @@ public class AccountController {
         GetAllAccountsResponse response = accountService.getAllAccounts();
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
-    @GetMapping("{accountId}")
+    @GetMapping("/{accountId}")
     public ResponseEntity<GetUserAccountResponse> getAccount(@PathVariable int accountId) {
         GetUserAccountResponse response = accountService.getAccount(accountId);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @GetMapping("/login")
+    @PostMapping("/login")
     public ResponseEntity<GetUserAccountResponse> login(@RequestBody @Valid LoginRequest request) {
         GetUserAccountResponse response = accountService.login(request);
         return ResponseEntity.status(HttpStatus.OK).body(response);

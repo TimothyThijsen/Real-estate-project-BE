@@ -54,8 +54,8 @@ public class AccountServiceImpl implements AccountService {
     private AccountEntity saveAccountToRepository(CreateAccountRequest createAccountRequest) {
         AccountEntity newAccount = AccountEntity.builder()
                 .email(createAccountRequest.getEmail())
-                .firstName(createAccountRequest.getFirstName())
-                .lastName(createAccountRequest.getLastName())
+                .firstName(Character.toUpperCase(createAccountRequest.getFirstName().charAt(0)) + createAccountRequest.getFirstName().substring(1))
+                .lastName(Character.toUpperCase(createAccountRequest.getLastName().charAt(0)) + createAccountRequest.getLastName().substring(1))
                 .password(createAccountRequest.getPassword())
                 .role(UserRole.valueOf(createAccountRequest.getRole()))
                 .build();
@@ -93,8 +93,8 @@ public class AccountServiceImpl implements AccountService {
         return AccountEntity.builder()
                 .id(request.getId())
                 .email(request.getEmail())
-                .firstName(request.getFirstName())
-                .lastName(request.getLastName())
+                .firstName(Character.toUpperCase(request.getFirstName().charAt(0)) + request.getFirstName().substring(1))
+                .lastName(Character.toUpperCase(request.getLastName().charAt(0)) + request.getLastName().substring(1))
                 .password(request.getPassword())
                 .role(UserRole.valueOf(request.getRole()))
                 .build();

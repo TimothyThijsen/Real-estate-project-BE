@@ -2,11 +2,11 @@
 CREATE TABLE account
 (
     id int NOT NULL AUTO_INCREMENT,
-    email nvarchar(50) NOT NULL,
-    first_name nvarchar(50) NOT NULL,
-    last_name nvarchar(50) NOT NULL,
-    user_role nvarchar(50) NOT NULL,
-    password nvarchar(250) NOT NULL,
+    email varchar(50) NOT NULL,
+    first_name varchar(50) NOT NULL,
+    last_name varchar(50) NOT NULL,
+    user_role varchar(50) NOT NULL,
+    password varchar(250) NOT NULL,
     PRIMARY KEY (id),
     UNIQUE (email)
 );

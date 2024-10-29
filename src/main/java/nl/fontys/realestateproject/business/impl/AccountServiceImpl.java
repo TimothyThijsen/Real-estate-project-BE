@@ -26,37 +26,36 @@ public class AccountServiceImpl implements AccountService {
     @Override
     @Transactional
     public CreateAccountResponse createAccount(CreateAccountRequest createAccountRequest) {
-        AccountEntity savedAccount;
+        AccountEntity savedAccount = null;
         try {
             savedAccount = saveAccountToRepository(createAccountRequest);
         }
         catch (Exception e) {
+            handleException(e);
+        }
+        return new CreateAccountResponse(savedAccount.getId());
+    }
+    private void handleException(Exception e) {
+        Throwable cause = e.getCause();
+        if (cause instanceof DataException dataException) {
 
-            Throwable cause = e.getCause();
-            if (cause instanceof DataException dataException) {
-
-                int errorCode = dataException.getErrorCode();
-                switch (errorCode) {
-                    case 1406:
-                        throw new InvalidUserException("Limit exceeded");
-                    default:
-                        throw new InvalidUserException(cause.getMessage());
-                }
-            }
-            if(e instanceof DataIntegrityViolationException) {
-                throw new EmailAlreadyInUse();
+            int errorCode = dataException.getErrorCode();
+            if (errorCode == 1406) {
+                throw new InvalidUserException("Limit exceeded");
             }
             throw new InvalidUserException(e.getMessage());
         }
-
-        return new CreateAccountResponse(savedAccount.getId());
+        if(e instanceof DataIntegrityViolationException) {
+            throw new EmailAlreadyInUse();
+        }
+        throw new InvalidUserException("Error occurred trying to create account");
     }
 
     private AccountEntity saveAccountToRepository(CreateAccountRequest createAccountRequest) {
         AccountEntity newAccount = AccountEntity.builder()
                 .email(createAccountRequest.getEmail())
-                .firstName(createAccountRequest.getFirstName())
-                .lastName(createAccountRequest.getLastName())
+                .firstName(Character.toUpperCase(createAccountRequest.getFirstName().charAt(0)) + createAccountRequest.getFirstName().substring(1))
+                .lastName(Character.toUpperCase(createAccountRequest.getLastName().charAt(0)) + createAccountRequest.getLastName().substring(1))
                 .password(createAccountRequest.getPassword())
                 .role(UserRole.valueOf(createAccountRequest.getRole()))
                 .build();
@@ -86,22 +85,7 @@ public class AccountServiceImpl implements AccountService {
         try{
             userRepository.save(account);
         }catch (Exception e) {
-
-            Throwable cause = e.getCause();
-            if (cause instanceof DataException dataException) {
-
-                int errorCode = dataException.getErrorCode();
-                switch (errorCode) {
-                    case 1406:
-                        throw new InvalidUserException("Limit exceeded");
-                    default:
-                        throw new InvalidUserException(cause.getMessage());
-                }
-            }
-            if(e instanceof DataIntegrityViolationException) {
-                throw new EmailAlreadyInUse();
-            }
-            throw new InvalidUserException(e.getMessage());
+            handleException(e);
         }
     }
 
@@ -109,8 +93,8 @@ public class AccountServiceImpl implements AccountService {
         return AccountEntity.builder()
                 .id(request.getId())
                 .email(request.getEmail())
-                .firstName(request.getFirstName())
-                .lastName(request.getLastName())
+                .firstName(Character.toUpperCase(request.getFirstName().charAt(0)) + request.getFirstName().substring(1))
+                .lastName(Character.toUpperCase(request.getLastName().charAt(0)) + request.getLastName().substring(1))
                 .password(request.getPassword())
                 .role(UserRole.valueOf(request.getRole()))
                 .build();

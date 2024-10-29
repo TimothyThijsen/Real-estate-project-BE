@@ -2,6 +2,7 @@ package nl.fontys.realestateproject.business.impl;
 
 import nl.fontys.realestateproject.business.DTO.Property.*;
 import nl.fontys.realestateproject.business.exceptions.InvalidPropertyException;
+import nl.fontys.realestateproject.domain.PropertySurfaceArea;
 import nl.fontys.realestateproject.persistence.AddressRepository;
 import nl.fontys.realestateproject.persistence.PropertyRepository;
 import nl.fontys.realestateproject.persistence.PropertySurfaceAreaRepository;
@@ -42,7 +43,7 @@ class PropertyServiceImplTest {
                 .postalCode("1234AB")
                 .propertyType("RESIDENTIAL")
                 .listingType("SALE")
-                .surfaceAreas(List.of())
+                .surfaceAreas(List.of(PropertySurfaceArea.builder().nameOfSurfaceArea("Living room").areaInSquareMetre(100.0).build()))
                 .build();
 
         PropertyEntity propertyEntity = PropertyEntity.builder().id(1L).build();
@@ -99,7 +100,7 @@ class PropertyServiceImplTest {
                 .postalCode("1234AB")
                 .propertyType("RESIDENTIAL")
                 .listingType("SALE")
-                .surfaceAreas(List.of())
+                .surfaceAreas(List.of(PropertySurfaceArea.builder().nameOfSurfaceArea("Living Room").areaInSquareMetre(100.0).build()))
                 .build();
 
         PropertyEntity propertyEntity = PropertyEntity.builder().id(1L).build();

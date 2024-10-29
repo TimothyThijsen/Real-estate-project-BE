@@ -33,8 +33,11 @@ public class AccountServiceImpl implements AccountService {
         catch (Exception e) {
             handleException(e);
         }
-
-        return new CreateAccountResponse(savedAccount.getId());
+        if(savedAccount == null) {
+            throw new InvalidUserException("An error occurred trying to create account");
+        }else{
+            return new CreateAccountResponse(savedAccount.getId());
+        }
     }
     private void handleException(Exception e) {
         Throwable cause = e.getCause();
@@ -44,11 +47,11 @@ public class AccountServiceImpl implements AccountService {
             if (errorCode == 1406) {
                 throw new InvalidUserException("Limit exceeded");
             }
+            throw new InvalidUserException(e.getMessage());
         }
         if(e instanceof DataIntegrityViolationException) {
             throw new EmailAlreadyInUse();
         }
-        throw new InvalidUserException(e.getMessage());
     }
 
     private AccountEntity saveAccountToRepository(CreateAccountRequest createAccountRequest) {

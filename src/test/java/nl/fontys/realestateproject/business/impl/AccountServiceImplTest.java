@@ -52,7 +52,7 @@ class AccountServiceImplTest {
         new CreateAccountRequest();
         CreateAccountRequest request = CreateAccountRequest.builder()
                 .email("fake@fake.com")
-                .firstName("nameaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+                .firstName("nameaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
                 .lastName("last")
                 .role("CLIENT")
                 .password("12345").build();
@@ -60,7 +60,35 @@ class AccountServiceImplTest {
         DataException exception = new DataException("Error message", sqlException);
         DataIntegrityViolationException e = new DataIntegrityViolationException("Error", exception);
         when(userRepository.save(any(AccountEntity.class))).thenThrow(e);
-        assertThrows(InvalidUserException.class, () -> accountService.createAccount(request));}
+        assertThrows(InvalidUserException.class, () -> accountService.createAccount(request));
+    }
+    @Test
+    void createAccount_shouldThrowInvalidUserException_WhenThereIsDataException() {
+        new CreateAccountRequest();
+        CreateAccountRequest request = CreateAccountRequest.builder()
+                .email("fake@fake.com")
+                .firstName("name")
+                .lastName("last")
+                .role("CLIENT")
+                .password("12345").build();
+        SQLException sqlException = new SQLException("Error", "SQLState", 1409);
+        DataException exception = new DataException("Error message", sqlException);
+        DataIntegrityViolationException e = new DataIntegrityViolationException("Error", exception);
+        when(userRepository.save(any(AccountEntity.class))).thenThrow(e);
+        assertThrows(InvalidUserException.class, () -> accountService.createAccount(request));
+    }
+    @Test
+    void createAccount_ShouldThrowInvalidUserException_WhenAccountIsNotCreated() {
+        new CreateAccountRequest();
+        CreateAccountRequest request = CreateAccountRequest.builder()
+                .email("fake@fake.com")
+                .firstName("name")
+                .lastName("last")
+                .role("CLIENT")
+                .password("12345").build();
+        when(userRepository.save(any(AccountEntity.class))).thenReturn(null);
+        assertThrows(InvalidUserException.class, () -> accountService.createAccount(request));
+    }
     @Test
     void createAccount_ShouldReturnId_WhenAccountIsCreated() {
         new CreateAccountRequest();

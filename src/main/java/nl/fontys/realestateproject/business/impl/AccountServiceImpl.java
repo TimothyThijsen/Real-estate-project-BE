@@ -33,11 +33,7 @@ public class AccountServiceImpl implements AccountService {
         catch (Exception e) {
             handleException(e);
         }
-        if(savedAccount == null) {
-            throw new InvalidUserException("An error occurred trying to create account");
-        }else{
-            return new CreateAccountResponse(savedAccount.getId());
-        }
+        return new CreateAccountResponse(savedAccount.getId());
     }
     private void handleException(Exception e) {
         Throwable cause = e.getCause();
@@ -52,6 +48,7 @@ public class AccountServiceImpl implements AccountService {
         if(e instanceof DataIntegrityViolationException) {
             throw new EmailAlreadyInUse();
         }
+        throw new InvalidUserException("Error occurred trying to create account");
     }
 
     private AccountEntity saveAccountToRepository(CreateAccountRequest createAccountRequest) {

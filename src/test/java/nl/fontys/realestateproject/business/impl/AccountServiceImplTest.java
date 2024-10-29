@@ -78,15 +78,15 @@ class AccountServiceImplTest {
         assertThrows(InvalidUserException.class, () -> accountService.createAccount(request));
     }
     @Test
-    void createAccount_ShouldThrowInvalidUserException_WhenAccountIsNotCreated() {
-        new CreateAccountRequest();
+    void createAccount_ShouldThrowInvalidUserException_UnknownErrorIsThrown() {
         CreateAccountRequest request = CreateAccountRequest.builder()
                 .email("fake@fake.com")
                 .firstName("name")
                 .lastName("last")
                 .role("CLIENT")
                 .password("12345").build();
-        when(userRepository.save(any(AccountEntity.class))).thenReturn(null);
+        RuntimeException runtimeException = new RuntimeException(new SQLException("Error", "SQLState", 1409));
+        when(userRepository.save(any(AccountEntity.class))).thenThrow(runtimeException);
         assertThrows(InvalidUserException.class, () -> accountService.createAccount(request));
     }
     @Test

@@ -2,13 +2,13 @@ package nl.fontys.realestateproject.business.impl;
 
 import nl.fontys.realestateproject.business.dto.property.*;
 import nl.fontys.realestateproject.business.exceptions.InvalidPropertyException;
+import nl.fontys.realestateproject.domain.Property;
 import nl.fontys.realestateproject.domain.PropertySurfaceArea;
 import nl.fontys.realestateproject.persistence.AddressRepository;
 import nl.fontys.realestateproject.persistence.PropertyRepository;
 import nl.fontys.realestateproject.persistence.PropertySurfaceAreaRepository;
 import nl.fontys.realestateproject.persistence.entity.AddressEntity;
 import nl.fontys.realestateproject.persistence.entity.PropertyEntity;
-import nl.fontys.realestateproject.persistence.entity.PropertySurfaceAreaEntity;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -18,8 +18,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
-import static org.junit.jupiter.api.Assertions.*;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -30,6 +31,9 @@ class PropertyServiceImplTest {
     AddressRepository addressRepositoryMock;
     @Mock
     PropertySurfaceAreaRepository propertySurfaceAreaRepositoryMock;
+
+    @Mock
+    PropertyConverter propertyConverterMock;
     @InjectMocks
     PropertyServiceImpl propertyService;
 
@@ -61,10 +65,12 @@ class PropertyServiceImplTest {
 
     @Test
     void getAllProperties() {
-        PropertyEntity property1 = PropertyEntity.builder().id(1L).description("Property 1").address(AddressEntity.builder().street("street").build()).surfaceAreas(List.of(PropertySurfaceAreaEntity.builder().nameOfSurfaceArea("Living room").areaInSquareMetre(100.0).build())).build();
-        PropertyEntity property2 = PropertyEntity.builder().id(2L).description("Property 2").address(AddressEntity.builder().street("street").build()).surfaceAreas(List.of(PropertySurfaceAreaEntity.builder().nameOfSurfaceArea("Living room").areaInSquareMetre(100.0).build())).build();
+        PropertyEntity property1 = PropertyEntity.builder().id(1L).description("Property 1").surfaceAreas(List.of()).build();
+        PropertyEntity property2 = PropertyEntity.builder().id(2L).description("Property 2").surfaceAreas(List.of()).build();
 
-        when(propertyRepositoryMock.findAll()).thenReturn(List.of(property1,property2));
+        when(propertyRepositoryMock.findAll()).thenReturn(List.of(property1, property2));
+        when(propertyConverterMock.convert(property1)).thenReturn(Property.builder().id(1L).description("Property 1").build());
+        when(propertyConverterMock.convert(property2)).thenReturn(Property.builder().id(2L).description("Property 2").build());
         GetAllPropertiesResponse actual = propertyService.getAllProperties();
 
         assertEquals(2, actual.getProperties().size());
@@ -73,16 +79,17 @@ class PropertyServiceImplTest {
 
     @Test
     void getProperty_ShouldReturnProperty() {
-        PropertyEntity property2 = PropertyEntity.builder().id(2L).description("Property 2").address(AddressEntity.builder().street("street").build()).surfaceAreas(List.of()).build();
+        PropertyEntity property2 = PropertyEntity.builder().id(2L).description("Property 2").surfaceAreas(List.of()).build();
 
         when(propertyRepositoryMock.findById(2L)).thenReturn(Optional.ofNullable(property2));
-
+        when(propertyConverterMock.convert(property2)).thenReturn(Property.builder().id(2L).description("Property 2").build());
         GetPropertyResponse actual = propertyService.getProperty(2L);
 
         assertEquals("Property 2", actual.getProperty().getDescription());
         assertEquals(2L, actual.getProperty().getId());
         verify(propertyRepositoryMock).findById(2L);
     }
+
     @Test
     void getProperty_ShouldThrowException_WhenPropertyNotFound() {
         when(propertyRepositoryMock.findById(99L)).thenReturn(Optional.empty());
@@ -121,7 +128,6 @@ class PropertyServiceImplTest {
                 .country("Netherlands")
                 .city("Eindhoven")
                 .postalCode("1234AB").build();
-
 
 
         assertThrows(InvalidPropertyException.class, () -> propertyService.updateProperty(request));

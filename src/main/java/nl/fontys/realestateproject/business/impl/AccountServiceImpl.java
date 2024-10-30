@@ -2,7 +2,7 @@ package nl.fontys.realestateproject.business.impl;
 
 import lombok.AllArgsConstructor;
 import nl.fontys.realestateproject.business.AccountService;
-import nl.fontys.realestateproject.business.DTO.User.*;
+import nl.fontys.realestateproject.business.dto.user.*;
 import nl.fontys.realestateproject.business.exceptions.CredentialsException;
 import nl.fontys.realestateproject.business.exceptions.EmailAlreadyInUse;
 import nl.fontys.realestateproject.business.exceptions.InvalidUserException;

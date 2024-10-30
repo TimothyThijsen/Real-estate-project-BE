@@ -1,4 +1,4 @@
-package nl.fontys.realestateproject.business.DTO.Property;
+package nl.fontys.realestateproject.business.dto.property;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;

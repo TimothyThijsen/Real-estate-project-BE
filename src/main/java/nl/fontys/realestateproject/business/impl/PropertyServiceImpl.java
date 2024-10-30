@@ -1,13 +1,12 @@
 package nl.fontys.realestateproject.business.impl;
 
 import lombok.AllArgsConstructor;
-import nl.fontys.realestateproject.business.DTO.Property.*;
+import nl.fontys.realestateproject.business.dto.property.*;
 import nl.fontys.realestateproject.business.PropertyService;
 import nl.fontys.realestateproject.business.exceptions.InvalidPropertyException;
 import nl.fontys.realestateproject.domain.Property;
 import nl.fontys.realestateproject.domain.Enums.ListingType;
 import nl.fontys.realestateproject.domain.Enums.PropertyType;
-import nl.fontys.realestateproject.domain.PropertySurfaceArea;
 import nl.fontys.realestateproject.persistence.AddressRepository;
 import nl.fontys.realestateproject.persistence.PropertyRepository;
 import nl.fontys.realestateproject.persistence.PropertySurfaceAreaRepository;

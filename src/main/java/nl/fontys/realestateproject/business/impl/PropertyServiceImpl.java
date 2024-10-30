@@ -26,6 +26,7 @@ public class PropertyServiceImpl implements PropertyService {
     PropertyRepository propertyRepository;
     AddressRepository addressRepository;
     PropertySurfaceAreaRepository surfaceAreaRepository;
+    PropertyConverter propertyConverter;
     @Override
     @Transactional
     public CreatePropertyResponse createProperty(CreatePropertyRequest request) {
@@ -76,7 +77,7 @@ return AddressEntity.builder()
         final GetAllPropertiesResponse response = new GetAllPropertiesResponse();
         List<Property> properties = results
                 .stream()
-                .map(PropertyConverter::convert)
+                .map(propertyConverter::convert)
                 .toList();
         response.setProperties(properties);
         return response;
@@ -89,7 +90,7 @@ return AddressEntity.builder()
             throw new InvalidPropertyException("PROPERTY_NOT_FOUND");
         }
         return GetPropertyResponse.builder()
-                .property(PropertyConverter.convert(result.get()))
+                .property(propertyConverter.convert(result.get()))
                 .build();
     }
 

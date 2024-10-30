@@ -35,6 +35,7 @@ public class AccountController {
         GetAllAccountsResponse response = accountService.getAllAccounts();
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
+
     @GetMapping("/{accountId}")
     public ResponseEntity<GetUserAccountResponse> getAccount(@PathVariable int accountId) {
         GetUserAccountResponse response = accountService.getAccount(accountId);
@@ -46,6 +47,7 @@ public class AccountController {
         GetUserAccountResponse response = accountService.login(request);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
+
     @PutMapping()
     public ResponseEntity<Void> updateAccount(@RequestBody @Valid UpdateAccountRequest request) {
         accountService.updateAccount(request);

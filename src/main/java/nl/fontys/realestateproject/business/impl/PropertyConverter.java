@@ -1,6 +1,5 @@
 package nl.fontys.realestateproject.business.impl;
 
-import com.fasterxml.jackson.databind.annotation.JsonAppend;
 import lombok.AllArgsConstructor;
 import nl.fontys.realestateproject.domain.Property;
 import nl.fontys.realestateproject.persistence.entity.PropertyEntity;
@@ -11,6 +10,7 @@ import org.springframework.stereotype.Service;
 final class PropertyConverter {
     PropertySurfaceAreaConverter propertySurfaceAreaConverter;
     AddressConverter addressConverter;
+
     public Property convert(PropertyEntity propertyEntity) {
         return Property.builder()
                 .id(propertyEntity.getId())

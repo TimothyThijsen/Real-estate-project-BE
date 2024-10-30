@@ -28,7 +28,7 @@ public class UpdatePropertyRequest {
     private String listingType;
     @NotEmpty
     private List<PropertySurfaceArea> surfaceAreas;
-    
+
     @NotBlank
     private String street;
     @NotBlank

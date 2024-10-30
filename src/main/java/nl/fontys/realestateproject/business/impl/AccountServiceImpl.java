@@ -30,12 +30,12 @@ public class AccountServiceImpl implements AccountService {
         AccountEntity savedAccount = null;
         try {
             savedAccount = saveAccountToRepository(createAccountRequest);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             handleException(e);
         }
         return new CreateAccountResponse(savedAccount.getId());
     }
+
     private void handleException(Exception e) {
         Throwable cause = e.getCause();
         if (cause instanceof DataException dataException) {
@@ -46,7 +46,7 @@ public class AccountServiceImpl implements AccountService {
             }
             throw new InvalidUserException(e.getMessage());
         }
-        if(e instanceof DataIntegrityViolationException) {
+        if (e instanceof DataIntegrityViolationException) {
             throw new EmailAlreadyInUse();
         }
         throw new InvalidUserException("Error occurred trying to create account");
@@ -79,13 +79,13 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public void updateAccount(UpdateAccountRequest request) {
-        if(!userRepository.existsById(request.getId())) {
+        if (!userRepository.existsById(request.getId())) {
             throw new InvalidUserException();
         }
         AccountEntity account = getUpdatedAccount(request);
-        try{
+        try {
             userRepository.save(account);
-        }catch (Exception e) {
+        } catch (Exception e) {
             handleException(e);
         }
     }
@@ -103,7 +103,7 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public void deleteAccount(long id) {
-        if(!userRepository.existsById(id)) {
+        if (!userRepository.existsById(id)) {
             throw new InvalidUserException();
         }
         userRepository.deleteById(id);
@@ -112,7 +112,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public GetUserAccountResponse getAccount(long id) {
         Optional<AccountEntity> result = userRepository.findById(id);
-        if(result.isEmpty()) {
+        if (result.isEmpty()) {
             throw new InvalidUserException();
         }
 
@@ -124,10 +124,10 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public GetUserAccountResponse login(LoginRequest request) {
         Optional<AccountEntity> result = userRepository.findByEmail(request.getEmail());
-        if(result.isEmpty()) {
+        if (result.isEmpty()) {
             throw new CredentialsException();
         }
-        if(!result.get().getPassword().equals(request.getPassword())) {
+        if (!result.get().getPassword().equals(request.getPassword())) {
             throw new CredentialsException();
         }
         return GetUserAccountResponse.builder()

@@ -1,8 +1,8 @@
 package nl.fontys.realestateproject.business.impl;
 
 import lombok.AllArgsConstructor;
-import nl.fontys.realestateproject.business.dto.property.*;
 import nl.fontys.realestateproject.business.PropertyService;
+import nl.fontys.realestateproject.business.dto.property.*;
 import nl.fontys.realestateproject.business.exceptions.InvalidPropertyException;
 import nl.fontys.realestateproject.domain.Property;
 import nl.fontys.realestateproject.domain.enums.ListingType;
@@ -27,6 +27,7 @@ public class PropertyServiceImpl implements PropertyService {
     AddressRepository addressRepository;
     PropertySurfaceAreaRepository surfaceAreaRepository;
     PropertyConverter propertyConverter;
+
     @Override
     @Transactional
     public CreatePropertyResponse createProperty(CreatePropertyRequest request) {
@@ -36,6 +37,7 @@ public class PropertyServiceImpl implements PropertyService {
                 .propertyId(savedProperty.getId())
                 .build();
     }
+
     private PropertyEntity createNewProperty(CreatePropertyRequest request) {
         AddressEntity address = saveAddress(request.getCity(), request.getCountry(), request.getPostalCode(), request.getStreet());
         addressRepository.save(address);
@@ -56,13 +58,14 @@ public class PropertyServiceImpl implements PropertyService {
                         .build())
                 .toList();
 
-       newProperty.setSurfaceAreas(surfaceAreas);
+        newProperty.setSurfaceAreas(surfaceAreas);
         surfaceAreaRepository.saveAll(surfaceAreas);
 
         return propertyRepository.save(newProperty);
     }
+
     private AddressEntity saveAddress(String city, String country, String postalCode, String street) {
-return AddressEntity.builder()
+        return AddressEntity.builder()
                 .city(city)
                 .country(country)
                 .postalCode(postalCode)
@@ -86,8 +89,8 @@ return AddressEntity.builder()
     @Override
     public GetPropertyResponse getProperty(long id) {
         Optional<PropertyEntity> result = propertyRepository.findById(id);
-        if(result.isEmpty()) {
-            throw new InvalidPropertyException("PROPERTY_NOT_FOUND");
+        if (result.isEmpty()) {
+            throw new InvalidPropertyException();
         }
         return GetPropertyResponse.builder()
                 .property(propertyConverter.convert(result.get()))
@@ -98,10 +101,11 @@ return AddressEntity.builder()
     @Transactional
     public void updateProperty(UpdatePropertyRequest request) {
         if (!propertyRepository.existsById(request.getId())) {
-            throw new InvalidPropertyException("PROPERTY_NOT_FOUND");
+            throw new InvalidPropertyException();
         }
         propertyRepository.save(getUpdatedPropertyEntity(request));
     }
+
     private PropertyEntity getUpdatedPropertyEntity(UpdatePropertyRequest request) {
         AddressEntity address = saveAddress(request.getCity(), request.getCountry(), request.getPostalCode(), request.getStreet());
         addressRepository.save(address);//change so that street is key
@@ -124,12 +128,13 @@ return AddressEntity.builder()
                 .surfaceAreas(surfaceAreas)
                 .build();
     }
+
     @Override
     @Transactional
     public void deleteProperty(long id) {
         Optional<PropertyEntity> propertyEntity = propertyRepository.findById(id);
         if (propertyEntity.isEmpty()) {
-            throw new InvalidPropertyException("PROPERTY_NOT_FOUND");
+            throw new InvalidPropertyException();
         }
         surfaceAreaRepository.deleteAllByPropertyId(id);
         propertyRepository.deleteById(id);

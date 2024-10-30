@@ -1,8 +1,8 @@
 package nl.fontys.realestateproject.domain;
 
 import lombok.*;
-import nl.fontys.realestateproject.domain.Enums.ListingType;
-import nl.fontys.realestateproject.domain.Enums.PropertyType;
+import nl.fontys.realestateproject.domain.enums.ListingType;
+import nl.fontys.realestateproject.domain.enums.PropertyType;
 
 import java.math.BigDecimal;
 import java.util.*;

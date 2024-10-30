@@ -7,7 +7,7 @@ import nl.fontys.realestateproject.business.exceptions.CredentialsException;
 import nl.fontys.realestateproject.business.exceptions.EmailAlreadyInUse;
 import nl.fontys.realestateproject.business.exceptions.InvalidUserException;
 import nl.fontys.realestateproject.domain.Account;
-import nl.fontys.realestateproject.domain.Enums.UserRole;
+import nl.fontys.realestateproject.domain.enums.UserRole;
 import nl.fontys.realestateproject.persistence.UserRepository;
 import nl.fontys.realestateproject.persistence.entity.AccountEntity;
 import org.hibernate.exception.DataException;

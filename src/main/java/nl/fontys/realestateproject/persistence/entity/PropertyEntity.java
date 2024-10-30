@@ -4,8 +4,8 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
-import nl.fontys.realestateproject.domain.Enums.ListingType;
-import nl.fontys.realestateproject.domain.Enums.PropertyType;
+import nl.fontys.realestateproject.domain.enums.ListingType;
+import nl.fontys.realestateproject.domain.enums.PropertyType;
 import org.hibernate.validator.constraints.Length;
 
 import java.math.BigDecimal;

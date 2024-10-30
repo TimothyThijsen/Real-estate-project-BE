@@ -22,6 +22,7 @@ import java.util.Optional;
 @AllArgsConstructor
 public class AccountServiceImpl implements AccountService {
     UserRepository userRepository;
+    AccountConverter accountConverter;
 
     @Override
     @Transactional
@@ -70,7 +71,7 @@ public class AccountServiceImpl implements AccountService {
         final GetAllAccountsResponse response = new GetAllAccountsResponse();
         List<Account> accounts = results
                 .stream()
-                .map(AccountConverter::convert)
+                .map(accountConverter::convert)
                 .toList();
         response.setAccountsList(accounts);
         return response;
@@ -114,8 +115,9 @@ public class AccountServiceImpl implements AccountService {
         if(result.isEmpty()) {
             throw new InvalidUserException();
         }
+
         return GetUserAccountResponse.builder()
-                .account(AccountConverter.convert(result.get()))
+                .account(accountConverter.convert(result.get()))
                 .build();
     }
 
@@ -129,7 +131,7 @@ public class AccountServiceImpl implements AccountService {
             throw new CredentialsException();
         }
         return GetUserAccountResponse.builder()
-                .account(AccountConverter.convert(result.get()))
+                .account(accountConverter.convert(result.get()))
                 .build();
     }
 }

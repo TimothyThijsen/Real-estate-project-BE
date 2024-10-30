@@ -1,9 +1,9 @@
 package nl.fontys.realestateproject.business.impl;
 
-import nl.fontys.realestateproject.business.DTO.User.CreateAccountRequest;
-import nl.fontys.realestateproject.business.DTO.User.GetAllAccountsResponse;
-import nl.fontys.realestateproject.business.DTO.User.LoginRequest;
-import nl.fontys.realestateproject.business.DTO.User.UpdateAccountRequest;
+import nl.fontys.realestateproject.business.dto.user.CreateAccountRequest;
+import nl.fontys.realestateproject.business.dto.user.GetAllAccountsResponse;
+import nl.fontys.realestateproject.business.dto.user.LoginRequest;
+import nl.fontys.realestateproject.business.dto.user.UpdateAccountRequest;
 import nl.fontys.realestateproject.business.exceptions.CredentialsException;
 import nl.fontys.realestateproject.business.exceptions.EmailAlreadyInUse;
 import nl.fontys.realestateproject.business.exceptions.InvalidUserException;

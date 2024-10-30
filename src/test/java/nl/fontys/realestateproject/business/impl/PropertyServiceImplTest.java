@@ -1,6 +1,6 @@
 package nl.fontys.realestateproject.business.impl;
 
-import nl.fontys.realestateproject.business.DTO.Property.*;
+import nl.fontys.realestateproject.business.dto.property.*;
 import nl.fontys.realestateproject.business.exceptions.InvalidPropertyException;
 import nl.fontys.realestateproject.domain.PropertySurfaceArea;
 import nl.fontys.realestateproject.persistence.AddressRepository;
@@ -8,6 +8,7 @@ import nl.fontys.realestateproject.persistence.PropertyRepository;
 import nl.fontys.realestateproject.persistence.PropertySurfaceAreaRepository;
 import nl.fontys.realestateproject.persistence.entity.AddressEntity;
 import nl.fontys.realestateproject.persistence.entity.PropertyEntity;
+import nl.fontys.realestateproject.persistence.entity.PropertySurfaceAreaEntity;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -60,8 +61,8 @@ class PropertyServiceImplTest {
 
     @Test
     void getAllProperties() {
-        PropertyEntity property1 = PropertyEntity.builder().id(1L).description("Property 1").address(AddressEntity.builder().street("street").build()).surfaceAreas(List.of()).build();
-        PropertyEntity property2 = PropertyEntity.builder().id(2L).description("Property 2").address(AddressEntity.builder().street("street").build()).surfaceAreas(List.of()).build();
+        PropertyEntity property1 = PropertyEntity.builder().id(1L).description("Property 1").address(AddressEntity.builder().street("street").build()).surfaceAreas(List.of(PropertySurfaceAreaEntity.builder().nameOfSurfaceArea("Living room").areaInSquareMetre(100.0).build())).build();
+        PropertyEntity property2 = PropertyEntity.builder().id(2L).description("Property 2").address(AddressEntity.builder().street("street").build()).surfaceAreas(List.of(PropertySurfaceAreaEntity.builder().nameOfSurfaceArea("Living room").areaInSquareMetre(100.0).build())).build();
 
         when(propertyRepositoryMock.findAll()).thenReturn(List.of(property1,property2));
         GetAllPropertiesResponse actual = propertyService.getAllProperties();
@@ -103,7 +104,6 @@ class PropertyServiceImplTest {
                 .surfaceAreas(List.of(PropertySurfaceArea.builder().nameOfSurfaceArea("Living Room").areaInSquareMetre(100.0).build()))
                 .build();
 
-        PropertyEntity propertyEntity = PropertyEntity.builder().id(1L).build();
 
         when(propertyRepositoryMock.existsById(1L)).thenReturn(true);
 

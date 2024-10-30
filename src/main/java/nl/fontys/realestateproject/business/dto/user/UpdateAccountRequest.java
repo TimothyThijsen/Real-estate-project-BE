@@ -1,4 +1,4 @@
-package nl.fontys.realestateproject.business.DTO.User;
+package nl.fontys.realestateproject.business.dto.user;
 
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
@@ -10,7 +10,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CreateAccountRequest {
+public class UpdateAccountRequest {
+    @NotNull
+    private long id;
     @Email
     @NotBlank
     private String email;
@@ -27,4 +29,3 @@ public class CreateAccountRequest {
     @NotBlank
     private String role;
 }
-

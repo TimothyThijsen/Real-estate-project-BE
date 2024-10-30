@@ -1,17 +1,20 @@
 package nl.fontys.realestateproject.domain;
 
-import lombok.*;
-import nl.fontys.realestateproject.domain.Enums.ListingType;
-import nl.fontys.realestateproject.domain.Enums.PropertyType;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import nl.fontys.realestateproject.domain.enums.ListingType;
+import nl.fontys.realestateproject.domain.enums.PropertyType;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.List;
 
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
- public class Property {
+public class Property {
     private long id;
     private String description;
     private BigDecimal price;

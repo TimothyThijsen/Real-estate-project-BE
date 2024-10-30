@@ -1,4 +1,4 @@
-package nl.fontys.realestateproject.business.DTO.User;
+package nl.fontys.realestateproject.business.dto.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

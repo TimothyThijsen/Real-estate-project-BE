@@ -2,12 +2,12 @@ package nl.fontys.realestateproject.business.impl;
 
 import lombok.AllArgsConstructor;
 import nl.fontys.realestateproject.business.AccountService;
-import nl.fontys.realestateproject.business.DTO.User.*;
+import nl.fontys.realestateproject.business.dto.user.*;
 import nl.fontys.realestateproject.business.exceptions.CredentialsException;
 import nl.fontys.realestateproject.business.exceptions.EmailAlreadyInUse;
 import nl.fontys.realestateproject.business.exceptions.InvalidUserException;
 import nl.fontys.realestateproject.domain.Account;
-import nl.fontys.realestateproject.domain.Enums.UserRole;
+import nl.fontys.realestateproject.domain.enums.UserRole;
 import nl.fontys.realestateproject.persistence.UserRepository;
 import nl.fontys.realestateproject.persistence.entity.AccountEntity;
 import org.hibernate.exception.DataException;
@@ -22,6 +22,7 @@ import java.util.Optional;
 @AllArgsConstructor
 public class AccountServiceImpl implements AccountService {
     UserRepository userRepository;
+    AccountConverter accountConverter;
 
     @Override
     @Transactional
@@ -29,12 +30,12 @@ public class AccountServiceImpl implements AccountService {
         AccountEntity savedAccount = null;
         try {
             savedAccount = saveAccountToRepository(createAccountRequest);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             handleException(e);
         }
         return new CreateAccountResponse(savedAccount.getId());
     }
+
     private void handleException(Exception e) {
         Throwable cause = e.getCause();
         if (cause instanceof DataException dataException) {
@@ -45,7 +46,7 @@ public class AccountServiceImpl implements AccountService {
             }
             throw new InvalidUserException(e.getMessage());
         }
-        if(e instanceof DataIntegrityViolationException) {
+        if (e instanceof DataIntegrityViolationException) {
             throw new EmailAlreadyInUse();
         }
         throw new InvalidUserException("Error occurred trying to create account");
@@ -70,7 +71,7 @@ public class AccountServiceImpl implements AccountService {
         final GetAllAccountsResponse response = new GetAllAccountsResponse();
         List<Account> accounts = results
                 .stream()
-                .map(AccountConverter::convert)
+                .map(accountConverter::convert)
                 .toList();
         response.setAccountsList(accounts);
         return response;
@@ -78,13 +79,13 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public void updateAccount(UpdateAccountRequest request) {
-        if(!userRepository.existsById(request.getId())) {
+        if (!userRepository.existsById(request.getId())) {
             throw new InvalidUserException();
         }
         AccountEntity account = getUpdatedAccount(request);
-        try{
+        try {
             userRepository.save(account);
-        }catch (Exception e) {
+        } catch (Exception e) {
             handleException(e);
         }
     }
@@ -102,7 +103,7 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public void deleteAccount(long id) {
-        if(!userRepository.existsById(id)) {
+        if (!userRepository.existsById(id)) {
             throw new InvalidUserException();
         }
         userRepository.deleteById(id);
@@ -111,25 +112,26 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public GetUserAccountResponse getAccount(long id) {
         Optional<AccountEntity> result = userRepository.findById(id);
-        if(result.isEmpty()) {
+        if (result.isEmpty()) {
             throw new InvalidUserException();
         }
+
         return GetUserAccountResponse.builder()
-                .account(AccountConverter.convert(result.get()))
+                .account(accountConverter.convert(result.get()))
                 .build();
     }
 
     @Override
     public GetUserAccountResponse login(LoginRequest request) {
         Optional<AccountEntity> result = userRepository.findByEmail(request.getEmail());
-        if(result.isEmpty()) {
+        if (result.isEmpty()) {
             throw new CredentialsException();
         }
-        if(!result.get().getPassword().equals(request.getPassword())) {
+        if (!result.get().getPassword().equals(request.getPassword())) {
             throw new CredentialsException();
         }
         return GetUserAccountResponse.builder()
-                .account(AccountConverter.convert(result.get()))
+                .account(accountConverter.convert(result.get()))
                 .build();
     }
 }

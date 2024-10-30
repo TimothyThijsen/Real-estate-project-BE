@@ -1,12 +1,13 @@
 package nl.fontys.realestateproject.business.impl;
 
-import nl.fontys.realestateproject.business.DTO.User.CreateAccountRequest;
-import nl.fontys.realestateproject.business.DTO.User.GetAllAccountsResponse;
-import nl.fontys.realestateproject.business.DTO.User.LoginRequest;
-import nl.fontys.realestateproject.business.DTO.User.UpdateAccountRequest;
+import nl.fontys.realestateproject.business.dto.user.CreateAccountRequest;
+import nl.fontys.realestateproject.business.dto.user.GetAllAccountsResponse;
+import nl.fontys.realestateproject.business.dto.user.LoginRequest;
+import nl.fontys.realestateproject.business.dto.user.UpdateAccountRequest;
 import nl.fontys.realestateproject.business.exceptions.CredentialsException;
 import nl.fontys.realestateproject.business.exceptions.EmailAlreadyInUse;
 import nl.fontys.realestateproject.business.exceptions.InvalidUserException;
+import nl.fontys.realestateproject.domain.Account;
 import nl.fontys.realestateproject.persistence.UserRepository;
 import nl.fontys.realestateproject.persistence.entity.AccountEntity;
 import org.hibernate.exception.DataException;
@@ -30,6 +31,8 @@ import static org.mockito.Mockito.when;
 class AccountServiceImplTest {
     @Mock
     private UserRepository userRepository;
+    @Mock
+    private AccountConverter accountConverter;
 
     @InjectMocks
     private AccountServiceImpl accountService;
@@ -47,6 +50,7 @@ class AccountServiceImplTest {
         when(userRepository.save(any(AccountEntity.class))).thenThrow(new DataIntegrityViolationException("Duplicate email"));
         assertThrows(EmailAlreadyInUse.class, () -> accountService.createAccount(request));
     }
+
     @Test
     void createAccount_ShouldThrowInvalidUserException_WhenCharacterLimitExceeded() {
         new CreateAccountRequest();
@@ -62,6 +66,7 @@ class AccountServiceImplTest {
         when(userRepository.save(any(AccountEntity.class))).thenThrow(e);
         assertThrows(InvalidUserException.class, () -> accountService.createAccount(request));
     }
+
     @Test
     void createAccount_shouldThrowInvalidUserException_WhenThereIsDataException() {
         new CreateAccountRequest();
@@ -77,6 +82,7 @@ class AccountServiceImplTest {
         when(userRepository.save(any(AccountEntity.class))).thenThrow(e);
         assertThrows(InvalidUserException.class, () -> accountService.createAccount(request));
     }
+
     @Test
     void createAccount_ShouldThrowInvalidUserException_UnknownErrorIsThrown() {
         CreateAccountRequest request = CreateAccountRequest.builder()
@@ -89,6 +95,7 @@ class AccountServiceImplTest {
         when(userRepository.save(any(AccountEntity.class))).thenThrow(runtimeException);
         assertThrows(InvalidUserException.class, () -> accountService.createAccount(request));
     }
+
     @Test
     void createAccount_ShouldReturnId_WhenAccountIsCreated() {
         new CreateAccountRequest();
@@ -101,8 +108,9 @@ class AccountServiceImplTest {
         AccountEntity accountEntity = new AccountEntity();
         accountEntity.setId(1L);
         when(userRepository.save(any(AccountEntity.class))).thenReturn(accountEntity);
-       assertEquals(1L, accountService.createAccount(request).getAccountId());
+        assertEquals(1L, accountService.createAccount(request).getAccountId());
     }
+
     @Test
     void getAllAccounts_ShouldReturnAllAccounts() {
         when(userRepository.findAll()).thenReturn(List.of(new AccountEntity(), new AccountEntity()));
@@ -111,6 +119,7 @@ class AccountServiceImplTest {
 
         assertEquals(2, response.getAccountsList().size());
     }
+
     @Test
     void updateAccount_ShouldThrowInvalidUserException_WhenUserNotFound() {
         UpdateAccountRequest request = new UpdateAccountRequest();
@@ -119,6 +128,7 @@ class AccountServiceImplTest {
 
         assertThrows(InvalidUserException.class, () -> accountService.updateAccount(request));
     }
+
     @Test
     void updateAccount_ShouldThrowInvalidUserException_WhenCharacterLimitExceeded() {
         new UpdateAccountRequest();
@@ -136,6 +146,7 @@ class AccountServiceImplTest {
 
         assertThrows(InvalidUserException.class, () -> accountService.updateAccount(request));
     }
+
     @Test
     void updateAccount_ShouldReturnUpdatedAccount_WhenAccountIsUpdated() {
         UpdateAccountRequest request = UpdateAccountRequest.builder()
@@ -150,7 +161,8 @@ class AccountServiceImplTest {
         when(userRepository.save(any(AccountEntity.class))).thenReturn(accountEntity);
         assertDoesNotThrow(() -> accountService.updateAccount(request));
         verify(userRepository).save(any(AccountEntity.class));
-        }
+    }
+
     @Test
     void updateAccount_ShouldThrowEmailAlreadyInUse_WhenEmailAlreadyExists() {
         new UpdateAccountRequest();
@@ -163,7 +175,8 @@ class AccountServiceImplTest {
         when(userRepository.existsById(request.getId())).thenReturn(true);
         when(userRepository.save(any(AccountEntity.class))).thenThrow(new DataIntegrityViolationException("Duplicate email"));
         assertThrows(EmailAlreadyInUse.class, () -> accountService.updateAccount(request));
-        }
+    }
+
     @Test
     void deleteAccount_ShouldThrowInvalidUserException_WhenUserNotFound() {
         long userId = 1L;
@@ -171,6 +184,7 @@ class AccountServiceImplTest {
 
         assertThrows(InvalidUserException.class, () -> accountService.deleteAccount(userId));
     }
+
     @Test
     void deleteAccount_ShouldDeleteAccount_WhenUserFound() {
         long userId = 1L;
@@ -187,13 +201,15 @@ class AccountServiceImplTest {
 
         assertThrows(InvalidUserException.class, () -> accountService.getAccount(userId));
     }
+
     @Test
     void getAccount_ShouldReturnAccount_WhenUserFound() {
         long userId = 1L;
         AccountEntity accountEntity = new AccountEntity();
         accountEntity.setId(userId);
         when(userRepository.findById(userId)).thenReturn(Optional.of(accountEntity));
-
+        new Account();
+        when(accountConverter.convert(accountEntity)).thenReturn(Account.builder().id(1L).build());
         assertEquals(userId, accountService.getAccount(userId).getAccount().getId());
     }
 
@@ -217,6 +233,7 @@ class AccountServiceImplTest {
 
         assertThrows(CredentialsException.class, () -> accountService.login(request));
     }
+
     @Test
     void login_ShouldReturnAccount_WhenCredentialsAreCorrect() {
         LoginRequest request = new LoginRequest();
@@ -226,6 +243,9 @@ class AccountServiceImplTest {
         accountEntity.setId(1L);
         accountEntity.setPassword("12345");
         when(userRepository.findByEmail(request.getEmail())).thenReturn(Optional.of(accountEntity));
+        new Account();
+        when(accountConverter.convert(accountEntity)).thenReturn(Account.builder().id(1L).build());
+
         assertEquals(1L, accountService.login(request).getAccount().getId());
     }
 }

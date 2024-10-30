@@ -1,4 +1,4 @@
-package nl.fontys.realestateproject.business.DTO.Property;
+package nl.fontys.realestateproject.business.dto.property;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
@@ -14,10 +14,9 @@ import java.util.List;
 
 @Data
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
-public class UpdatePropertyRequest {
-    private long id;
+@NoArgsConstructor
+public class CreatePropertyRequest {
     @NotBlank
     private String description;
     @NotNull
@@ -28,7 +27,7 @@ public class UpdatePropertyRequest {
     private String listingType;
     @NotEmpty
     private List<PropertySurfaceArea> surfaceAreas;
-    
+
     @NotBlank
     private String street;
     @NotBlank
@@ -37,4 +36,5 @@ public class UpdatePropertyRequest {
     private String postalCode;
     @NotBlank
     private String country;
+
 }

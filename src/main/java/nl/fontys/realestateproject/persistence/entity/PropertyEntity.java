@@ -3,13 +3,17 @@ package nl.fontys.realestateproject.persistence.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.*;
-import nl.fontys.realestateproject.domain.Enums.ListingType;
-import nl.fontys.realestateproject.domain.Enums.PropertyType;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import nl.fontys.realestateproject.domain.enums.ListingType;
+import nl.fontys.realestateproject.domain.enums.PropertyType;
 import org.hibernate.validator.constraints.Length;
 
 import java.math.BigDecimal;
 import java.util.List;
+
 @Entity
 @Table(name = "property")
 @Data
@@ -21,11 +25,6 @@ public class PropertyEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
-
-  /*  @NotBlank
-    @Length(min = 2, max = 100)
-    @Column(name = "name")
-    private String name;*/
 
     @NotBlank
     @Length(min = 2, max = 250)

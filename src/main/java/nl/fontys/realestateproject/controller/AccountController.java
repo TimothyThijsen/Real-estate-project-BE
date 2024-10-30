@@ -3,7 +3,7 @@ package nl.fontys.realestateproject.controller;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import nl.fontys.realestateproject.business.AccountService;
-import nl.fontys.realestateproject.business.DTO.User.*;
+import nl.fontys.realestateproject.business.dto.user.*;
 import nl.fontys.realestateproject.business.exceptions.CredentialsException;
 import nl.fontys.realestateproject.business.exceptions.EmailAlreadyInUse;
 import nl.fontys.realestateproject.business.exceptions.InvalidUserException;
@@ -35,6 +35,7 @@ public class AccountController {
         GetAllAccountsResponse response = accountService.getAllAccounts();
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
+
     @GetMapping("/{accountId}")
     public ResponseEntity<GetUserAccountResponse> getAccount(@PathVariable int accountId) {
         GetUserAccountResponse response = accountService.getAccount(accountId);
@@ -46,6 +47,7 @@ public class AccountController {
         GetUserAccountResponse response = accountService.login(request);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
+
     @PutMapping()
     public ResponseEntity<Void> updateAccount(@RequestBody @Valid UpdateAccountRequest request) {
         accountService.updateAccount(request);

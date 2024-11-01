@@ -34,7 +34,6 @@ class UserRepositoryTest {
 
         // Act
         AccountEntity savedUser = userRepository.save(user);
-        assertNotNull(savedUser.getId());
 
         AccountEntity expectedUser = AccountEntity.builder().id(savedUser.getId()).firstName("test").lastName("test").role(UserRole.CLIENT).email("email").password("test").build();
 

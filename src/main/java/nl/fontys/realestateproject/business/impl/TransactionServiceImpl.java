@@ -44,13 +44,13 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public GetAllTransactionResponse getTransactionsByCustomerId(int customerId) {
+    public GetAllTransactionResponse getTransactionsByCustomerId(Long customerId) {
         List<TransactionEntity> results = transactionRepository.findAllByCustomerId(customerId);
         return convertToResponse(results);
     }
 
     @Override
-    public GetAllTransactionResponse getTransactionsByPropertyId(int propertyId) {
+    public GetAllTransactionResponse getTransactionsByPropertyId(Long propertyId) {
         List<TransactionEntity> results = transactionRepository.findAllByPropertyId(propertyId);
         return convertToResponse(results);
     }

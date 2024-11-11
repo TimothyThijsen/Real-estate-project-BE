@@ -9,7 +9,7 @@ public interface TransactionService {
 
     GetAllTransactionResponse getAllTransactions();
 
-    GetAllTransactionResponse getTransactionsByCustomerId(int customerId);
+    GetAllTransactionResponse getTransactionsByCustomerId(Long customerId);
 
-    GetAllTransactionResponse getTransactionsByPropertyId(int propertyId);
+    GetAllTransactionResponse getTransactionsByPropertyId(Long propertyId);
 }

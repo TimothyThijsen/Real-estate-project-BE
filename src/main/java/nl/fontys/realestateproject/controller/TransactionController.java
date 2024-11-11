@@ -31,15 +31,15 @@ public class TransactionController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @GetMapping("/{customerId}")
+    @GetMapping("/customer/{customerId}")
     public ResponseEntity<GetAllTransactionResponse> getAllTransactionsByCustomerId(@PathVariable int customerId) {
-        GetAllTransactionResponse response = transactionService.getTransactionsByCustomerId(customerId);
+        GetAllTransactionResponse response = transactionService.getTransactionsByCustomerId((long) customerId);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @GetMapping("/{propertyId}")
+    @GetMapping("/property/{propertyId}")
     public ResponseEntity<GetAllTransactionResponse> getAllTransactionsByPropertyId(@PathVariable int propertyId) {
-        GetAllTransactionResponse response = transactionService.getTransactionsByPropertyId(propertyId);
+        GetAllTransactionResponse response = transactionService.getTransactionsByPropertyId((long) propertyId);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 

@@ -18,12 +18,12 @@ public class TransactionEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private int id;
+    private Long id;
 
     @Column(name = "property_id")
-    private int propertyId;
+    private Long propertyId;
     @Column(name = "customer_id")
-    private int customerId;
+    private Long customerId;
     @Column(name = "date")
     private LocalDateTime date;
 

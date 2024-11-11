@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class MakeTransactionResponse {
-    private int transactionId;
+    private Long transactionId;
 
 }

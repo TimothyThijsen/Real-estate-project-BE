@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class MakeTransactionRequest {
-    private int propertyId;
-    private int customerId;
+    private Long propertyId;
+    private Long customerId;
 }

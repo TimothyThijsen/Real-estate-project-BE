@@ -12,8 +12,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Transaction {
-    private int id;
-    private int propertyId;
-    private int customerId;
+    private Long id;
+    private Long propertyId;
+    private Long customerId;
     private LocalDateTime date;
 }

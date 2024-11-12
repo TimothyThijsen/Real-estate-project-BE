@@ -5,14 +5,11 @@ import nl.fontys.realestateproject.domain.enums.ListingType;
 import nl.fontys.realestateproject.domain.enums.PropertyType;
 import nl.fontys.realestateproject.domain.enums.UserRole;
 import nl.fontys.realestateproject.persistence.TransactionRepository;
-import nl.fontys.realestateproject.persistence.UserRepository;
 import nl.fontys.realestateproject.persistence.entity.AccountEntity;
 import nl.fontys.realestateproject.persistence.entity.AddressEntity;
 import nl.fontys.realestateproject.persistence.entity.PropertyEntity;
 import nl.fontys.realestateproject.persistence.entity.TransactionEntity;
-import org.aspectj.lang.annotation.Before;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,7 +18,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -54,8 +50,9 @@ class TransactionRepositoryTest {
         assertNotNull(savedTransaction);
         assertEquals(1L, savedTransaction.getPropertyId());
     }
+
     @AfterEach
-    public void cleanUp(){
+    public void cleanUp() {
         List<String> tables = jdbcTemplate.queryForList(
                 "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES " +
                         "WHERE TABLE_SCHEMA = 'PUBLIC' AND TABLE_NAME != 'flyway_schema_history'",
@@ -64,12 +61,13 @@ class TransactionRepositoryTest {
         jdbcTemplate.execute("SET REFERENTIAL_INTEGRITY FALSE");
         tables.forEach(table -> {
             jdbcTemplate.execute("TRUNCATE TABLE " + table);
-            jdbcTemplate.execute("ALTER TABLE " + table + " ALTER COLUMN id RESTART WITH 1");  // Reset auto-increment ID to 1
+            jdbcTemplate.execute("ALTER TABLE " + table + " ALTER COLUMN id RESTART WITH 1");
         });
         jdbcTemplate.execute("SET REFERENTIAL_INTEGRITY TRUE");
     }
+
     @BeforeEach
-    public void setupTestEnvironment(){
+    public void setupTestEnvironment() {
         AddressEntity address = AddressEntity.builder().street("Boschdijk").postalCode("1234AB").city("Eindhoven").country("Netherlands").build();
         entityManager.persist(address);
         PropertyEntity property = PropertyEntity.builder().listingType(ListingType.SALE)
@@ -87,6 +85,7 @@ class TransactionRepositoryTest {
                 .build();
         entityManager.persist(account);
     }
+
     @Test
     void find_shouldReturnTransaction_WhenItExists() {
         TransactionEntity transaction = TransactionEntity.builder()
@@ -102,6 +101,7 @@ class TransactionRepositoryTest {
         assertNotNull(savedTransaction);
         assertEquals(1L, savedTransaction.getPropertyId());
     }
+
     @Test
     void findByCustomerId_shouldReturnTransaction_WhenItExists() {
         TransactionEntity transaction = TransactionEntity.builder()

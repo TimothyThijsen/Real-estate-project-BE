@@ -28,6 +28,7 @@ class AddressRepositoryTest {
         assertNotNull(savedAddress);
         assertEquals("Boschdijk", savedAddress.getStreet());
     }
+
     @Test
     void find_shouldReturnAddress_WhenItExists() {
         AddressEntity address = AddressEntity.builder().street("Boschdijk").postalCode("1234AB").city("Eindhoven").country("Netherlands").build();

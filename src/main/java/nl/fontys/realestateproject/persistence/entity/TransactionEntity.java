@@ -20,9 +20,9 @@ public class TransactionEntity {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "property_id")
+    @JoinColumn(name = "property_id")
     private Long propertyId;
-    @Column(name = "customer_id")
+    @JoinColumn(name = "customer_id")
     private Long customerId;
     @Column(name = "date")
     private LocalDateTime date;

@@ -1,4 +1,4 @@
-package nl.fontys.realestateproject.configurations;
+package nl.fontys.realestateproject.configuration;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

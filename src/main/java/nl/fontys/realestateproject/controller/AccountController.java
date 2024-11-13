@@ -20,7 +20,7 @@ public class AccountController {
     private final AccountService accountService;
 
     @PostMapping()
-    public ResponseEntity<CreateAccountResponse> createProperty(@RequestBody @Valid CreateAccountRequest request) {
+    public ResponseEntity<CreateAccountResponse> createAccount(@RequestBody @Valid CreateAccountRequest request) {
         CreateAccountResponse response = accountService.createAccount(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
@@ -43,8 +43,8 @@ public class AccountController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<GetUserAccountResponse> login(@RequestBody @Valid LoginRequest request) {
-        GetUserAccountResponse response = accountService.login(request);
+    public ResponseEntity<LoginResponse> login(@RequestBody @Valid LoginRequest request) {
+        LoginResponse response = accountService.login(request);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 

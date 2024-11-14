@@ -1,4 +1,4 @@
-package nl.fontys.realestateproject.business.impl;
+package nl.fontys.realestateproject.business.impl.account;
 
 import lombok.AllArgsConstructor;
 import nl.fontys.realestateproject.business.AccountService;
@@ -6,15 +6,19 @@ import nl.fontys.realestateproject.business.dto.user.*;
 import nl.fontys.realestateproject.business.exceptions.CredentialsException;
 import nl.fontys.realestateproject.business.exceptions.EmailAlreadyInUse;
 import nl.fontys.realestateproject.business.exceptions.InvalidUserException;
+import nl.fontys.realestateproject.configuration.security.token.AccessTokenEncoder;
+import nl.fontys.realestateproject.configuration.security.token.impl.AccessTokenImpl;
 import nl.fontys.realestateproject.domain.Account;
 import nl.fontys.realestateproject.domain.enums.UserRole;
 import nl.fontys.realestateproject.persistence.UserRepository;
 import nl.fontys.realestateproject.persistence.entity.AccountEntity;
 import org.hibernate.exception.DataException;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,7 +27,8 @@ import java.util.Optional;
 public class AccountServiceImpl implements AccountService {
     UserRepository userRepository;
     AccountConverter accountConverter;
-
+    PasswordEncoder passwordEncoder;
+    AccessTokenEncoder accessTokenEncoder;
     @Override
     @Transactional
     public CreateAccountResponse createAccount(CreateAccountRequest createAccountRequest) {
@@ -57,7 +62,7 @@ public class AccountServiceImpl implements AccountService {
                 .email(createAccountRequest.getEmail())
                 .firstName(Character.toUpperCase(createAccountRequest.getFirstName().charAt(0)) + createAccountRequest.getFirstName().substring(1))
                 .lastName(Character.toUpperCase(createAccountRequest.getLastName().charAt(0)) + createAccountRequest.getLastName().substring(1))
-                .password(createAccountRequest.getPassword())
+                .password(passwordEncoder.encode(createAccountRequest.getPassword()))
                 .role(UserRole.valueOf(createAccountRequest.getRole()))
                 .build();
 
@@ -122,16 +127,23 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public GetUserAccountResponse login(LoginRequest request) {
+    public LoginResponse login(LoginRequest request) {
         Optional<AccountEntity> result = userRepository.findByEmail(request.getEmail());
         if (result.isEmpty()) {
             throw new CredentialsException();
         }
-        if (!result.get().getPassword().equals(request.getPassword())) {
+        if (!passwordEncoder.matches(request.getPassword(), result.get().getPassword())) {
             throw new CredentialsException();
         }
-        return GetUserAccountResponse.builder()
-                .account(accountConverter.convert(result.get()))
+        return LoginResponse.builder()
+                .token(generateAccessToken(result.get()))
                 .build();
+    }
+    private String generateAccessToken(AccountEntity user) {
+        Long userId = user.getId();
+        Collection<String> roles = List.of(user.getRole().toString());
+
+        return accessTokenEncoder.encode(
+                new AccessTokenImpl(user.getEmail(), userId, roles));
     }
 }

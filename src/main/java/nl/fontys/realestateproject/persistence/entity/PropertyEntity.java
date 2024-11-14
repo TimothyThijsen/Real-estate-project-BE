@@ -52,7 +52,7 @@ public class PropertyEntity {
 
     @OneToOne
     @JoinColumn(name = "account_id")
-    private AccountEntity account;
+    private AccountEntity agent;
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "property")
     private List<PropertySurfaceAreaEntity> surfaceAreas;

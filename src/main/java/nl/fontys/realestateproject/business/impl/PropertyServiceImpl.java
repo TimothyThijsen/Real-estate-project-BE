@@ -13,8 +13,10 @@ import nl.fontys.realestateproject.persistence.PropertySurfaceAreaRepository;
 import nl.fontys.realestateproject.persistence.entity.AddressEntity;
 import nl.fontys.realestateproject.persistence.entity.PropertyEntity;
 import nl.fontys.realestateproject.persistence.entity.PropertySurfaceAreaEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -131,10 +133,13 @@ public class PropertyServiceImpl implements PropertyService {
 
     @Override
     @Transactional
-    public void deleteProperty(long id) {
+    public void deleteProperty(long id, long agentId) {
         Optional<PropertyEntity> propertyEntity = propertyRepository.findById(id);
         if (propertyEntity.isEmpty()) {
             throw new InvalidPropertyException();
+        }
+        if(propertyEntity.get().getAgent().getId() != agentId){
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
         surfaceAreaRepository.deleteAllByPropertyId(id);
         propertyRepository.deleteById(id);

@@ -7,6 +7,7 @@ import nl.fontys.realestateproject.domain.PropertySurfaceArea;
 import nl.fontys.realestateproject.persistence.AddressRepository;
 import nl.fontys.realestateproject.persistence.PropertyRepository;
 import nl.fontys.realestateproject.persistence.PropertySurfaceAreaRepository;
+import nl.fontys.realestateproject.persistence.entity.AccountEntity;
 import nl.fontys.realestateproject.persistence.entity.AddressEntity;
 import nl.fontys.realestateproject.persistence.entity.PropertyEntity;
 import org.junit.jupiter.api.Test;
@@ -135,14 +136,16 @@ class PropertyServiceImplTest {
 
     @Test
     void deleteProperty_ShouldDeleteProperty_WhenIdIsValid() {
+        AccountEntity accountEntity = AccountEntity.builder().id(1L).build();
         PropertyEntity propertyEntity = PropertyEntity.builder()
                 .id(1L)
+                .agent(accountEntity)
                 .address(AddressEntity.builder().id(1L).build())
                 .build();
         when(propertyRepositoryMock.findById(1L)).thenReturn(Optional.of(propertyEntity));
         doNothing().when(propertyRepositoryMock).deleteById(1L);
 
-        propertyService.deleteProperty(1);
+        propertyService.deleteProperty(1,1);
 
         verify(propertyRepositoryMock).deleteById(1L);
     }
@@ -151,6 +154,6 @@ class PropertyServiceImplTest {
     void deleteProperty_ShouldReturnNotFound_WhenIdIsInvalid() {
         when(propertyRepositoryMock.findById(99L)).thenReturn(Optional.empty());
 
-        assertThrows(InvalidPropertyException.class, () -> propertyService.deleteProperty(99));
+        assertThrows(InvalidPropertyException.class, () -> propertyService.deleteProperty(99,1));
     }
 }

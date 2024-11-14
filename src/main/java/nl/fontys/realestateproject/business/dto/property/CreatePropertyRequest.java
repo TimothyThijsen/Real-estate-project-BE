@@ -27,7 +27,8 @@ public class CreatePropertyRequest {
     private String listingType;
     @NotEmpty
     private List<PropertySurfaceArea> surfaceAreas;
-
+    @NotNull
+    private Long agentId;
     @NotBlank
     private String street;
     @NotBlank

@@ -1,5 +1,6 @@
 package nl.fontys.realestateproject.controller;
 
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import nl.fontys.realestateproject.business.TransactionService;
@@ -26,18 +27,21 @@ public class TransactionController {
     }
 
     @GetMapping()
+    @RolesAllowed({"ADMIN"})
     public ResponseEntity<GetAllTransactionResponse> getAllTransactions() {
         GetAllTransactionResponse response = transactionService.getAllTransactions();
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @GetMapping("/customer/{customerId}")
+    @RolesAllowed({"ADMIN", "CUSTOMER"})
     public ResponseEntity<GetAllTransactionResponse> getAllTransactionsByCustomerId(@PathVariable int customerId) {
         GetAllTransactionResponse response = transactionService.getTransactionsByCustomerId((long) customerId);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @GetMapping("/property/{propertyId}")
+    @RolesAllowed({"ADMIN", "AGENT"})
     public ResponseEntity<GetAllTransactionResponse> getAllTransactionsByPropertyId(@PathVariable int propertyId) {
         GetAllTransactionResponse response = transactionService.getTransactionsByPropertyId((long) propertyId);
         return ResponseEntity.status(HttpStatus.OK).body(response);

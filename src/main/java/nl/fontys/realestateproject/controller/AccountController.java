@@ -7,6 +7,8 @@ import nl.fontys.realestateproject.business.dto.user.*;
 import nl.fontys.realestateproject.business.exceptions.CredentialsException;
 import nl.fontys.realestateproject.business.exceptions.EmailAlreadyInUse;
 import nl.fontys.realestateproject.business.exceptions.InvalidUserException;
+import nl.fontys.realestateproject.configuration.security.auth.RequestAuthenticatedUserProvider;
+import nl.fontys.realestateproject.configuration.security.token.AccessToken;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +20,7 @@ import org.springframework.web.server.ResponseStatusException;
 @AllArgsConstructor
 public class AccountController {
     private final AccountService accountService;
+    private final RequestAuthenticatedUserProvider requestAuthenticatedUserProvider;
 
     @PostMapping()
     public ResponseEntity<CreateAccountResponse> createAccount(@RequestBody @Valid CreateAccountRequest request) {
@@ -50,12 +53,20 @@ public class AccountController {
 
     @PutMapping()
     public ResponseEntity<Void> updateAccount(@RequestBody @Valid UpdateAccountRequest request) {
+        AccessToken accessToken = requestAuthenticatedUserProvider.getAuthenticatedUserInRequest();
+        if(accessToken.getUserId() != request.getId() && !accessToken.getRoles().contains("ADMIN")) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not allowed to update this account");
+        }
         accountService.updateAccount(request);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @DeleteMapping("{accountId}")
     public ResponseEntity<Void> deleteAccount(@PathVariable int accountId) {
+        AccessToken accessToken = requestAuthenticatedUserProvider.getAuthenticatedUserInRequest();
+        if(accessToken.getUserId() != accountId && !accessToken.getRoles().contains("ADMIN")) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not allowed to update this account");
+        }
         accountService.deleteAccount(accountId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }

@@ -28,8 +28,6 @@ public class UpdatePropertyRequest {
     private String listingType;
     @NotEmpty
     private List<PropertySurfaceArea> surfaceAreas;
-    @NotNull
-    private Long agentId;
     @NotBlank
     private String street;
     @NotBlank
@@ -38,4 +36,7 @@ public class UpdatePropertyRequest {
     private String postalCode;
     @NotBlank
     private String country;
+    @NotNull
+    private Long agentId;
+    private String imageUrl;
 }

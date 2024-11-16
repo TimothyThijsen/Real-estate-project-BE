@@ -10,6 +10,8 @@ import nl.fontys.realestateproject.domain.enums.PropertyType;
 import nl.fontys.realestateproject.persistence.AddressRepository;
 import nl.fontys.realestateproject.persistence.PropertyRepository;
 import nl.fontys.realestateproject.persistence.PropertySurfaceAreaRepository;
+import nl.fontys.realestateproject.persistence.UserRepository;
+import nl.fontys.realestateproject.persistence.entity.AccountEntity;
 import nl.fontys.realestateproject.persistence.entity.AddressEntity;
 import nl.fontys.realestateproject.persistence.entity.PropertyEntity;
 import nl.fontys.realestateproject.persistence.entity.PropertySurfaceAreaEntity;
@@ -28,6 +30,7 @@ public class PropertyServiceImpl implements PropertyService {
     PropertyRepository propertyRepository;
     AddressRepository addressRepository;
     PropertySurfaceAreaRepository surfaceAreaRepository;
+    UserRepository userRepository;
     PropertyConverter propertyConverter;
 
     @Override
@@ -43,13 +46,15 @@ public class PropertyServiceImpl implements PropertyService {
     private PropertyEntity createNewProperty(CreatePropertyRequest request) {
         AddressEntity address = saveAddress(request.getCity(), request.getCountry(), request.getPostalCode(), request.getStreet());
         addressRepository.save(address);
-
+        AccountEntity account = userRepository.getReferenceById(request.getAgentId());
         PropertyEntity newProperty = PropertyEntity.builder()
                 .description(request.getDescription())
                 .price(request.getPrice())
                 .address(address)
                 .propertyType(PropertyType.valueOf(request.getPropertyType()))
                 .listingType(ListingType.valueOf(request.getListingType()))
+                .account(account)
+                .imageUrl(request.getImageUrl())
                 .build();
 
         List<PropertySurfaceAreaEntity> surfaceAreas = request.getSurfaceAreas().stream()
@@ -123,6 +128,7 @@ public class PropertyServiceImpl implements PropertyService {
         return PropertyEntity.builder()
                 .id(request.getId())
                 .description(request.getDescription())
+
                 .price(request.getPrice())
                 .address(address)
                 .propertyType(PropertyType.valueOf(request.getPropertyType()))
@@ -138,7 +144,7 @@ public class PropertyServiceImpl implements PropertyService {
         if (propertyEntity.isEmpty()) {
             throw new InvalidPropertyException();
         }
-        if(propertyEntity.get().getAgent().getId() != agentId){
+        if(propertyEntity.get().getId() != agentId){
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
         surfaceAreaRepository.deleteAllByPropertyId(id);

@@ -1,6 +1,7 @@
 package nl.fontys.realestateproject.business.impl;
 
 import lombok.AllArgsConstructor;
+import nl.fontys.realestateproject.business.impl.account.AccountConverter;
 import nl.fontys.realestateproject.domain.Property;
 import nl.fontys.realestateproject.persistence.entity.PropertyEntity;
 import org.springframework.stereotype.Service;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Service;
 @Service
 @AllArgsConstructor
 final class PropertyConverter {
+    private final AccountConverter accountConverter;
     PropertySurfaceAreaConverter propertySurfaceAreaConverter;
     AddressConverter addressConverter;
 
@@ -22,6 +24,8 @@ final class PropertyConverter {
                         .map(propertySurfaceAreaConverter::convert)
                         .toList())
                 .address(addressConverter.convert(propertyEntity.getAddress()))
+                .agent(accountConverter.convert(propertyEntity.getAccount()))
+                .imageUrl(propertyEntity.getImageUrl())
                 .build();
     }
 

@@ -22,4 +22,6 @@ public class Property {
     private PropertyType propertyType;
     private List<PropertySurfaceArea> surfaceAreas;
     private Address address;
+    private Account agent;
+    private String imageUrl;
 }

@@ -52,7 +52,10 @@ public class PropertyEntity {
 
     @OneToOne
     @JoinColumn(name = "account_id")
-    private AccountEntity agent;
+    private AccountEntity account;
+
+    @Column(name = "image_url")
+    private String imageUrl;
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "property")
     private List<PropertySurfaceAreaEntity> surfaceAreas;

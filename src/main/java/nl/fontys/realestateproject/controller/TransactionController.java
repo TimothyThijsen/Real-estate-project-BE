@@ -8,6 +8,7 @@ import nl.fontys.realestateproject.business.dto.transaction.GetAllTransactionRes
 import nl.fontys.realestateproject.business.dto.transaction.MakeTransactionRequest;
 import nl.fontys.realestateproject.business.dto.transaction.MakeTransactionResponse;
 import nl.fontys.realestateproject.business.exceptions.TransactionException;
+import org.springframework.context.annotation.Role;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +22,7 @@ public class TransactionController {
     private final TransactionService transactionService;
 
     @PostMapping()
+    @RolesAllowed({"ADMIN", "CLIENT"})
     public ResponseEntity<MakeTransactionResponse> makeTransaction(@RequestBody @Valid MakeTransactionRequest request) {
         MakeTransactionResponse response = transactionService.makeTransaction(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
@@ -34,7 +36,7 @@ public class TransactionController {
     }
 
     @GetMapping("/customer/{customerId}")
-    @RolesAllowed({"ADMIN", "CUSTOMER"})
+    @RolesAllowed({"ADMIN", "CLIENT"})
     public ResponseEntity<GetAllTransactionResponse> getAllTransactionsByCustomerId(@PathVariable int customerId) {
         GetAllTransactionResponse response = transactionService.getTransactionsByCustomerId((long) customerId);
         return ResponseEntity.status(HttpStatus.OK).body(response);

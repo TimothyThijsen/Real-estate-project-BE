@@ -27,8 +27,6 @@ public class CreatePropertyRequest {
     private String listingType;
     @NotEmpty
     private List<PropertySurfaceArea> surfaceAreas;
-    @NotNull
-    private Long agentId;
     @NotBlank
     private String street;
     @NotBlank
@@ -37,5 +35,9 @@ public class CreatePropertyRequest {
     private String postalCode;
     @NotBlank
     private String country;
+    @NotNull
+    private Long agentId;
+
+    private String imageUrl;
 
 }

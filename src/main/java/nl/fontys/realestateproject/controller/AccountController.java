@@ -65,7 +65,7 @@ public class AccountController {
     public ResponseEntity<Void> deleteAccount(@PathVariable int accountId) {
         AccessToken accessToken = requestAuthenticatedUserProvider.getAuthenticatedUserInRequest();
         if(accessToken.getUserId() != accountId && !accessToken.getRoles().contains("ADMIN")) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not allowed to update this account");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You are not allowed to update this account");
         }
         accountService.deleteAccount(accountId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();

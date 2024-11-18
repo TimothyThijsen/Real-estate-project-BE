@@ -15,6 +15,7 @@ import nl.fontys.realestateproject.persistence.entity.AccountEntity;
 import nl.fontys.realestateproject.persistence.entity.AddressEntity;
 import nl.fontys.realestateproject.persistence.entity.PropertyEntity;
 import nl.fontys.realestateproject.persistence.entity.PropertySurfaceAreaEntity;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,7 +37,16 @@ public class PropertyServiceImpl implements PropertyService {
     @Override
     @Transactional
     public CreatePropertyResponse createProperty(CreatePropertyRequest request) {
-        PropertyEntity savedProperty = createNewProperty(request);
+        PropertyEntity savedProperty;
+        try{
+            savedProperty = createNewProperty(request);
+
+        }catch (Exception e){
+            if (e instanceof DataIntegrityViolationException){
+                throw new InvalidPropertyException("Street address is already in use");
+            }
+            throw e;
+        }
 
         return CreatePropertyResponse.builder()
                 .propertyId(savedProperty.getId())

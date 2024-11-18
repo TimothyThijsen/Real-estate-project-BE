@@ -1,5 +1,6 @@
 package nl.fontys.realestateproject.business.impl;
 
+import nl.fontys.realestateproject.business.impl.account.AccountConverter;
 import nl.fontys.realestateproject.domain.Property;
 import nl.fontys.realestateproject.persistence.entity.PropertyEntity;
 import org.junit.jupiter.api.Test;
@@ -19,7 +20,8 @@ class PropertyConverterTest {
     AddressConverter addressConverter;
     @Mock
     PropertySurfaceAreaConverter propertySurfaceAreaConverter;
-
+    @Mock
+    AccountConverter accountConverter;
     @InjectMocks
     PropertyConverter propertyConverter;
 

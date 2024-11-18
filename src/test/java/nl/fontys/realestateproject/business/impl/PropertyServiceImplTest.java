@@ -7,6 +7,7 @@ import nl.fontys.realestateproject.domain.PropertySurfaceArea;
 import nl.fontys.realestateproject.persistence.AddressRepository;
 import nl.fontys.realestateproject.persistence.PropertyRepository;
 import nl.fontys.realestateproject.persistence.PropertySurfaceAreaRepository;
+import nl.fontys.realestateproject.persistence.UserRepository;
 import nl.fontys.realestateproject.persistence.entity.AccountEntity;
 import nl.fontys.realestateproject.persistence.entity.AddressEntity;
 import nl.fontys.realestateproject.persistence.entity.PropertyEntity;
@@ -32,7 +33,8 @@ class PropertyServiceImplTest {
     AddressRepository addressRepositoryMock;
     @Mock
     PropertySurfaceAreaRepository propertySurfaceAreaRepositoryMock;
-
+    @Mock
+    UserRepository userRepositoryMock;
     @Mock
     PropertyConverter propertyConverterMock;
     @InjectMocks
@@ -139,7 +141,7 @@ class PropertyServiceImplTest {
         AccountEntity accountEntity = AccountEntity.builder().id(1L).build();
         PropertyEntity propertyEntity = PropertyEntity.builder()
                 .id(1L)
-                .agent(accountEntity)
+                .account(accountEntity)
                 .address(AddressEntity.builder().id(1L).build())
                 .build();
         when(propertyRepositoryMock.findById(1L)).thenReturn(Optional.of(propertyEntity));

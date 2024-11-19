@@ -41,11 +41,10 @@ public class PropertyServiceImpl implements PropertyService {
         try{
             savedProperty = createNewProperty(request);
 
+        }catch(DataIntegrityViolationException ex) {
+            throw new InvalidPropertyException("Street address is already in use");
         }catch (Exception e){
-            if (e instanceof DataIntegrityViolationException){
-                throw new InvalidPropertyException("Street address is already in use");
-            }
-            throw e;
+            throw new InvalidPropertyException("Error occurred trying to create property");
         }
 
         return CreatePropertyResponse.builder()

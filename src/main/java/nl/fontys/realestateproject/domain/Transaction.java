@@ -16,4 +16,5 @@ public class Transaction {
     private Long propertyId;
     private Long customerId;
     private LocalDateTime date;
+    private String description;
 }

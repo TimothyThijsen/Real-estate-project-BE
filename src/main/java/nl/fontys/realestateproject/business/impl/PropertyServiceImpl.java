@@ -91,7 +91,7 @@ public class PropertyServiceImpl implements PropertyService {
 
     @Override
     public GetAllPropertiesResponse getAllProperties() {
-        List<PropertyEntity> results = propertyRepository.findAllAvailableProperty();
+        List<PropertyEntity> results = propertyRepository.findAllAvailablePropertyByc();
 
         final GetAllPropertiesResponse response = new GetAllPropertiesResponse();
         List<Property> properties = results

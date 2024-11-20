@@ -108,13 +108,13 @@ class PropertyServiceImplTest {
         PropertyEntity property1 = PropertyEntity.builder().id(1L).description("Property 1").surfaceAreas(List.of()).build();
         PropertyEntity property2 = PropertyEntity.builder().id(2L).description("Property 2").surfaceAreas(List.of()).build();
 
-        when(propertyRepositoryMock.findAll()).thenReturn(List.of(property1, property2));
+        when(propertyRepositoryMock.findAllAvailableProperty()).thenReturn(List.of(property1, property2));
         when(propertyConverterMock.convert(property1)).thenReturn(Property.builder().id(1L).description("Property 1").build());
         when(propertyConverterMock.convert(property2)).thenReturn(Property.builder().id(2L).description("Property 2").build());
         GetAllPropertiesResponse actual = propertyService.getAllProperties();
 
         assertEquals(2, actual.getProperties().size());
-        verify(propertyRepositoryMock).findAll();
+        verify(propertyRepositoryMock).findAllAvailableProperty();
     }
 
     @Test

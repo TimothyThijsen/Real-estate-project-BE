@@ -22,7 +22,7 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public MakeTransactionResponse makeTransaction(MakeTransactionRequest request) {
-        TransactionEntity transactionEntity = TransactionEntity.builder()
+         TransactionEntity transactionEntity = TransactionEntity.builder()
                 .customerId(request.getCustomerId())
                 .propertyId(request.getPropertyId())
                 .date(LocalDateTime.now())

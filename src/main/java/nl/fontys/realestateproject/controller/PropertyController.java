@@ -13,6 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Objects;
+
 @RestController
 @RequestMapping("/properties")
 @CrossOrigin(origins = "${cors.allowedOrigins}")
@@ -56,7 +58,7 @@ public class PropertyController {
     @RolesAllowed({"ADMIN","AGENT"})
     public ResponseEntity<Void> updateProperty(@RequestBody @Valid UpdatePropertyRequest request) {
         AccessToken accessToken = requestAuthenticatedUserProvider.getAuthenticatedUserInRequest();
-        if(accessToken.getUserId() != request.getAgentId() && !accessToken.getRoles().contains("ADMIN")) {
+        if(!Objects.equals(accessToken.getUserId(), request.getAgentId()) && !accessToken.getRoles().contains("ADMIN")) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
         propertyService.updateProperty(request);

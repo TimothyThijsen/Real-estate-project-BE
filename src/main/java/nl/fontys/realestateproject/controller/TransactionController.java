@@ -8,7 +8,6 @@ import nl.fontys.realestateproject.business.dto.transaction.GetAllTransactionRes
 import nl.fontys.realestateproject.business.dto.transaction.MakeTransactionRequest;
 import nl.fontys.realestateproject.business.dto.transaction.MakeTransactionResponse;
 import nl.fontys.realestateproject.business.exceptions.TransactionException;
-import org.springframework.context.annotation.Role;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

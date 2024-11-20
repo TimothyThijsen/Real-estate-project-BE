@@ -20,7 +20,7 @@ sonar {
         property("sonar.projectName", "realEstateProject")
         property("sonar.host.url", "http://localhost:9000")
         property("sonar.token", "sqp_0a1ff4cfc43161a8095d5d7dacfd4504fecb8d41")
-        property("sonar.exclusions", "**/dto/**,**/controller/**,**/RealEstateProjectApplication.java,**/configuration/**")
+        property("sonar.exclusions", "**/dto/**,**/RealEstateProjectApplication.java,**/configuration/**")
     }
 }
 jacocoTestReport {

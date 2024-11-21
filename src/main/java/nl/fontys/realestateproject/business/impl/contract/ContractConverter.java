@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import java.util.Comparator;
 @Service
 @AllArgsConstructor
-final class ContractConverter {
+public final class ContractConverter {
     private final TransactionConverter transactionConverter;
     public Contract convert(ContractEntity contractEntity) {
         return Contract.builder()

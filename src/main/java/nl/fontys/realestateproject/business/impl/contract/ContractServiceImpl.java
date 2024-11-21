@@ -4,8 +4,12 @@ import lombok.AllArgsConstructor;
 import nl.fontys.realestateproject.business.ContractService;
 import nl.fontys.realestateproject.business.dto.contract.GetAllContractsResponse;
 import nl.fontys.realestateproject.business.dto.contract.GetContractById;
+import nl.fontys.realestateproject.business.exceptions.ContractNotFoundException;
 import nl.fontys.realestateproject.persistence.ContractRepository;
+import nl.fontys.realestateproject.persistence.entity.ContractEntity;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -19,9 +23,11 @@ public class ContractServiceImpl implements ContractService {
 
     @Override
     public GetContractById getContractById(long id) {
-        return new GetContractById(
-                contractConverter.convert(contractRepository.findById(id).get())
-        );
+        Optional<ContractEntity> contractOptional = contractRepository.findById(id);
+        if (contractOptional.isEmpty()) {
+            throw new ContractNotFoundException();
+        }
+        return new GetContractById(contractConverter.convert(contractOptional.get()));
     }
 
     @Override

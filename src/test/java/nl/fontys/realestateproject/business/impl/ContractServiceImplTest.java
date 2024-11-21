@@ -1,5 +1,6 @@
 package nl.fontys.realestateproject.business.impl;
 
+import nl.fontys.realestateproject.business.exceptions.ContractNotFoundException;
 import nl.fontys.realestateproject.business.impl.contract.ContractConverter;
 import nl.fontys.realestateproject.business.impl.contract.ContractServiceImpl;
 import nl.fontys.realestateproject.domain.Contract;
@@ -14,6 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -41,6 +43,12 @@ class ContractServiceImplTest {
         contractService.getContractById(1L);
         verify(contractRepository).findById(1L);
         assertEquals(1L, contractService.getContractById(1L).getContract().getId());
+    }
+    @Test
+    void getContractById_shouldThrowContractNotFoundException_whenContractDoesNotExist() {
+        when(contractRepository.findById(1L)).thenReturn(Optional.empty());
+        
+        assertThrows(ContractNotFoundException.class, () -> contractService.getContractById(1L));
     }
     @Test
     void getAllContractsByAgentId_shouldCallRepository() {

@@ -66,6 +66,7 @@ class PropertyServiceImplTest {
         //step 5: validate expected mock behaviour
         assertEquals(1L, actual.getPropertyId());
     }
+
     @Test
     void createProperty_ShouldThrowDataIntegrityException_WhenStreetAddressIsAlreadyInUse() {
         CreatePropertyRequest request = CreatePropertyRequest.builder()
@@ -103,6 +104,7 @@ class PropertyServiceImplTest {
 
         // Assert: Check the exception message
     }
+
     @Test
     void getAllProperties() {
         PropertyEntity property1 = PropertyEntity.builder().id(1L).description("Property 1").surfaceAreas(List.of()).build();
@@ -184,7 +186,7 @@ class PropertyServiceImplTest {
         when(propertyRepositoryMock.findById(1L)).thenReturn(Optional.of(propertyEntity));
         doNothing().when(propertyRepositoryMock).deleteById(1L);
 
-        propertyService.deleteProperty(1,1);
+        propertyService.deleteProperty(1, 1);
 
         verify(propertyRepositoryMock).deleteById(1L);
     }
@@ -193,8 +195,9 @@ class PropertyServiceImplTest {
     void deleteProperty_ShouldReturnNotFound_WhenIdIsInvalid() {
         when(propertyRepositoryMock.findById(99L)).thenReturn(Optional.empty());
 
-        assertThrows(InvalidPropertyException.class, () -> propertyService.deleteProperty(99,1));
+        assertThrows(InvalidPropertyException.class, () -> propertyService.deleteProperty(99, 1));
     }
+
     @Test
     void deleteProperty_ShouldReturnNotFound_WhenAccountIdIsInvalid() {
         AccountEntity accountEntity = AccountEntity.builder().id(1L).build();
@@ -205,6 +208,6 @@ class PropertyServiceImplTest {
                 .account(accountEntity)
                 .build();
         when(propertyRepositoryMock.findById(1L)).thenReturn(Optional.of(propertyEntity));
-        assertThrows(ResponseStatusException.class, () -> propertyService.deleteProperty(1,99));
+        assertThrows(ResponseStatusException.class, () -> propertyService.deleteProperty(1, 99));
     }
 }

@@ -14,6 +14,7 @@ import nl.fontys.realestateproject.domain.Account;
 import nl.fontys.realestateproject.domain.enums.UserRole;
 import nl.fontys.realestateproject.persistence.UserRepository;
 import nl.fontys.realestateproject.persistence.entity.AccountEntity;
+import nl.fontys.realestateproject.persistence.entity.UserRoleEntity;
 import org.hibernate.exception.DataException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,6 +27,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -35,13 +37,13 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class AccountServiceImplTest {
     @Mock
-    private UserRepository userRepository;
-    @Mock
-    private AccountConverter accountConverter;
-    @Mock
     AccessTokenEncoder accessTokenEncoder;
     @Mock
     PasswordEncoder passwordEncoder;
+    @Mock
+    private UserRepository userRepository;
+    @Mock
+    private AccountConverter accountConverter;
     @InjectMocks
     private AccountServiceImpl accountService;
 
@@ -250,7 +252,7 @@ class AccountServiceImplTest {
         AccountEntity accountEntity = new AccountEntity();
         accountEntity.setId(1L);
         accountEntity.setPassword("12345");
-        accountEntity.setRole(UserRole.CLIENT);
+        accountEntity.setUserRoles(Set.of(UserRoleEntity.builder().role(UserRole.CLIENT).build()));
         when(userRepository.findByEmail(request.getEmail())).thenReturn(Optional.of(accountEntity));
         new Account();
         when(accessTokenEncoder.encode(any())).thenReturn("token");

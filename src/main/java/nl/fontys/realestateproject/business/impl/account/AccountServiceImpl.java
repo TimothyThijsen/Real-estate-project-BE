@@ -12,6 +12,7 @@ import nl.fontys.realestateproject.domain.Account;
 import nl.fontys.realestateproject.domain.enums.UserRole;
 import nl.fontys.realestateproject.persistence.UserRepository;
 import nl.fontys.realestateproject.persistence.entity.AccountEntity;
+import nl.fontys.realestateproject.persistence.entity.UserRoleEntity;
 import org.hibernate.exception.DataException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -21,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 @AllArgsConstructor
@@ -29,6 +31,7 @@ public class AccountServiceImpl implements AccountService {
     AccountConverter accountConverter;
     PasswordEncoder passwordEncoder;
     AccessTokenEncoder accessTokenEncoder;
+
     @Override
     @Transactional
     public CreateAccountResponse createAccount(CreateAccountRequest createAccountRequest) {
@@ -63,8 +66,12 @@ public class AccountServiceImpl implements AccountService {
                 .firstName(Character.toUpperCase(createAccountRequest.getFirstName().charAt(0)) + createAccountRequest.getFirstName().substring(1))
                 .lastName(Character.toUpperCase(createAccountRequest.getLastName().charAt(0)) + createAccountRequest.getLastName().substring(1))
                 .password(passwordEncoder.encode(createAccountRequest.getPassword()))
-                .role(UserRole.valueOf(createAccountRequest.getRole()))
                 .build();
+        UserRoleEntity userRole = UserRoleEntity.builder()
+                .role(UserRole.valueOf(createAccountRequest.getRole()))
+                .user(newAccount)
+                .build();
+        newAccount.setUserRoles(Set.of(userRole));
 
         return userRepository.save(newAccount);
     }
@@ -96,14 +103,19 @@ public class AccountServiceImpl implements AccountService {
     }
 
     private AccountEntity getUpdatedAccount(UpdateAccountRequest request) {
-        return AccountEntity.builder()
+        AccountEntity accountEntity = AccountEntity.builder()
                 .id(request.getId())
                 .email(request.getEmail())
                 .firstName(Character.toUpperCase(request.getFirstName().charAt(0)) + request.getFirstName().substring(1))
                 .lastName(Character.toUpperCase(request.getLastName().charAt(0)) + request.getLastName().substring(1))
                 .password(request.getPassword())
-                .role(UserRole.valueOf(request.getRole()))
                 .build();
+        UserRoleEntity userRole = UserRoleEntity.builder()
+                .role(UserRole.valueOf(request.getRole()))
+                .user(accountEntity)
+                .build();
+        accountEntity.setUserRoles(Set.of(userRole));
+        return accountEntity;
     }
 
     @Override
@@ -139,9 +151,10 @@ public class AccountServiceImpl implements AccountService {
                 .token(generateAccessToken(result.get()))
                 .build();
     }
+
     private String generateAccessToken(AccountEntity user) {
         Long userId = user.getId();
-        Collection<String> roles = List.of(user.getRole().toString());
+        Collection<String> roles = List.of(user.getUserRoles().toString());
 
         return accessTokenEncoder.encode(
                 new AccessTokenImpl(user.getEmail(), userId, roles));

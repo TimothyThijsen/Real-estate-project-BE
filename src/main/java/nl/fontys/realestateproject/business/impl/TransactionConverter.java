@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 
 
 @Service
-final class TransactionConverter {
+public final class TransactionConverter {
     public Transaction convert(TransactionEntity transactionEntity) {
         return Transaction.builder()
                 .id(transactionEntity.getId())

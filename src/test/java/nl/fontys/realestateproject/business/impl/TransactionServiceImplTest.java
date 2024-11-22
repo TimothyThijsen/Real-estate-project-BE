@@ -5,7 +5,9 @@ import nl.fontys.realestateproject.business.dto.transaction.MakeTransactionReque
 import nl.fontys.realestateproject.business.dto.transaction.MakeTransactionResponse;
 import nl.fontys.realestateproject.business.exceptions.TransactionException;
 import nl.fontys.realestateproject.domain.Transaction;
+import nl.fontys.realestateproject.persistence.ContractRepository;
 import nl.fontys.realestateproject.persistence.TransactionRepository;
+import nl.fontys.realestateproject.persistence.entity.ContractEntity;
 import nl.fontys.realestateproject.persistence.entity.TransactionEntity;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,14 +24,16 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-
 class TransactionServiceImplTest {
     @Mock
     TransactionRepository transactionRepositoryMock;
     @Mock
     TransactionConverter transactionConverter;
+    @Mock
+    ContractRepository contractRepository;
     @InjectMocks
     TransactionServiceImpl transactionService;
+
 
     @Test
     void makeTransaction_ShouldMakeATransaction() {
@@ -40,11 +44,13 @@ class TransactionServiceImplTest {
 
         TransactionEntity transactionEntity = TransactionEntity.builder().id(1L).build();
         when(transactionRepositoryMock.save(any(TransactionEntity.class))).thenReturn(transactionEntity);
+        when(contractRepository.save(any(ContractEntity.class))).thenReturn(ContractEntity.builder().build());
         MakeTransactionResponse actual = transactionService.makeTransaction(request);
 
         verify(transactionRepositoryMock).save(any(TransactionEntity.class));
         assertEquals(1, actual.getTransactionId());
     }
+
     @Test
     void makeTransaction_ShouldThrowTransactionException() {
         MakeTransactionRequest request = MakeTransactionRequest.builder()
@@ -53,6 +59,7 @@ class TransactionServiceImplTest {
                 .build();
 
         when(transactionRepositoryMock.save(any(TransactionEntity.class))).thenThrow(new RuntimeException());
+        when(contractRepository.save(any(ContractEntity.class))).thenReturn(ContractEntity.builder().build());
         assertThrows(TransactionException.class, () -> transactionService.makeTransaction(request));
     }
 
@@ -67,6 +74,7 @@ class TransactionServiceImplTest {
         verify(transactionRepositoryMock).findAll();
         assertEquals(1, actual.getTransactions().size());
     }
+
     @Test
     void getTransactionsByCustomerId_ShouldReturnAllTransactionsByCustomerId() {
         TransactionEntity transactionEntity = TransactionEntity.builder().id(1L).customerId(1L).propertyId(1L).build();
@@ -78,6 +86,7 @@ class TransactionServiceImplTest {
         verify(transactionRepositoryMock).findAllByCustomerId(1L);
         assertEquals(1, actual.getTransactions().size());
     }
+
     @Test
     void getTransactionsByPropertyId_ShouldReturnAllTransactionsByPropertyId() {
         TransactionEntity transactionEntity = TransactionEntity.builder().id(1L).customerId(1L).propertyId(1L).build();

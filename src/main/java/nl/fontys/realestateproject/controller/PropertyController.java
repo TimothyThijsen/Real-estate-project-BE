@@ -24,7 +24,7 @@ public class PropertyController {
     private final RequestAuthenticatedUserProvider requestAuthenticatedUserProvider;
 
     @PostMapping()
-    @RolesAllowed({"ADMIN","AGENT"})
+    @RolesAllowed({"ADMIN", "AGENT"})
     public ResponseEntity<CreatePropertyResponse> createProperty(@RequestBody @Valid CreatePropertyRequest request) {
         CreatePropertyResponse response = propertyService.createProperty(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
@@ -48,17 +48,17 @@ public class PropertyController {
     }
 
     @DeleteMapping("{propertyId}")
-    @RolesAllowed({"ADMIN","AGENT"})
+    @RolesAllowed({"ADMIN", "AGENT"})
     public ResponseEntity<Void> deleteProperty(@PathVariable int propertyId) {
         propertyService.deleteProperty(propertyId, requestAuthenticatedUserProvider.getAuthenticatedUserInRequest().getUserId());
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @PutMapping()
-    @RolesAllowed({"ADMIN","AGENT"})
+    @RolesAllowed({"ADMIN", "AGENT"})
     public ResponseEntity<Void> updateProperty(@RequestBody @Valid UpdatePropertyRequest request) {
         AccessToken accessToken = requestAuthenticatedUserProvider.getAuthenticatedUserInRequest();
-        if(!Objects.equals(accessToken.getUserId(), request.getAgentId()) && !accessToken.getRoles().contains("ADMIN")) {
+        if (!Objects.equals(accessToken.getUserId(), request.getAgentId()) && !accessToken.getRoles().contains("ADMIN")) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
         propertyService.updateProperty(request);

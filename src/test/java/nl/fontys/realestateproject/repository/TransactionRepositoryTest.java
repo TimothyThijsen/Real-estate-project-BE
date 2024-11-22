@@ -5,10 +5,7 @@ import nl.fontys.realestateproject.domain.enums.ListingType;
 import nl.fontys.realestateproject.domain.enums.PropertyType;
 import nl.fontys.realestateproject.domain.enums.UserRole;
 import nl.fontys.realestateproject.persistence.TransactionRepository;
-import nl.fontys.realestateproject.persistence.entity.AccountEntity;
-import nl.fontys.realestateproject.persistence.entity.AddressEntity;
-import nl.fontys.realestateproject.persistence.entity.PropertyEntity;
-import nl.fontys.realestateproject.persistence.entity.TransactionEntity;
+import nl.fontys.realestateproject.persistence.entity.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,6 +19,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -79,10 +77,11 @@ class TransactionRepositoryTest {
         entityManager.persist(property);
         AccountEntity account = AccountEntity.builder().firstName("test")
                 .lastName("test")
-                .role(UserRole.CLIENT)
                 .email("email")
                 .password("test")
                 .build();
+        UserRoleEntity userRole = UserRoleEntity.builder().role(UserRole.CLIENT).user(account).build();
+        account.setUserRoles(Set.of(userRole));
         entityManager.persist(account);
     }
 

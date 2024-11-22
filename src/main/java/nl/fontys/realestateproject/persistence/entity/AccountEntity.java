@@ -9,6 +9,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import nl.fontys.realestateproject.domain.enums.UserRole;
 
+import java.util.Set;
+
 @Entity
 @Table(name = "account")
 @Data
@@ -37,8 +39,11 @@ public class AccountEntity {
     @Column(name = "password")
     private String password;
 
-    @NotNull
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    @JoinColumn(name = "account_id")
+    private Set<UserRoleEntity> userRoles;
+    /*@NotNull
     @Enumerated(EnumType.STRING)
     @Column(name = "user_role")
-    private UserRole role;
+    private UserRole role;*/
 }

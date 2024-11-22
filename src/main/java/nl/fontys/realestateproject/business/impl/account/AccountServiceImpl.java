@@ -154,8 +154,10 @@ public class AccountServiceImpl implements AccountService {
 
     private String generateAccessToken(AccountEntity user) {
         Long userId = user.getId();
-        Collection<String> roles = List.of(user.getUserRoles().toString());
-
+        Collection<String> roles = user.getUserRoles().stream()
+                .map(UserRoleEntity::getRole)
+                .map(UserRole::name)
+                .toList();
         return accessTokenEncoder.encode(
                 new AccessTokenImpl(user.getEmail(), userId, roles));
     }

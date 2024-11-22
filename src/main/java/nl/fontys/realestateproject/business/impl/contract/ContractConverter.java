@@ -8,10 +8,12 @@ import nl.fontys.realestateproject.persistence.entity.TransactionEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
+
 @Service
 @AllArgsConstructor
 public final class ContractConverter {
     private final TransactionConverter transactionConverter;
+
     public Contract convert(ContractEntity contractEntity) {
         return Contract.builder()
                 .id(contractEntity.getId())

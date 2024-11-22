@@ -40,6 +40,7 @@ class ContractConverterTest {
 
         assertEquals(1L, contract.getId());
     }
+
     @Test
     void convert_ShouldThrowException_WhenContractEntityIsNull() {
         ContractEntity contractEntity = null;

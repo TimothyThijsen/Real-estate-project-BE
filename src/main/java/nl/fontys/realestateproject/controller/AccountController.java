@@ -54,7 +54,7 @@ public class AccountController {
     @PutMapping()
     public ResponseEntity<Void> updateAccount(@RequestBody @Valid UpdateAccountRequest request) {
         AccessToken accessToken = requestAuthenticatedUserProvider.getAuthenticatedUserInRequest();
-        if(accessToken.getUserId() != request.getId() && !accessToken.getRoles().contains("ADMIN")) {
+        if (accessToken.getUserId() != request.getId() && !accessToken.getRoles().contains("ADMIN")) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not allowed to update this account");
         }
         accountService.updateAccount(request);
@@ -64,7 +64,7 @@ public class AccountController {
     @DeleteMapping("{accountId}")
     public ResponseEntity<Void> deleteAccount(@PathVariable int accountId) {
         AccessToken accessToken = requestAuthenticatedUserProvider.getAuthenticatedUserInRequest();
-        if(accessToken.getUserId() != accountId && !accessToken.getRoles().contains("ADMIN")) {
+        if (accessToken.getUserId() != accountId && !accessToken.getRoles().contains("ADMIN")) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You are not allowed to update this account");
         }
         accountService.deleteAccount(accountId);

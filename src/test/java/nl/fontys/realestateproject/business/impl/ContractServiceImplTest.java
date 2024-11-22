@@ -34,6 +34,7 @@ class ContractServiceImplTest {
         contractService.cancelContract(1L);
         verify(contractRepository).cancelContract(1L);
     }
+
     @Test
     void getContractById_shouldReturnContract() {
         ContractEntity contractEntity = ContractEntity.builder().id(1L).build();
@@ -44,17 +45,20 @@ class ContractServiceImplTest {
         verify(contractRepository).findById(1L);
         assertEquals(1L, contractService.getContractById(1L).getContract().getId());
     }
+
     @Test
     void getContractById_shouldThrowContractNotFoundException_whenContractDoesNotExist() {
         when(contractRepository.findById(1L)).thenReturn(Optional.empty());
-        
+
         assertThrows(ContractNotFoundException.class, () -> contractService.getContractById(1L));
     }
+
     @Test
     void getAllContractsByAgentId_shouldCallRepository() {
         contractService.getAllContractsByAgentId(1L);
         verify(contractRepository).findAllByAgentId(1L);
     }
+
     @Test
     void getAllContractsByCustomerId_shouldCallRepository() {
         contractService.getAllContractsByCustomerId(1L);

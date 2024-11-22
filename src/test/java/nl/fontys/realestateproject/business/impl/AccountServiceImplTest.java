@@ -37,13 +37,13 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class AccountServiceImplTest {
     @Mock
-    private UserRepository userRepository;
-    @Mock
-    private AccountConverter accountConverter;
-    @Mock
     AccessTokenEncoder accessTokenEncoder;
     @Mock
     PasswordEncoder passwordEncoder;
+    @Mock
+    private UserRepository userRepository;
+    @Mock
+    private AccountConverter accountConverter;
     @InjectMocks
     private AccountServiceImpl accountService;
 

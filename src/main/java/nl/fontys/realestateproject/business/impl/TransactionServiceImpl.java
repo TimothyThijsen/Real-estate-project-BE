@@ -23,6 +23,7 @@ public class TransactionServiceImpl implements TransactionService {
     private final TransactionRepository transactionRepository;
     private final TransactionConverter transactionConverter;
     private final ContractRepository contractRepository;
+
     @Transactional
     @Override
     public MakeTransactionResponse makeTransaction(MakeTransactionRequest request) {
@@ -34,7 +35,7 @@ public class TransactionServiceImpl implements TransactionService {
                 .minimumContractEndDate(LocalDateTime.now().plusYears(1))
                 .build();
 
-         TransactionEntity transactionEntity = TransactionEntity.builder()
+        TransactionEntity transactionEntity = TransactionEntity.builder()
                 .customerId(request.getCustomerId())
                 .propertyId(request.getPropertyId())
                 .date(LocalDateTime.now())

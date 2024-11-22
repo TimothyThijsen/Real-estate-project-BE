@@ -25,6 +25,7 @@ class TransactionConverterTest {
         assertEquals(1L, response.getId());
         assertDoesNotThrow(() -> transactionConverter.convert(entity));
     }
+
     @Test
     void convert_ShouldThrowException_WhenAccountEntityIsNull() {
         TransactionEntity entity = null;

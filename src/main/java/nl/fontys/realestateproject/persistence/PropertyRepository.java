@@ -14,8 +14,11 @@ public interface PropertyRepository extends JpaRepository<PropertyEntity, Long> 
             "WHERE (t.id is null) OR " +
             "(p.propertyType = 'RENTAL' AND (c.id IS NULL OR c.isActive = false))")
     List<PropertyEntity> findAllAvailableProperty();
+
     List<PropertyEntity> findAllByAccountId(long accountId);
+
     List<PropertyEntity> findAllByAddressCity(String city);
+
     List<PropertyEntity> findAllByAddressCountry(String country);
 
 }

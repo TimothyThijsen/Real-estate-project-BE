@@ -8,7 +8,6 @@ import lombok.AllArgsConstructor;
 import nl.fontys.realestateproject.configuration.security.token.AccessToken;
 import nl.fontys.realestateproject.configuration.security.token.AccessTokenDecoder;
 import nl.fontys.realestateproject.configuration.security.token.exception.InvalidAccessTokenException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;

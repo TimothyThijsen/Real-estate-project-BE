@@ -31,6 +31,7 @@ public class AccountServiceImpl implements AccountService {
     AccountConverter accountConverter;
     PasswordEncoder passwordEncoder;
     AccessTokenEncoder accessTokenEncoder;
+
     @Override
     @Transactional
     public CreateAccountResponse createAccount(CreateAccountRequest createAccountRequest) {
@@ -150,6 +151,7 @@ public class AccountServiceImpl implements AccountService {
                 .token(generateAccessToken(result.get()))
                 .build();
     }
+
     private String generateAccessToken(AccountEntity user) {
         Long userId = user.getId();
         Collection<String> roles = List.of(user.getUserRoles().toString());

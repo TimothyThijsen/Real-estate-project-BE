@@ -16,6 +16,7 @@ import java.util.Optional;
 public class ContractServiceImpl implements ContractService {
     private final ContractRepository contractRepository;
     ContractConverter contractConverter;
+
     @Override
     public void cancelContract(long id) {
         contractRepository.cancelContract(id);

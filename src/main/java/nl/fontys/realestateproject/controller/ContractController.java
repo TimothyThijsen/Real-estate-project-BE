@@ -18,6 +18,7 @@ public class ContractController {
         GetAllContractsResponse response = contractService.getAllContractsByAgentId(agentId);
         return ResponseEntity.ok(response);
     }
+
     @GetMapping("/customer/{customerId}")
     public ResponseEntity<GetAllContractsResponse> getAllContractsByCustomerId(@PathVariable long customerId) {
         GetAllContractsResponse response = contractService.getAllContractsByCustomerId(customerId);

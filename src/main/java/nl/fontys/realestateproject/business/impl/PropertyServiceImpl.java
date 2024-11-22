@@ -38,12 +38,12 @@ public class PropertyServiceImpl implements PropertyService {
     @Transactional
     public CreatePropertyResponse createProperty(CreatePropertyRequest request) {
         PropertyEntity savedProperty;
-        try{
+        try {
             savedProperty = createNewProperty(request);
 
-        }catch(DataIntegrityViolationException ex) {
+        } catch (DataIntegrityViolationException ex) {
             throw new InvalidPropertyException("Street address is already in use");
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new InvalidPropertyException("Error occurred trying to create property");
         }
 
@@ -153,7 +153,7 @@ public class PropertyServiceImpl implements PropertyService {
         if (propertyEntity.isEmpty()) {
             throw new InvalidPropertyException();
         }
-        if(propertyEntity.get().getId() != agentId){
+        if (propertyEntity.get().getId() != agentId) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
         surfaceAreaRepository.deleteAllByPropertyId(id);

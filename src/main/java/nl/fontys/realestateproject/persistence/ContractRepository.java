@@ -12,7 +12,9 @@ public interface ContractRepository extends JpaRepository<ContractEntity, Long> 
             "LEFT JOIN PropertyEntity p on p.id = c.propertyId " +
             "WHERE p.account.id = :agentId")
     List<ContractEntity> findAllByAgentId(long agentId);
+
     List<ContractEntity> findAllByCustomerId(long customerId);
+
     @Modifying
     @Query("UPDATE ContractEntity c SET c.isActive = false WHERE c.id = :id")
     void cancelContract(long id);

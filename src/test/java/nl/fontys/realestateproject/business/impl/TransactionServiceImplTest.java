@@ -24,7 +24,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-
 class TransactionServiceImplTest {
     @Mock
     TransactionRepository transactionRepositoryMock;
@@ -51,6 +50,7 @@ class TransactionServiceImplTest {
         verify(transactionRepositoryMock).save(any(TransactionEntity.class));
         assertEquals(1, actual.getTransactionId());
     }
+
     @Test
     void makeTransaction_ShouldThrowTransactionException() {
         MakeTransactionRequest request = MakeTransactionRequest.builder()
@@ -74,6 +74,7 @@ class TransactionServiceImplTest {
         verify(transactionRepositoryMock).findAll();
         assertEquals(1, actual.getTransactions().size());
     }
+
     @Test
     void getTransactionsByCustomerId_ShouldReturnAllTransactionsByCustomerId() {
         TransactionEntity transactionEntity = TransactionEntity.builder().id(1L).customerId(1L).propertyId(1L).build();
@@ -85,6 +86,7 @@ class TransactionServiceImplTest {
         verify(transactionRepositoryMock).findAllByCustomerId(1L);
         assertEquals(1, actual.getTransactions().size());
     }
+
     @Test
     void getTransactionsByPropertyId_ShouldReturnAllTransactionsByPropertyId() {
         TransactionEntity transactionEntity = TransactionEntity.builder().id(1L).customerId(1L).propertyId(1L).build();

@@ -5,7 +5,6 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import nl.fontys.realestateproject.business.PropertyService;
 import nl.fontys.realestateproject.business.dto.property.*;
-import nl.fontys.realestateproject.business.exceptions.InvalidPropertyException;
 import nl.fontys.realestateproject.configuration.security.auth.RequestAuthenticatedUserProvider;
 import nl.fontys.realestateproject.configuration.security.token.AccessToken;
 import org.springframework.http.HttpStatus;
@@ -28,11 +27,6 @@ public class PropertyController {
     public ResponseEntity<CreatePropertyResponse> createProperty(@RequestBody @Valid CreatePropertyRequest request) {
         CreatePropertyResponse response = propertyService.createProperty(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
-    }
-
-    @ExceptionHandler(InvalidPropertyException.class)
-    public ResponseEntity<String> handleInvalidPropertyException(InvalidPropertyException ex) {
-        return new ResponseEntity<>(ex.getReason(), HttpStatus.BAD_REQUEST);
     }
 
     @GetMapping()

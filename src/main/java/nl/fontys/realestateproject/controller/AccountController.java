@@ -4,9 +4,6 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import nl.fontys.realestateproject.business.AccountService;
 import nl.fontys.realestateproject.business.dto.user.*;
-import nl.fontys.realestateproject.business.exceptions.CredentialsException;
-import nl.fontys.realestateproject.business.exceptions.EmailAlreadyInUse;
-import nl.fontys.realestateproject.business.exceptions.InvalidUserException;
 import nl.fontys.realestateproject.configuration.security.auth.RequestAuthenticatedUserProvider;
 import nl.fontys.realestateproject.configuration.security.token.AccessToken;
 import org.springframework.http.HttpStatus;
@@ -26,11 +23,6 @@ public class AccountController {
     public ResponseEntity<CreateAccountResponse> createAccount(@RequestBody @Valid CreateAccountRequest request) {
         CreateAccountResponse response = accountService.createAccount(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
-    }
-
-    @ExceptionHandler({EmailAlreadyInUse.class, InvalidUserException.class, CredentialsException.class})
-    public ResponseEntity<String> handleExceptions(ResponseStatusException ex) {
-        return new ResponseEntity<>(ex.getReason(), HttpStatus.BAD_REQUEST);
     }
 
     @GetMapping()

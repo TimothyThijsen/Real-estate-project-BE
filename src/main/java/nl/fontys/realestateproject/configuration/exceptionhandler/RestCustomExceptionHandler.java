@@ -31,6 +31,12 @@ public class RestCustomExceptionHandler extends ResponseEntityExceptionHandler {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
+    @ExceptionHandler(value = {ResponseStatusException.class})
+    public ResponseEntity<String> handleResponseStatusException(final ResponseStatusException error) {
+        log.error("ResponseStatusException with status {} occurred.", error.getStatusCode(), error);
+        return new ResponseEntity<>(error.getReason(),error.getStatusCode());
+    }
+
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(
             MethodArgumentNotValidException error, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
@@ -48,14 +54,7 @@ public class RestCustomExceptionHandler extends ResponseEntityExceptionHandler {
         return convertToProblemDetail(errors);
     }
 
-    @ExceptionHandler(value = {ResponseStatusException.class})
-    public ProblemDetail handleResponseStatusException(final ResponseStatusException error) {
-        log.error("ResponseStatusException with status {} occurred.", error.getStatusCode(), error);
-        final List<ValidationErrorDTO> errors = error.getReason() != null ?
-                List.of(new ValidationErrorDTO(null, error.getReason()))
-                : Collections.emptyList();
-        return convertToProblemDetail(error.getStatusCode(), errors);
-    }
+
 
     @ExceptionHandler(value = {RuntimeException.class})
     public ProblemDetail handleUnknownRuntimeError(final RuntimeException error) {

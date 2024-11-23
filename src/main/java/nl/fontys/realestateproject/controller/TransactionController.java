@@ -7,11 +7,9 @@ import nl.fontys.realestateproject.business.TransactionService;
 import nl.fontys.realestateproject.business.dto.transaction.GetAllTransactionResponse;
 import nl.fontys.realestateproject.business.dto.transaction.MakeTransactionRequest;
 import nl.fontys.realestateproject.business.dto.transaction.MakeTransactionResponse;
-import nl.fontys.realestateproject.business.exceptions.TransactionException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("/transactions")
@@ -48,8 +46,4 @@ public class TransactionController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @ExceptionHandler({TransactionException.class})
-    public ResponseEntity<String> handleExceptions(ResponseStatusException ex) {
-        return new ResponseEntity<>(ex.getReason(), ex.getStatusCode());
-    }
 }

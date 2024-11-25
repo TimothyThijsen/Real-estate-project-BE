@@ -8,6 +8,7 @@ stages:
   - build
   - test
   - sonar
+  - docker
 build:
   stage: build
   script:
@@ -23,7 +24,7 @@ sonar:
     - ./gradlew test jacocoTestReport sonar
 
 docker:
-  stage: build
+  stage: docker
   script:
     - ./gradlew assemble
     - docker build -t real-estate-project-backend .

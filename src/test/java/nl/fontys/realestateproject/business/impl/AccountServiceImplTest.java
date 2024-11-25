@@ -127,7 +127,7 @@ class AccountServiceImplTest {
 
         GetAllAccountsResponse response = accountService.getAllAccounts();
 
-        assertEquals(2, response.getAccountsList().size());
+        assertEquals(2, response.getAccounts().size());
     }
 
     @Test

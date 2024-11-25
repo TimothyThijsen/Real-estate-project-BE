@@ -85,7 +85,7 @@ public class AccountServiceImpl implements AccountService {
                 .stream()
                 .map(accountConverter::convert)
                 .toList();
-        response.setAccountsList(accounts);
+        response.setAccounts(accounts);
         return response;
     }
 

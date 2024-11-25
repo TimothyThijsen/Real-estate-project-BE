@@ -36,6 +36,7 @@ class PropertySurfaceAreaRepositoryTest {
         assertNotNull(savedPropertySurfaceArea);
         assertEquals(15.0, savedPropertySurfaceArea.getAreaInSquareMetre());
     }
+
     @Test
     void find_shouldReturnPropertySurfaceArea_WhenItExists() {
         PropertySurfaceAreaEntity propertySurfaceArea = PropertySurfaceAreaEntity.builder()

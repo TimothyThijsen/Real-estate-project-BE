@@ -14,5 +14,5 @@ public interface AccountService {
 
     GetUserAccountResponse getAccount(long id);
 
-    GetUserAccountResponse login(LoginRequest request);
+    LoginResponse login(LoginRequest request);
 }

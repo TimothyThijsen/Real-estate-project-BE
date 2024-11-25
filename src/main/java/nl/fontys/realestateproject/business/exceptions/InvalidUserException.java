@@ -5,7 +5,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 public class InvalidUserException extends ResponseStatusException {
     public InvalidUserException() {
-        super(HttpStatus.BAD_REQUEST, "USER_NOT_FOUND");
+        super(HttpStatus.NOT_FOUND, "USER_NOT_FOUND");
     }
 
     public InvalidUserException(String message) {

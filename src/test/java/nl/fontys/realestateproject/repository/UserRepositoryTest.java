@@ -4,11 +4,14 @@ import jakarta.persistence.EntityManager;
 import nl.fontys.realestateproject.domain.enums.UserRole;
 import nl.fontys.realestateproject.persistence.UserRepository;
 import nl.fontys.realestateproject.persistence.entity.AccountEntity;
+import nl.fontys.realestateproject.persistence.entity.UserRoleEntity;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -27,15 +30,15 @@ class UserRepositoryTest {
         AccountEntity user = AccountEntity.builder()
                 .firstName("test")
                 .lastName("test")
-                .role(UserRole.CLIENT)
                 .email("email")
                 .password("test")
                 .build();
-
+        UserRoleEntity userRoles = UserRoleEntity.builder().role(UserRole.CLIENT).user(user).build();
+        user.setUserRoles(Set.of(userRoles));
         // Act
         AccountEntity savedUser = userRepository.save(user);
 
-        AccountEntity expectedUser = AccountEntity.builder().id(savedUser.getId()).firstName("test").lastName("test").role(UserRole.CLIENT).email("email").password("test").build();
+        AccountEntity expectedUser = AccountEntity.builder().id(savedUser.getId()).firstName("test").lastName("test").userRoles(Set.of(userRoles)).email("email").password("test").build();
 
         assertEquals(expectedUser, savedUser);
         // Assert
@@ -50,10 +53,11 @@ class UserRepositoryTest {
         AccountEntity user = AccountEntity.builder()
                 .firstName("name")
                 .lastName("test")
-                .role(UserRole.CLIENT)
                 .email("email")
                 .password("test")
                 .build();
+        UserRoleEntity userRoles = UserRoleEntity.builder().role(UserRole.CLIENT).user(user).build();
+        user.setUserRoles(Set.of(userRoles));
         entityManager.persist(user);
         entityManager.flush();
         entityManager.clear();
@@ -70,17 +74,21 @@ class UserRepositoryTest {
         AccountEntity user1 = AccountEntity.builder()
                 .firstName("name")
                 .lastName("test")
-                .role(UserRole.CLIENT)
                 .email("email1")
                 .password("test")
                 .build();
+        UserRoleEntity userRoles1 = UserRoleEntity.builder().role(UserRole.CLIENT).user(user1).build();
+        user1.setUserRoles(Set.of(userRoles1));
+
         AccountEntity user2 = AccountEntity.builder()
                 .firstName("name")
                 .lastName("test")
-                .role(UserRole.CLIENT)
                 .email("email2")
                 .password("test")
                 .build();
+        UserRoleEntity userRoles2 = UserRoleEntity.builder().role(UserRole.CLIENT).user(user2).build();
+        user2.setUserRoles(Set.of(userRoles2));
+
         entityManager.persist(user1);
         entityManager.persist(user2);
         entityManager.flush();

@@ -10,11 +10,16 @@ import nl.fontys.realestateproject.domain.enums.PropertyType;
 import nl.fontys.realestateproject.persistence.AddressRepository;
 import nl.fontys.realestateproject.persistence.PropertyRepository;
 import nl.fontys.realestateproject.persistence.PropertySurfaceAreaRepository;
+import nl.fontys.realestateproject.persistence.UserRepository;
+import nl.fontys.realestateproject.persistence.entity.AccountEntity;
 import nl.fontys.realestateproject.persistence.entity.AddressEntity;
 import nl.fontys.realestateproject.persistence.entity.PropertyEntity;
 import nl.fontys.realestateproject.persistence.entity.PropertySurfaceAreaEntity;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -26,12 +31,21 @@ public class PropertyServiceImpl implements PropertyService {
     PropertyRepository propertyRepository;
     AddressRepository addressRepository;
     PropertySurfaceAreaRepository surfaceAreaRepository;
+    UserRepository userRepository;
     PropertyConverter propertyConverter;
 
     @Override
     @Transactional
     public CreatePropertyResponse createProperty(CreatePropertyRequest request) {
-        PropertyEntity savedProperty = createNewProperty(request);
+        PropertyEntity savedProperty;
+        try {
+            savedProperty = createNewProperty(request);
+
+        } catch (DataIntegrityViolationException ex) {
+            throw new InvalidPropertyException("Street address is already in use");
+        } catch (Exception e) {
+            throw new InvalidPropertyException("Error occurred trying to create property");
+        }
 
         return CreatePropertyResponse.builder()
                 .propertyId(savedProperty.getId())
@@ -41,13 +55,15 @@ public class PropertyServiceImpl implements PropertyService {
     private PropertyEntity createNewProperty(CreatePropertyRequest request) {
         AddressEntity address = saveAddress(request.getCity(), request.getCountry(), request.getPostalCode(), request.getStreet());
         addressRepository.save(address);
-
+        AccountEntity account = userRepository.getReferenceById(request.getAgentId());
         PropertyEntity newProperty = PropertyEntity.builder()
                 .description(request.getDescription())
                 .price(request.getPrice())
                 .address(address)
                 .propertyType(PropertyType.valueOf(request.getPropertyType()))
                 .listingType(ListingType.valueOf(request.getListingType()))
+                .account(account)
+                .imageUrl(request.getImageUrl())
                 .build();
 
         List<PropertySurfaceAreaEntity> surfaceAreas = request.getSurfaceAreas().stream()
@@ -75,7 +91,7 @@ public class PropertyServiceImpl implements PropertyService {
 
     @Override
     public GetAllPropertiesResponse getAllProperties() {
-        List<PropertyEntity> results = propertyRepository.findAll();
+        List<PropertyEntity> results = propertyRepository.findAllAvailableProperty();
 
         final GetAllPropertiesResponse response = new GetAllPropertiesResponse();
         List<Property> properties = results
@@ -121,6 +137,7 @@ public class PropertyServiceImpl implements PropertyService {
         return PropertyEntity.builder()
                 .id(request.getId())
                 .description(request.getDescription())
+
                 .price(request.getPrice())
                 .address(address)
                 .propertyType(PropertyType.valueOf(request.getPropertyType()))
@@ -131,10 +148,13 @@ public class PropertyServiceImpl implements PropertyService {
 
     @Override
     @Transactional
-    public void deleteProperty(long id) {
+    public void deleteProperty(long id, long agentId) {
         Optional<PropertyEntity> propertyEntity = propertyRepository.findById(id);
         if (propertyEntity.isEmpty()) {
             throw new InvalidPropertyException();
+        }
+        if (propertyEntity.get().getId() != agentId) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
         surfaceAreaRepository.deleteAllByPropertyId(id);
         propertyRepository.deleteById(id);

@@ -7,9 +7,14 @@ import nl.fontys.realestateproject.business.dto.user.UpdateAccountRequest;
 import nl.fontys.realestateproject.business.exceptions.CredentialsException;
 import nl.fontys.realestateproject.business.exceptions.EmailAlreadyInUse;
 import nl.fontys.realestateproject.business.exceptions.InvalidUserException;
+import nl.fontys.realestateproject.business.impl.account.AccountConverter;
+import nl.fontys.realestateproject.business.impl.account.AccountServiceImpl;
+import nl.fontys.realestateproject.configuration.security.token.AccessTokenEncoder;
 import nl.fontys.realestateproject.domain.Account;
+import nl.fontys.realestateproject.domain.enums.UserRole;
 import nl.fontys.realestateproject.persistence.UserRepository;
 import nl.fontys.realestateproject.persistence.entity.AccountEntity;
+import nl.fontys.realestateproject.persistence.entity.UserRoleEntity;
 import org.hibernate.exception.DataException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,10 +22,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -30,10 +37,13 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class AccountServiceImplTest {
     @Mock
+    AccessTokenEncoder accessTokenEncoder;
+    @Mock
+    PasswordEncoder passwordEncoder;
+    @Mock
     private UserRepository userRepository;
     @Mock
     private AccountConverter accountConverter;
-
     @InjectMocks
     private AccountServiceImpl accountService;
 
@@ -235,17 +245,20 @@ class AccountServiceImplTest {
     }
 
     @Test
-    void login_ShouldReturnAccount_WhenCredentialsAreCorrect() {
+    void login_ShouldReturnLoginResponse_WhenCredentialsAreCorrect() {
         LoginRequest request = new LoginRequest();
         request.setEmail("john.doe@fake.com");
         request.setPassword("12345");
         AccountEntity accountEntity = new AccountEntity();
         accountEntity.setId(1L);
         accountEntity.setPassword("12345");
+        accountEntity.setUserRoles(Set.of(UserRoleEntity.builder().role(UserRole.CLIENT).build()));
         when(userRepository.findByEmail(request.getEmail())).thenReturn(Optional.of(accountEntity));
         new Account();
-        when(accountConverter.convert(accountEntity)).thenReturn(Account.builder().id(1L).build());
+        when(accessTokenEncoder.encode(any())).thenReturn("token");
+        when(passwordEncoder.matches(request.getPassword(), accountEntity.getPassword())).thenReturn(true);
+        assertEquals("token", accountService.login(request).getToken());
+        verify(userRepository).findByEmail(request.getEmail());
 
-        assertEquals(1L, accountService.login(request).getAccount().getId());
     }
 }

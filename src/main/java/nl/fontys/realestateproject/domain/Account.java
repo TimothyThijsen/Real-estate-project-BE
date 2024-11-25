@@ -7,6 +7,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import nl.fontys.realestateproject.domain.enums.UserRole;
 
+import java.util.List;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -18,5 +20,5 @@ public class Account {
     private String lastName;
     @JsonIgnore
     private String password;
-    private UserRole role;
+    private List<UserRole> roles;
 }

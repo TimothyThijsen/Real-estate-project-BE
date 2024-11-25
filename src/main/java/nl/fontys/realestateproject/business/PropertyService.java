@@ -11,5 +11,5 @@ public interface PropertyService {
 
     void updateProperty(UpdatePropertyRequest request);
 
-    void deleteProperty(long id);
+    void deleteProperty(long id, long agentId);
 }

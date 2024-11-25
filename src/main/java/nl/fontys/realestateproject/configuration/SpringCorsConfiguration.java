@@ -1,4 +1,4 @@
-package nl.fontys.realestateproject.configurations;
+package nl.fontys.realestateproject.configuration;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -8,6 +8,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 public class SpringCorsConfiguration {
+
     @Bean
     public WebMvcConfigurer corsConfigurer(@Value("${cors.allowedOrigins}") String allowedOrigins) {
         return new WebMvcConfigurer() {

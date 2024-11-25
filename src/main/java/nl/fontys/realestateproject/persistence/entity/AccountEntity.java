@@ -2,12 +2,12 @@ package nl.fontys.realestateproject.persistence.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import nl.fontys.realestateproject.domain.enums.UserRole;
+
+import java.util.Set;
 
 @Entity
 @Table(name = "account")
@@ -37,8 +37,8 @@ public class AccountEntity {
     @Column(name = "password")
     private String password;
 
-    @NotNull
-    @Enumerated(EnumType.STRING)
-    @Column(name = "user_role")
-    private UserRole role;
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    @JoinColumn(name = "account_id")
+    private Set<UserRoleEntity> userRoles;
+
 }

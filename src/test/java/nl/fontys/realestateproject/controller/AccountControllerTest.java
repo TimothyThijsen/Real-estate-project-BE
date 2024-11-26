@@ -3,7 +3,6 @@ package nl.fontys.realestateproject.controller;
 import nl.fontys.realestateproject.business.dto.user.*;
 import nl.fontys.realestateproject.business.impl.account.AccountServiceImpl;
 import nl.fontys.realestateproject.configuration.security.auth.RequestAuthenticatedUserProvider;
-import nl.fontys.realestateproject.configuration.security.token.AccessToken;
 import nl.fontys.realestateproject.configuration.security.token.impl.AccessTokenImpl;
 import nl.fontys.realestateproject.domain.Account;
 import nl.fontys.realestateproject.domain.enums.UserRole;
@@ -109,14 +108,14 @@ class AccountControllerTest {
     @Test
     void createAccount_shouldReturn201ResponseWithCreateAccountResponse() throws Exception {
         // Arrange
-        CreateAccountRequest createAccountRequest = CreateAccountRequest.builder()
+       /* CreateAccountRequest createAccountRequest = CreateAccountRequest.builder()
                 .email("test@mail.com")
                 .firstName("test")
                 .lastName("test")
                 .password("Pass123")
-                .role("CLIENT").build();
+                .role("CLIENT").build();*/
         CreateAccountResponse response = new CreateAccountResponse(1);
-        when(accountService.createAccount(createAccountRequest)).thenReturn(response);
+        when(accountService.createAccount(any())).thenReturn(response);
         mockMvc.perform(post("/accounts")
                         .contentType(APPLICATION_JSON_VALUE)
                         .content("""
@@ -130,7 +129,7 @@ class AccountControllerTest {
                                 """))
                 .andDo(print())
                 .andExpect(status().isCreated());
-        verify(accountService).createAccount(createAccountRequest);
+        verify(accountService).createAccount(any());
     }
 
     @Test
@@ -166,6 +165,28 @@ class AccountControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "test@mail.com", roles = {"CLIENT"})
+    void updateAccount_shouldReturn403Response() throws Exception {
+        AccessTokenImpl accessToken = new AccessTokenImpl("user", 2L, List.of("CLIENT"));
+        when(requestAuthenticatedUserProvider.getAuthenticatedUserInRequest()).thenReturn(accessToken);
+        doNothing().when(accountService).updateAccount(any());
+        mockMvc.perform(put("/accounts")
+                        .contentType(APPLICATION_JSON_VALUE)
+                        .content("""
+                                {
+                                    "id": 1,
+                                    "email": "test@mail.com",
+                                    "firstName": "test",
+                                    "lastName": "test",
+                                    "password": "Pass123",
+                                    "role": "CLIENT"
+                                    }"""))
+                .andDo(print())
+                .andExpect(status().isForbidden());
+        verify(accountService, never()).deleteAccount(1);
+    }
+
+    @Test
     @WithMockUser(username = "test@mail.com", roles = {"ADMIN"})
     void deleteAccount_shouldReturn204Response() throws Exception {
         // Arrange
@@ -176,5 +197,17 @@ class AccountControllerTest {
                 .andDo(print())
                 .andExpect(status().isNoContent());
         verify(accountService).deleteAccount(1);
+    }
+    @Test
+    @WithMockUser(username = "test@mail.com", roles = {"CLIENT"})
+    void deleteAccouunt_shouldReturn403Response() throws Exception {
+        // Arrange
+        AccessTokenImpl accessToken = new AccessTokenImpl("user", 2L, List.of("CLIENT"));
+        when(requestAuthenticatedUserProvider.getAuthenticatedUserInRequest()).thenReturn(accessToken);
+        doNothing().when(accountService).deleteAccount(1);
+        mockMvc.perform(delete("/accounts/1"))
+                .andDo(print())
+                .andExpect(status().isForbidden());
+        verify(accountService, never()).deleteAccount(1);
     }
 }

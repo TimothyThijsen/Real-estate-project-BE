@@ -58,4 +58,10 @@ public class PropertyController {
         propertyService.updateProperty(request);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
+
+    @GetMapping("/agent/{agentId}")
+    public ResponseEntity<GetAllPropertiesByAgentId> getAllPropertiesByAgentId(@PathVariable int agentId) {
+        GetAllPropertiesByAgentId response = propertyService.getAllPropertiesByAgentId(agentId);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
 }

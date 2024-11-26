@@ -210,4 +210,17 @@ class PropertyServiceImplTest {
         when(propertyRepositoryMock.findById(1L)).thenReturn(Optional.of(propertyEntity));
         assertThrows(ResponseStatusException.class, () -> propertyService.deleteProperty(1, 99));
     }
+
+    @Test
+    void getAllPropertiesByAgentId_ShouldReturnProperty_WhenPropertiesIsFound(){
+        AccountEntity accountEntity = AccountEntity.builder().id(1L).build();
+        PropertyEntity property1 = PropertyEntity.builder().id(1L).description("Property 1").account(accountEntity).surfaceAreas(List.of()).build();
+
+        when(propertyRepositoryMock.findAllByAccountId(1L)).thenReturn(List.of(property1));
+        when(propertyConverterMock.convert(property1)).thenReturn(Property.builder().id(1L).description("Property 1").build());
+        GetAllPropertiesByAgentId actual = propertyService.getAllPropertiesByAgentId(1L);
+
+        assertEquals(1, actual.getProperties().size());
+        verify(propertyRepositoryMock).findAllByAccountId(1L);
+    }
 }

@@ -161,4 +161,13 @@ public class PropertyServiceImpl implements PropertyService {
         addressRepository.deleteById(propertyEntity.get().getAddress().getId());
     }
 
+    @Override
+    public GetAllPropertiesByAgentId getAllPropertiesByAgentId(long agentId) {
+        List<PropertyEntity> results = propertyRepository.findAllByAccountId(agentId);
+        return GetAllPropertiesByAgentId.builder()
+                .properties(results.stream().map(propertyConverter::convert).toList())
+                .build();
+    }
+
+
 }

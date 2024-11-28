@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import nl.fontys.realestateproject.domain.enums.ListingStatus;
 import nl.fontys.realestateproject.domain.enums.ListingType;
 import nl.fontys.realestateproject.domain.enums.PropertyType;
 
@@ -24,4 +25,5 @@ public class Property {
     private Address address;
     private Account agent;
     private String imageUrl;
+    private ListingStatus listingStatus;
 }

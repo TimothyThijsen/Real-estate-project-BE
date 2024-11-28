@@ -200,7 +200,7 @@ class AccountControllerTest {
     }
     @Test
     @WithMockUser(username = "test@mail.com", roles = {"CLIENT"})
-    void deleteAccouunt_shouldReturn403Response() throws Exception {
+    void deleteAccount_shouldReturn403Response() throws Exception {
         // Arrange
         AccessTokenImpl accessToken = new AccessTokenImpl("user", 2L, List.of("CLIENT"));
         when(requestAuthenticatedUserProvider.getAuthenticatedUserInRequest()).thenReturn(accessToken);

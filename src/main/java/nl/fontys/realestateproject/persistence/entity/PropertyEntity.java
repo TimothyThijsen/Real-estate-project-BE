@@ -59,4 +59,7 @@ public class PropertyEntity {
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "property")
     private List<PropertySurfaceAreaEntity> surfaceAreas;
+
+    @Column(name = "listing_status")
+    private String listingStatus;
 }

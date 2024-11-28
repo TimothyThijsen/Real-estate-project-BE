@@ -11,7 +11,6 @@ import nl.fontys.realestateproject.domain.PropertySurfaceArea;
 import nl.fontys.realestateproject.domain.enums.ListingType;
 import nl.fontys.realestateproject.domain.enums.PropertyType;
 import nl.fontys.realestateproject.domain.enums.UserRole;
-import org.apache.catalina.User;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;

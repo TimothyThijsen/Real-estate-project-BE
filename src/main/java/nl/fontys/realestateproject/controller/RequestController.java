@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import nl.fontys.realestateproject.business.RequestService;
 import nl.fontys.realestateproject.business.dto.request.CreateRequestRequest;
 import nl.fontys.realestateproject.business.dto.request.GetAllRequestResponse;
+import nl.fontys.realestateproject.business.dto.request.UpdateRequestRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,5 +26,11 @@ public class RequestController {
     public ResponseEntity<Void> createRequest(@RequestBody CreateRequestRequest request) {
         requestService.createRequest(request);
         return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @PutMapping()
+    public ResponseEntity<Void> updateRequest(@RequestBody UpdateRequestRequest request) {
+        requestService.updateRequest(request);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

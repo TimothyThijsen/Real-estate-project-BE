@@ -1,9 +1,6 @@
 package nl.fontys.realestateproject.business.dto.property;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -22,6 +19,7 @@ public class CreatePropertyRequest {
     @Size(max = 500, message = "Description must be at most 250 characters long")
     private String description;
     @NotNull
+    @Max(value = 1000000000, message = "Price must be at most 1000000000")
     private BigDecimal price;
     @NotNull
     private String propertyType;

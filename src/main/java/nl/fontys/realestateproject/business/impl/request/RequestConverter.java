@@ -1,4 +1,4 @@
-package nl.fontys.realestateproject.business.impl.Request;
+package nl.fontys.realestateproject.business.impl.request;
 
 import lombok.AllArgsConstructor;
 import nl.fontys.realestateproject.domain.Request;

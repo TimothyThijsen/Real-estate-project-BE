@@ -1,4 +1,4 @@
-package nl.fontys.realestateproject.business.impl.Request;
+package nl.fontys.realestateproject.business.impl.request;
 
 import lombok.AllArgsConstructor;
 import nl.fontys.realestateproject.business.RequestService;
@@ -11,7 +11,7 @@ import nl.fontys.realestateproject.persistence.RequestRepository;
 import nl.fontys.realestateproject.persistence.UserRepository;
 import nl.fontys.realestateproject.persistence.entity.PropertyEntity;
 import nl.fontys.realestateproject.persistence.entity.RequestEntity;
-import org.apache.catalina.authenticator.SavedRequest;
+import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -59,6 +59,6 @@ public class RequestServiceImpl implements RequestService {
 
     @Override
     public void deleteRequest(long id) {
-
+       throw new NotImplementedException();
     }
 }

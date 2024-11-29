@@ -32,6 +32,7 @@ class PropertyConverterTest {
                 .description("Nice house")
                 .price(BigDecimal.valueOf(100000.0))
                 .surfaceAreas(List.of())
+                .listingStatus("ACTIVE")
                 .build();
         Property response = propertyConverter.convert(entity);
         assertEquals(1L, response.getId());

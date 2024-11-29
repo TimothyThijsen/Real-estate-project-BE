@@ -107,13 +107,6 @@ class AccountControllerTest {
 
     @Test
     void createAccount_shouldReturn201ResponseWithCreateAccountResponse() throws Exception {
-        // Arrange
-       /* CreateAccountRequest createAccountRequest = CreateAccountRequest.builder()
-                .email("test@mail.com")
-                .firstName("test")
-                .lastName("test")
-                .password("Pass123")
-                .role("CLIENT").build();*/
         CreateAccountResponse response = new CreateAccountResponse(1);
         when(accountService.createAccount(any())).thenReturn(response);
         mockMvc.perform(post("/accounts")

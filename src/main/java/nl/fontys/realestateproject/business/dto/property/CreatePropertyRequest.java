@@ -19,7 +19,7 @@ import java.util.List;
 @NoArgsConstructor
 public class CreatePropertyRequest {
     @NotBlank
-    @Size(max = 250, message = "Description must be at most 250 characters long")
+    @Size(max = 500, message = "Description must be at most 250 characters long")
     private String description;
     @NotNull
     private BigDecimal price;

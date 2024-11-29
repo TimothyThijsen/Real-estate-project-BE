@@ -1,0 +1,29 @@
+package nl.fontys.realestateproject.controller;
+
+import lombok.AllArgsConstructor;
+import nl.fontys.realestateproject.business.RequestService;
+import nl.fontys.realestateproject.business.dto.request.CreateRequestRequest;
+import nl.fontys.realestateproject.business.dto.request.GetAllRequestResponse;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/requests")
+@CrossOrigin(origins = "${cors.allowedOrigins}")
+@AllArgsConstructor
+public class RequestController {
+    RequestService requestService;
+
+    @GetMapping()
+    public ResponseEntity<GetAllRequestResponse> getAllRequests() {
+        GetAllRequestResponse response = requestService.getAllRequests();
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @PostMapping()
+    public ResponseEntity<Void> createRequest(@RequestBody CreateRequestRequest request) {
+        requestService.createRequest(request);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+}

@@ -3,6 +3,7 @@ package nl.fontys.realestateproject.business.impl;
 import lombok.AllArgsConstructor;
 import nl.fontys.realestateproject.business.impl.account.AccountConverter;
 import nl.fontys.realestateproject.domain.Property;
+import nl.fontys.realestateproject.domain.enums.ListingStatus;
 import nl.fontys.realestateproject.persistence.entity.PropertyEntity;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +27,7 @@ final class PropertyConverter {
                 .address(addressConverter.convert(propertyEntity.getAddress()))
                 .agent(accountConverter.convert(propertyEntity.getAccount()))
                 .imageUrl(propertyEntity.getImageUrl())
+                .listingStatus(ListingStatus.valueOf(propertyEntity.getListingStatus()))
                 .build();
     }
 

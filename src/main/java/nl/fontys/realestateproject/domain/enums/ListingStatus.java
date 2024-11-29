@@ -4,5 +4,4 @@ public enum ListingStatus {
     ACTIVE,
     SOLD,
     RENTED
-
 }

@@ -3,6 +3,7 @@ package nl.fontys.realestateproject.business.dto.property;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,6 +20,7 @@ import java.util.List;
 public class UpdatePropertyRequest {
     private long id;
     @NotBlank
+    @Size(max = 500, message = "Description must be at most 250 characters long")
     private String description;
     @NotNull
     private BigDecimal price;
@@ -29,12 +31,16 @@ public class UpdatePropertyRequest {
     @NotEmpty
     private List<PropertySurfaceArea> surfaceAreas;
     @NotBlank
+    @Size(max = 50, message = "Street name must be at most 50 characters long")
     private String street;
     @NotBlank
+    @Size(max = 50, message = "City name must be at most 50 characters long")
     private String city;
     @NotBlank
+    @Size(max = 15, message = "Postal code must be at most 15 characters long")
     private String postalCode;
     @NotBlank
+    @Size(max = 50, message = "Country name must be at most 50 characters long")
     private String country;
     @NotNull
     private Long agentId;

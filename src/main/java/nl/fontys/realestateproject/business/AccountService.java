@@ -2,6 +2,7 @@ package nl.fontys.realestateproject.business;
 
 
 import nl.fontys.realestateproject.business.dto.user.*;
+import nl.fontys.realestateproject.persistence.entity.AccountEntity;
 
 public interface AccountService {
     CreateAccountResponse createAccount(CreateAccountRequest createAccountRequest);
@@ -14,5 +15,6 @@ public interface AccountService {
 
     GetUserAccountResponse getAccount(long id);
 
-    LoginResponse login(LoginRequest request);
+    String login(LoginRequest request);
+    String generateAccessToken(AccountEntity user);
 }

@@ -139,7 +139,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public LoginResponse login(LoginRequest request) {
+    public String login(LoginRequest request) {
         Optional<AccountEntity> result = userRepository.findByEmail(request.getEmail());
         if (result.isEmpty()) {
             throw new CredentialsException();
@@ -147,12 +147,11 @@ public class AccountServiceImpl implements AccountService {
         if (!passwordEncoder.matches(request.getPassword(), result.get().getPassword())) {
             throw new CredentialsException();
         }
-        return LoginResponse.builder()
-                .token(generateAccessToken(result.get()))
-                .build();
+        return generateAccessToken(result.get());
     }
 
-    private String generateAccessToken(AccountEntity user) {
+    @Override
+    public String generateAccessToken(AccountEntity user) {
         Long userId = user.getId();
         Collection<String> roles = user.getUserRoles().stream()
                 .map(UserRoleEntity::getRole)

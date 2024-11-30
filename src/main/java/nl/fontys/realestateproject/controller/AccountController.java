@@ -3,9 +3,11 @@ package nl.fontys.realestateproject.controller;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import nl.fontys.realestateproject.business.AccountService;
+import nl.fontys.realestateproject.business.RefreshTokenService;
 import nl.fontys.realestateproject.business.dto.user.*;
 import nl.fontys.realestateproject.configuration.security.auth.RequestAuthenticatedUserProvider;
 import nl.fontys.realestateproject.configuration.security.token.AccessToken;
+import nl.fontys.realestateproject.persistence.entity.RefreshTokenEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +20,8 @@ import org.springframework.web.server.ResponseStatusException;
 public class AccountController {
     private final AccountService accountService;
     private final RequestAuthenticatedUserProvider requestAuthenticatedUserProvider;
+    private final RefreshTokenService refreshTokenService;
+
 
     @PostMapping()
     public ResponseEntity<CreateAccountResponse> createAccount(@RequestBody @Valid CreateAccountRequest request) {
@@ -39,7 +43,12 @@ public class AccountController {
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody @Valid LoginRequest request) {
-        LoginResponse response = accountService.login(request);
+        String accessToken = accountService.login(request);
+        RefreshTokenEntity refreshToken = refreshTokenService.createRefreshToken(request.getEmail());
+        LoginResponse response = LoginResponse.builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshToken.getToken())
+                .build();
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 

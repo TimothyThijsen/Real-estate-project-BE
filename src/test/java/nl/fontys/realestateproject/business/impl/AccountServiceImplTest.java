@@ -257,7 +257,7 @@ class AccountServiceImplTest {
         new Account();
         when(accessTokenEncoder.encode(any())).thenReturn("token");
         when(passwordEncoder.matches(request.getPassword(), accountEntity.getPassword())).thenReturn(true);
-        assertEquals("token", accountService.login(request).getToken());
+        assertEquals("token", accountService.login(request));
         verify(userRepository).findByEmail(request.getEmail());
 
     }

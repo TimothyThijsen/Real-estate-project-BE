@@ -1,11 +1,13 @@
 package nl.fontys.realestateproject.controller;
 
+import nl.fontys.realestateproject.business.RefreshTokenService;
 import nl.fontys.realestateproject.business.dto.user.*;
 import nl.fontys.realestateproject.business.impl.account.AccountServiceImpl;
 import nl.fontys.realestateproject.configuration.security.auth.RequestAuthenticatedUserProvider;
 import nl.fontys.realestateproject.configuration.security.token.impl.AccessTokenImpl;
 import nl.fontys.realestateproject.domain.Account;
 import nl.fontys.realestateproject.domain.enums.UserRole;
+import nl.fontys.realestateproject.persistence.entity.RefreshTokenEntity;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +37,8 @@ class AccountControllerTest {
     RequestAuthenticatedUserProvider requestAuthenticatedUserProvider;
     @MockBean
     AccountServiceImpl accountService;
+    @MockBean
+    RefreshTokenService refreshTokenService;
 
     @Test
     void getAllAccount_shouldReturn200ResponseWithAllAccounts() throws Exception {
@@ -92,8 +96,12 @@ class AccountControllerTest {
     void login_shouldReturn200ResponseWithLoginResponse() throws Exception {
         // Arrange
         LoginRequest loginRequest = new LoginRequest("user@mail.com", "pass");
-        LoginResponse response = new LoginResponse("token");
-        when(accountService.login(loginRequest)).thenReturn(response);
+        LoginResponse response = new LoginResponse("token","refreshToken");
+        RefreshTokenEntity refreshTokenEntity = RefreshTokenEntity.builder().token("refreshToken").build();
+
+        when(accountService.login(loginRequest)).thenReturn("token");
+        when(refreshTokenService.createRefreshToken(loginRequest.getEmail())).thenReturn(refreshTokenEntity);
+
         mockMvc.perform(post("/accounts/login")
                         .contentType(APPLICATION_JSON_VALUE)
                         .content(""" 

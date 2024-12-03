@@ -64,7 +64,7 @@ public class PropertyServiceImpl implements PropertyService {
                 .listingType(ListingType.valueOf(request.getListingType()))
                 .account(account)
                 .imageUrl(request.getImageUrl())
-                .listingStatus("AVAILABLE")
+                .listingStatus("ACTIVE")
                 .build();
 
         List<PropertySurfaceAreaEntity> surfaceAreas = request.getSurfaceAreas().stream()

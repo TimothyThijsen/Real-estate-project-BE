@@ -1,5 +1,6 @@
 package nl.fontys.realestateproject.business;
 
+import nl.fontys.realestateproject.business.exceptions.InvalidRefreshTokenException;
 import nl.fontys.realestateproject.persistence.RefreshTokenRepository;
 import nl.fontys.realestateproject.persistence.UserRepository;
 import nl.fontys.realestateproject.persistence.entity.RefreshTokenEntity;
@@ -34,8 +35,20 @@ public class RefreshTokenService {
     public RefreshTokenEntity verifyExpiration(RefreshTokenEntity token){
         if(token.getExpiryDate().compareTo(Instant.now())<0){
             refreshTokenRepository.delete(token);
-            throw new RuntimeException(token.getToken() + " Refresh token is expired. Please make a new login..!");
+            throw new InvalidRefreshTokenException();
         }
         return token;
+    }
+
+    public RefreshTokenEntity updateRefreshToken(String token){
+        RefreshTokenEntity oldToken = refreshTokenRepository.findByToken(token).get();
+        RefreshTokenEntity updatedToken = RefreshTokenEntity.builder()
+                .account(oldToken.getAccount())
+                .token(UUID.randomUUID().toString())
+                .expiryDate(oldToken.getExpiryDate())
+                .build();
+        oldToken.setExpiryDate(Instant.now());
+        refreshTokenRepository.delete(oldToken);
+        return refreshTokenRepository.save(updatedToken);
     }
 }

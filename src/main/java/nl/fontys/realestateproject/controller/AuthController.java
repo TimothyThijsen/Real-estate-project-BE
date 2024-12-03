@@ -5,7 +5,7 @@ import nl.fontys.realestateproject.business.AccountService;
 import nl.fontys.realestateproject.business.RefreshTokenService;
 import nl.fontys.realestateproject.business.dto.RefreshTokenRequest;
 import nl.fontys.realestateproject.business.dto.user.LoginResponse;
-import nl.fontys.realestateproject.persistence.entity.AccountEntity;
+import nl.fontys.realestateproject.business.exceptions.InvalidRefreshTokenException;
 import nl.fontys.realestateproject.persistence.entity.RefreshTokenEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,8 +25,8 @@ public class AuthController {
                     String accessToken = accountService.generateAccessToken(accountInfo);
                     return LoginResponse.builder()
                             .accessToken(accessToken)
-                            .refreshToken(request.getToken())
+                            .refreshToken(refreshTokenService.updateRefreshToken(request.getToken()).getToken())
                             .build();
-                }).orElseThrow(() ->new RuntimeException("Refresh Token is not in DB..!!"));
+                }).orElseThrow(InvalidRefreshTokenException::new);
     }
 }

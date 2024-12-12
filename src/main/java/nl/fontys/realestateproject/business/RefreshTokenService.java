@@ -1,10 +1,11 @@
 package nl.fontys.realestateproject.business;
 
 import nl.fontys.realestateproject.business.exceptions.InvalidRefreshTokenException;
+import nl.fontys.realestateproject.business.exceptions.InvalidUserException;
 import nl.fontys.realestateproject.persistence.RefreshTokenRepository;
 import nl.fontys.realestateproject.persistence.UserRepository;
+import nl.fontys.realestateproject.persistence.entity.AccountEntity;
 import nl.fontys.realestateproject.persistence.entity.RefreshTokenEntity;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -15,15 +16,15 @@ import java.util.UUID;
 @Service
 public class RefreshTokenService {
 
-    @Autowired
     RefreshTokenRepository refreshTokenRepository;
-
-    @Autowired
     UserRepository userRepository;
-
     public RefreshTokenEntity createRefreshToken(String email) {
+        Optional<AccountEntity> account = userRepository.findByEmail(email);
+        if (account.isEmpty()) {
+            throw new InvalidUserException();
+        }
         RefreshTokenEntity refreshToken = RefreshTokenEntity.builder()
-                .account(userRepository.findByEmail(email).get())
+                .account(account.get())
                 .token(UUID.randomUUID().toString())
                 .expiryDate(Instant.now().plus(120, ChronoUnit.MINUTES))
                 .build();
@@ -42,7 +43,11 @@ public class RefreshTokenService {
     }
 
     public RefreshTokenEntity updateRefreshToken(String token){
-        RefreshTokenEntity oldToken = refreshTokenRepository.findByToken(token).get();
+        Optional<RefreshTokenEntity> tokenEntity = refreshTokenRepository.findByToken(token);
+        if (tokenEntity.isEmpty()) {
+            throw new InvalidUserException();
+        }
+        RefreshTokenEntity oldToken = tokenEntity.get();
         RefreshTokenEntity updatedToken = RefreshTokenEntity.builder()
                 .account(oldToken.getAccount())
                 .token(UUID.randomUUID().toString())

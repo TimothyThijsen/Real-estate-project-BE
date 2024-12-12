@@ -96,7 +96,6 @@ class AccountControllerTest {
     void login_shouldReturn200ResponseWithLoginResponse() throws Exception {
         // Arrange
         LoginRequest loginRequest = new LoginRequest("user@mail.com", "pass");
-        LoginResponse response = new LoginResponse("token","refreshToken");
         RefreshTokenEntity refreshTokenEntity = RefreshTokenEntity.builder().token("refreshToken").build();
 
         when(accountService.login(loginRequest)).thenReturn("token");

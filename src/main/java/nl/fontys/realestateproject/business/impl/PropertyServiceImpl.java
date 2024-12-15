@@ -16,11 +16,15 @@ import nl.fontys.realestateproject.persistence.entity.AddressEntity;
 import nl.fontys.realestateproject.persistence.entity.PropertyEntity;
 import nl.fontys.realestateproject.persistence.entity.PropertySurfaceAreaEntity;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -168,6 +172,29 @@ public class PropertyServiceImpl implements PropertyService {
         return GetAllPropertiesByAgentId.builder()
                 .properties(results.stream().map(propertyConverter::convert).toList())
                 .build();
+    }
+
+    @Override
+    public GetAllPropertiesResponse getAllPropertiesBySearch(GetAllPropertiesBySearchRequest request) {
+        Pageable pageable = PageRequest.of(request.getCurrentPage()-1, request.getPageSize());
+
+        Page<PropertyEntity> results = propertyRepository.findAllByAvailableAndSearchTerm(
+                ListingType.valueOf(request.getListingType()),
+                pageable,
+                request.getMinPrice() != null ? request.getMinPrice() : BigDecimal.ZERO,
+                request.getMaxPrice() != null ? request.getMaxPrice() : BigDecimal.ZERO,
+                request.getSearchTerm() != null ? request.getSearchTerm() : "",
+                request.getMinTotalArea() != null ? request.getMinTotalArea() : 0.0);
+
+        final GetAllPropertiesResponse response = new GetAllPropertiesResponse();
+        List<Property> properties = results
+                .stream()
+                .map(propertyConverter::convert)
+                .toList();
+
+        response.setProperties(properties);
+        response.setTotalPages(results.getTotalPages());
+        return response;
     }
 
 

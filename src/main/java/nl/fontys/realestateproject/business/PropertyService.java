@@ -13,4 +13,5 @@ public interface PropertyService {
 
     void deleteProperty(long id, long agentId);
     GetAllPropertiesByAgentId getAllPropertiesByAgentId(long agentId);
+    GetAllPropertiesResponse getAllPropertiesBySearch(GetAllPropertiesBySearchRequest request);
 }

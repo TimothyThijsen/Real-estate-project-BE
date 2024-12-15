@@ -14,4 +14,5 @@ import java.util.List;
 @Builder
 public class GetAllPropertiesResponse {
     private List<Property> properties;
+    private int totalPages;
 }

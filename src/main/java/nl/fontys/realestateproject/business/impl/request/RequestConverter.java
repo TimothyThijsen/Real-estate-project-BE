@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @AllArgsConstructor
-public final class RequestConverter {
+final class RequestConverter {
 
     public Request convert(RequestEntity entity) {
         return Request.builder()

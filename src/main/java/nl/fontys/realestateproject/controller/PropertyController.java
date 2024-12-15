@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.math.BigDecimal;
 import java.util.Objects;
 
 @RestController
@@ -62,6 +63,27 @@ public class PropertyController {
     @GetMapping("/agent/{agentId}")
     public ResponseEntity<GetAllPropertiesByAgentId> getAllPropertiesByAgentId(@PathVariable int agentId) {
         GetAllPropertiesByAgentId response = propertyService.getAllPropertiesByAgentId(agentId);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<GetAllPropertiesResponse> getAllPropertiesBySearch(@RequestParam(required = false) String searchTerm,
+                                                                            @RequestParam(required = false) String listingType,
+                                                                            @RequestParam(required = false) BigDecimal minPrice,
+                                                                            @RequestParam(required = false) BigDecimal maxPrice,
+                                                                            @RequestParam(required = false) Double minSize,
+                                                                            @RequestParam(required = false) Integer currentPage,
+                                                                            @RequestParam(required = false) Integer pageSize) {
+        GetAllPropertiesBySearchRequest request = GetAllPropertiesBySearchRequest.builder()
+                .searchTerm(searchTerm)
+                .listingType(listingType)
+                .minPrice(minPrice)
+                .maxPrice(maxPrice)
+                .minTotalArea(minSize)
+                .currentPage(currentPage)
+                .pageSize(pageSize)
+                .build();
+        GetAllPropertiesResponse response = propertyService.getAllPropertiesBySearch(request);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 }

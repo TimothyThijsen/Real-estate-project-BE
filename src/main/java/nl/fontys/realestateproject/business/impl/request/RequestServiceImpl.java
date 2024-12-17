@@ -1,14 +1,13 @@
 package nl.fontys.realestateproject.business.impl.request;
 
 import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import nl.fontys.realestateproject.business.RequestService;
-import nl.fontys.realestateproject.business.dto.request.CreateRequestRequest;
-import nl.fontys.realestateproject.business.dto.request.GetAllRequestResponse;
-import nl.fontys.realestateproject.business.dto.request.GetRequestResponse;
-import nl.fontys.realestateproject.business.dto.request.UpdateRequestRequest;
+
+import nl.fontys.realestateproject.business.dto.request.*;
+import nl.fontys.realestateproject.domain.enums.RequestStatus;
 import nl.fontys.realestateproject.persistence.PropertyRepository;
 import nl.fontys.realestateproject.persistence.RequestRepository;
-import nl.fontys.realestateproject.persistence.UserRepository;
 import nl.fontys.realestateproject.persistence.entity.PropertyEntity;
 import nl.fontys.realestateproject.persistence.entity.RequestEntity;
 import org.apache.commons.lang3.NotImplementedException;
@@ -21,25 +20,25 @@ import java.time.LocalDateTime;
 public class RequestServiceImpl implements RequestService {
     RequestRepository requestRepository;
     PropertyRepository propertyRepository;
-    UserRepository userRepository;
     RequestConverter requestConverter;
+
     @Override
     public void createRequest(CreateRequestRequest request) {
 
-        PropertyEntity property = propertyRepository.getReferenceById(request.getPropertyId());
+        PropertyEntity property = propertyRepository.getById(request.getPropertyId());
 
         RequestEntity requestEntity = RequestEntity.builder()
-                .requestStatus(request.getRequestStatus())
+                .requestStatus(RequestStatus.PENDING.name())
                 .requestDate(LocalDateTime.now())
                 .property(property)
-                .customerId(request.getAccountId())
+                .accountId(request.getAccountId())
                 .build();
         requestRepository.save(requestEntity);
 
     }
 
     @Override
-    public GetAllRequestResponse getAllRequests() {
+    public GetAllRequestResponse getAllRequests(long agentId) {
         GetAllRequestResponse response = new GetAllRequestResponse();
         response.setRequests(requestRepository.findAll().stream().map(requestConverter::convert).toList());
         return response;
@@ -60,5 +59,13 @@ public class RequestServiceImpl implements RequestService {
     @Override
     public void deleteRequest(long id) {
        throw new NotImplementedException();
+    }
+
+    @Override
+    public GetActiveRequestsResponse getActiveRequests(long customerId, long propertyId) {
+        RequestEntity requestEntity = requestRepository.findActivePropertyByCustomerIdAndPropertyId(customerId, propertyId);
+        return GetActiveRequestsResponse.builder()
+                .hasActiveRequests(requestEntity != null)
+                .build();
     }
 }

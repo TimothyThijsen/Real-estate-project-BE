@@ -7,9 +7,13 @@ import nl.fontys.realestateproject.business.dto.transaction.GetAllTransactionRes
 import nl.fontys.realestateproject.business.dto.transaction.MakeTransactionRequest;
 import nl.fontys.realestateproject.business.dto.transaction.MakeTransactionResponse;
 import nl.fontys.realestateproject.business.exceptions.TransactionException;
+import nl.fontys.realestateproject.domain.enums.ListingStatus;
+import nl.fontys.realestateproject.domain.enums.ListingType;
 import nl.fontys.realestateproject.persistence.ContractRepository;
+import nl.fontys.realestateproject.persistence.PropertyRepository;
 import nl.fontys.realestateproject.persistence.TransactionRepository;
 import nl.fontys.realestateproject.persistence.entity.ContractEntity;
+import nl.fontys.realestateproject.persistence.entity.PropertyEntity;
 import nl.fontys.realestateproject.persistence.entity.TransactionEntity;
 import org.springframework.stereotype.Service;
 
@@ -23,13 +27,15 @@ public class TransactionServiceImpl implements TransactionService {
     private final TransactionRepository transactionRepository;
     private final TransactionConverter transactionConverter;
     private final ContractRepository contractRepository;
+    private final PropertyRepository propertyRepository;
 
     @Transactional
     @Override
     public MakeTransactionResponse makeTransaction(MakeTransactionRequest request) {
+        PropertyEntity property = propertyRepository.getReferenceById(request.getPropertyId());
         ContractEntity contractEntity = ContractEntity.builder()
                 .customerId(request.getCustomerId())
-                .propertyId(request.getPropertyId())
+                .propertyId(property.getId())
                 .isActive(true)
                 .startDate(LocalDateTime.now())
                 .minimumContractEndDate(LocalDateTime.now().plusYears(1))
@@ -41,9 +47,16 @@ public class TransactionServiceImpl implements TransactionService {
                 .date(LocalDateTime.now())
                 .build();
         TransactionEntity savedTransaction;
+        if (property.getListingType() == ListingType.SALE) {
+            property.setListingStatus(ListingStatus.SOLD.toString());
+        } else {
+            property.setListingStatus(ListingStatus.RENTED.toString());
+        }
+
         try {
             contractRepository.save(contractEntity);
             savedTransaction = transactionRepository.save(transactionEntity);
+            propertyRepository.save(property);
 
         } catch (Exception e) {
             throw new TransactionException();

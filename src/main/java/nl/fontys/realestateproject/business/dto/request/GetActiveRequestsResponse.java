@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CreateRequestRequest {
-    private long propertyId;
-    private long accountId;
+public class GetActiveRequestsResponse {
+    private boolean hasActiveRequests;
 }

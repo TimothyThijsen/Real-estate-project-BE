@@ -9,12 +9,12 @@ import org.springframework.stereotype.Service;
 
 @Service
 @AllArgsConstructor
-final class RequestConverter {
+public final class RequestConverter {
 
     public Request convert(RequestEntity entity) {
         return Request.builder()
                 .id(entity.getId())
-                .accountId(entity.getCustomerId())
+                .accountId(entity.getAccountId())
                 .propertyId(entity.getProperty().getId())
                 .status(RequestStatus.valueOf(entity.getRequestStatus()))
                 .requestDate(entity.getRequestDate())

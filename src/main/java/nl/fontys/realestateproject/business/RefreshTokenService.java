@@ -1,5 +1,6 @@
 package nl.fontys.realestateproject.business;
 
+import lombok.AllArgsConstructor;
 import nl.fontys.realestateproject.business.exceptions.InvalidRefreshTokenException;
 import nl.fontys.realestateproject.business.exceptions.InvalidUserException;
 import nl.fontys.realestateproject.persistence.RefreshTokenRepository;
@@ -14,6 +15,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
+@AllArgsConstructor
 public class RefreshTokenService {
 
     RefreshTokenRepository refreshTokenRepository;

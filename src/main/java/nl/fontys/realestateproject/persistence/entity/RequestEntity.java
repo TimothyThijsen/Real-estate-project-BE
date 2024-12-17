@@ -24,8 +24,8 @@ public class RequestEntity {
     @JoinColumn(name = "property_id")
     private PropertyEntity property;
 
-    @JoinColumn(name = "customer_id")
-    private Long customerId;
+    @JoinColumn(name = "account_id")
+    private Long accountId;
 
     @Column(name = "date")
     private LocalDateTime requestDate;

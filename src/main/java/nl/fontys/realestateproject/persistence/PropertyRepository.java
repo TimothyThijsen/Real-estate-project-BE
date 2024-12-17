@@ -36,7 +36,9 @@ public interface PropertyRepository extends JpaRepository<PropertyEntity, Long> 
             "AND (p.address.street LIKE %:searchTerm%) " +
             "GROUP BY p " +
             "HAVING SUM(se.areaInSquareMetre) >= :minSurfaceArea")
-    Page<PropertyEntity> findAllByAvailableAndSearchTerm(ListingType listingType, Pageable pageable, BigDecimal minPrice, BigDecimal maxPrice, String searchTerm, Double minSurfaceArea);
+    Page<PropertyEntity> findAllByAvailableAndSearchTerm(ListingType listingType, Pageable pageable,
+                                                         BigDecimal minPrice, BigDecimal maxPrice,
+                                                         String searchTerm, Double minSurfaceArea);
 
 }
 // OR p.address.city LIKE %:searchTerm% OR p.address.country LIKE %:searchTerm%

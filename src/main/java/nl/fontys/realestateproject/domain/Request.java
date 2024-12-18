@@ -15,8 +15,8 @@ import java.time.LocalDateTime;
 
 public class Request {
     private long id;
-    private long propertyId;
-    private long accountId;
+    private Property property;
+    private Account account;
     private RequestStatus status;
     private LocalDateTime requestDate;
 }

@@ -17,9 +17,14 @@ import org.springframework.web.bind.annotation.*;
 public class RequestController {
     RequestService requestService;
 
-    @GetMapping()
-    public ResponseEntity<GetAllRequestResponse> getAllRequests(@RequestParam long agentId) {
-        GetAllRequestResponse response = requestService.getAllRequests(agentId);
+    @GetMapping("/agent")
+    public ResponseEntity<GetAllRequestResponse> getAllByAgentId(@RequestParam long agentId) {
+        GetAllRequestResponse response = requestService.getAllByAgentId(agentId);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+    @GetMapping("/customer")
+    public ResponseEntity<GetAllRequestResponse> getAllByCustomerId(@RequestParam long customerId) {
+        GetAllRequestResponse response = requestService.getAllByCustomerId(customerId);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 

@@ -19,7 +19,7 @@ public class TransactionController {
     private final TransactionService transactionService;
 
     @PostMapping()
-    @RolesAllowed({"ADMIN", "CLIENT"})
+    @RolesAllowed({"ADMIN", "CLIENT", "AGENT"})
     public ResponseEntity<MakeTransactionResponse> makeTransaction(@RequestBody @Valid MakeTransactionRequest request) {
         MakeTransactionResponse response = transactionService.makeTransaction(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);

@@ -8,12 +8,16 @@ import nl.fontys.realestateproject.business.dto.request.*;
 import nl.fontys.realestateproject.domain.enums.RequestStatus;
 import nl.fontys.realestateproject.persistence.PropertyRepository;
 import nl.fontys.realestateproject.persistence.RequestRepository;
+import nl.fontys.realestateproject.persistence.UserRepository;
+import nl.fontys.realestateproject.persistence.entity.AccountEntity;
 import nl.fontys.realestateproject.persistence.entity.PropertyEntity;
 import nl.fontys.realestateproject.persistence.entity.RequestEntity;
 import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -21,27 +25,35 @@ public class RequestServiceImpl implements RequestService {
     RequestRepository requestRepository;
     PropertyRepository propertyRepository;
     RequestConverter requestConverter;
+    UserRepository userRepository;
 
     @Override
     public void createRequest(CreateRequestRequest request) {
 
         PropertyEntity property = propertyRepository.getById(request.getPropertyId());
-
+        AccountEntity account = userRepository.getReferenceById(request.getAccountId());
         RequestEntity requestEntity = RequestEntity.builder()
                 .requestStatus(RequestStatus.PENDING.name())
                 .requestDate(LocalDateTime.now())
                 .property(property)
-                .accountId(request.getAccountId())
+                .account(account)
                 .build();
         requestRepository.save(requestEntity);
 
     }
 
     @Override
-    public GetAllRequestResponse getAllRequests(long agentId) {
+    public GetAllRequestResponse getAllByAgentId(long agentId) {
+        List<RequestEntity> requests = requestRepository.findAllByAgentId(agentId);
+        requests.sort((r1, r2) -> r2.getRequestDate().compareTo(r1.getRequestDate())); // Sort by date descending
         GetAllRequestResponse response = new GetAllRequestResponse();
-        response.setRequests(requestRepository.findAll().stream().map(requestConverter::convert).toList());
+        response.setRequests(requests.stream().map(requestConverter::convert).toList());
         return response;
+    }
+
+    @Override
+    public GetAllRequestResponse getAllByCustomerId(long customerId) {
+        return null;
     }
 
     @Override
@@ -51,9 +63,12 @@ public class RequestServiceImpl implements RequestService {
 
     @Override
     public void updateRequest(UpdateRequestRequest request) {
-        RequestEntity requestEntity = requestRepository.getReferenceById(request.getRequestId());
-        requestEntity.setRequestStatus(request.getRequestStatus());
-        requestRepository.save(requestEntity);
+        Optional<RequestEntity> optionalRequestEntity = requestRepository.findById(request.getRequestId());
+        if (optionalRequestEntity.isPresent()) {
+            RequestEntity requestEntity = optionalRequestEntity.get();
+            requestEntity.setRequestStatus(request.getRequestStatus());
+            requestRepository.save(requestEntity);
+        }
     }
 
     @Override

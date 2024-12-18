@@ -5,7 +5,8 @@ import nl.fontys.realestateproject.business.dto.request.*;
 public interface RequestService {
     void createRequest(CreateRequestRequest request);
 
-    GetAllRequestResponse getAllRequests(long agentId);
+    GetAllRequestResponse getAllByAgentId(long agentId);
+    GetAllRequestResponse getAllByCustomerId(long customerId);
 
     GetRequestResponse getRequest(long id);
 

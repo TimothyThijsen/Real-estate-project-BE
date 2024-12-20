@@ -6,7 +6,6 @@ import nl.fontys.realestateproject.business.dto.property.GetPropertyResponse;
 import nl.fontys.realestateproject.business.dto.property.UpdatePropertyRequest;
 import nl.fontys.realestateproject.business.impl.PropertyServiceImpl;
 import nl.fontys.realestateproject.configuration.security.auth.RequestAuthenticatedUserProvider;
-import nl.fontys.realestateproject.configuration.security.token.AccessToken;
 import nl.fontys.realestateproject.configuration.security.token.impl.AccessTokenImpl;
 import nl.fontys.realestateproject.domain.Account;
 import nl.fontys.realestateproject.domain.Address;
@@ -27,7 +26,6 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Optional;
 
 import static org.mockito.Mockito.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;

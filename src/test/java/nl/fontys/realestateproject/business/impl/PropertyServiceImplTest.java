@@ -4,6 +4,7 @@ import nl.fontys.realestateproject.business.dto.property.*;
 import nl.fontys.realestateproject.business.exceptions.InvalidPropertyException;
 import nl.fontys.realestateproject.domain.Property;
 import nl.fontys.realestateproject.domain.PropertySurfaceArea;
+import nl.fontys.realestateproject.domain.enums.ListingType;
 import nl.fontys.realestateproject.persistence.AddressRepository;
 import nl.fontys.realestateproject.persistence.PropertyRepository;
 import nl.fontys.realestateproject.persistence.PropertySurfaceAreaRepository;
@@ -17,8 +18,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -222,5 +227,34 @@ class PropertyServiceImplTest {
 
         assertEquals(1, actual.getProperties().size());
         verify(propertyRepositoryMock).findAllByAccountId(1L);
+    }
+
+    @Test
+    void getAllPropertiesBySearch_ShouldReturnAllProperties(){
+        PropertyEntity property1 = PropertyEntity.builder().id(1L).description("Property 1").surfaceAreas(List.of()).build();
+        PropertyEntity property2 = PropertyEntity.builder().id(2L).description("Property 2").surfaceAreas(List.of()).build();
+        GetAllPropertiesBySearchRequest request = GetAllPropertiesBySearchRequest.builder().listingType("SALE").currentPage(1).pageSize(10).build();
+
+        when(propertyRepositoryMock.findAllByAvailableAndSearchTerm(
+                        eq(ListingType.SALE),
+                        any(Pageable.class),
+                        eq(BigDecimal.ZERO),
+                        eq(BigDecimal.ZERO),
+                        eq(""),
+                        eq(0.0)))
+                .thenReturn(new PageImpl<>(List.of(property1, property2)));
+        when(propertyConverterMock.convert(property1)).thenReturn(Property.builder().id(1L).description("Property 1").build());
+        when(propertyConverterMock.convert(property2)).thenReturn(Property.builder().id(2L).description("Property 2").build());
+
+        GetAllPropertiesResponse actual = propertyService.getAllPropertiesBySearch(request);
+
+        assertEquals(2, actual.getProperties().size());
+        verify(propertyRepositoryMock).findAllByAvailableAndSearchTerm(
+                eq(ListingType.SALE),
+                any(Pageable.class),
+                eq(BigDecimal.ZERO),
+                eq(BigDecimal.ZERO),
+                eq(""),
+                eq(0.0));
     }
 }

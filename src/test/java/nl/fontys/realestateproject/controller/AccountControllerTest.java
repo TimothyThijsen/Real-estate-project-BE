@@ -198,6 +198,7 @@ class AccountControllerTest {
                 .andExpect(status().isNoContent());
         verify(accountService).deleteAccount(1);
     }
+
     @Test
     @WithMockUser(username = "test@mail.com", roles = {"CLIENT"})
     void deleteAccount_shouldReturn403Response() throws Exception {

@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import nl.fontys.realestateproject.business.RequestService;
 
 import nl.fontys.realestateproject.business.dto.request.*;
+import nl.fontys.realestateproject.business.exceptions.AlreadyExistingRequestException;
 import nl.fontys.realestateproject.domain.enums.RequestStatus;
 import nl.fontys.realestateproject.persistence.PropertyRepository;
 import nl.fontys.realestateproject.persistence.RequestRepository;
@@ -30,12 +31,16 @@ public class RequestServiceImpl implements RequestService {
     @Override
     public void createRequest(CreateRequestRequest request) {
 
-        PropertyEntity property = propertyRepository.getById(request.getPropertyId());
+        Optional<PropertyEntity> property = propertyRepository.findById(request.getPropertyId());
         AccountEntity account = userRepository.getReferenceById(request.getAccountId());
+        Optional<RequestEntity> alreadyExistingRequest = requestRepository.findPendingPropertyByCustomerIdAndPropertyId(account.getId(), property.get().getId());
+        if(alreadyExistingRequest.isPresent()) {
+            throw new AlreadyExistingRequestException();
+        }
         RequestEntity requestEntity = RequestEntity.builder()
                 .requestStatus(RequestStatus.PENDING.name())
                 .requestDate(LocalDateTime.now())
-                .property(property)
+                .property(property.get())
                 .account(account)
                 .build();
         requestRepository.save(requestEntity);
@@ -45,7 +50,7 @@ public class RequestServiceImpl implements RequestService {
     @Override
     public GetAllRequestResponse getAllByAgentId(long agentId) {
         List<RequestEntity> requests = requestRepository.findAllByAgentId(agentId);
-        requests.sort((r1, r2) -> r2.getRequestDate().compareTo(r1.getRequestDate())); // Sort by date descending
+        requests.sort((r1, r2) -> r2.getRequestDate().compareTo(r1.getRequestDate()));
         GetAllRequestResponse response = new GetAllRequestResponse();
         response.setRequests(requests.stream().map(requestConverter::convert).toList());
         return response;

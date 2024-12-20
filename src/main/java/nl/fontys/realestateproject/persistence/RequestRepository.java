@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface RequestRepository extends JpaRepository<RequestEntity, Long> {
     List<RequestEntity> findAllByAccountId(long userId);
@@ -19,4 +20,9 @@ public interface RequestRepository extends JpaRepository<RequestEntity, Long> {
             "WHERE r.property.id = :propertyId AND r.account.id = :customerId " +
             "AND r.requestStatus = 'PENDING'")
     RequestEntity findActivePropertyByCustomerIdAndPropertyId(long customerId, long propertyId);
+
+    @Query("SELECT r FROM RequestEntity r " +
+            "WHERE r.property.id = :propertyId AND r.account.id = :customerId " +
+            "AND r.requestStatus = 'PENDING'")
+    Optional<RequestEntity> findPendingPropertyByCustomerIdAndPropertyId(long customerId, long propertyId);
 }

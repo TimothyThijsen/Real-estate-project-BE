@@ -47,7 +47,7 @@ public class RefreshTokenService {
     public RefreshTokenEntity updateRefreshToken(String token){
         Optional<RefreshTokenEntity> tokenEntity = refreshTokenRepository.findByToken(token);
         if (tokenEntity.isEmpty()) {
-            throw new InvalidUserException();
+            throw new InvalidRefreshTokenException("Token not found");
         }
         RefreshTokenEntity oldToken = tokenEntity.get();
         RefreshTokenEntity updatedToken = RefreshTokenEntity.builder()

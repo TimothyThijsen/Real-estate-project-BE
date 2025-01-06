@@ -49,10 +49,18 @@ public class TransactionServiceImpl implements TransactionService {
         TransactionEntity savedTransaction;
         if (property.getListingType() == ListingType.SALE) {
             property.setListingStatus(ListingStatus.SOLD.toString());
+            TransactionEntity existingTransaction = transactionRepository.findByPropertyId(request.getPropertyId());
+            if(existingTransaction != null) {
+                throw new TransactionException("Property is already sold");
+            }
         } else {
             property.setListingStatus(ListingStatus.RENTED.toString());
+            ContractEntity existingContract = contractRepository.findByPropertyId(request.getPropertyId());
+            if(existingContract != null && existingContract.isActive()) {
+                throw new TransactionException("Property is already rented");
+            }
         }
-
+        
         try {
             contractRepository.save(contractEntity);
             savedTransaction = transactionRepository.save(transactionEntity);

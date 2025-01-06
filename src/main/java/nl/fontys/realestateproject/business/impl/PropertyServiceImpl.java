@@ -158,7 +158,7 @@ public class PropertyServiceImpl implements PropertyService {
         if (propertyEntity.isEmpty()) {
             throw new InvalidPropertyException();
         }
-        if (propertyEntity.get().getId() != agentId) {
+        if (propertyEntity.get().getAccount().getId() != agentId) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
         surfaceAreaRepository.deleteAllByPropertyId(id);

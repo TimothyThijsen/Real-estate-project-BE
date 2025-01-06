@@ -19,4 +19,6 @@ public interface ContractRepository extends JpaRepository<ContractEntity, Long> 
     @Query("UPDATE ContractEntity c SET c.isActive = false WHERE c.id = :id")
     void cancelContract(long id);
 
+    ContractEntity findByPropertyId(long propertyId);
+
 }

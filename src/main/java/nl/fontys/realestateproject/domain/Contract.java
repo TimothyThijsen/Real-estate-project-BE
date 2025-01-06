@@ -14,7 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 public class Contract {
     private long id;
-    private long propertyId;
+    private Property property;
     private long customerId;
     private boolean active;
     private LocalDateTime minimumContractEndDate;

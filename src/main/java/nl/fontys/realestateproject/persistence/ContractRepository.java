@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface ContractRepository extends JpaRepository<ContractEntity, Long> {
     @Query("SELECT c FROM ContractEntity c " +
-            "LEFT JOIN PropertyEntity p on p.id = c.propertyId " +
+            "LEFT JOIN PropertyEntity p on p = c.property " +
             "WHERE p.account.id = :agentId")
     List<ContractEntity> findAllByAgentId(long agentId);
 

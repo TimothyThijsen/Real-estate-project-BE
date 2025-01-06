@@ -21,8 +21,9 @@ public class ContractEntity {
     @Column(name = "id")
     private Long id;
 
+    @ManyToOne
     @JoinColumn(name = "property_id")
-    private Long propertyId;
+    private PropertyEntity property;
     @JoinColumn(name = "customer_id")
     private Long customerId;
     @Column(name = "is_active")

@@ -14,7 +14,7 @@ import java.util.List;
 public interface PropertyRepository extends JpaRepository<PropertyEntity, Long> {
     @Query("SELECT p FROM PropertyEntity p " +
             "left join  TransactionEntity t on p.id = t.propertyId " +
-            "left join ContractEntity c on c.propertyId = p.id " +
+            "left join ContractEntity c on c.property = p " +
             "WHERE (t.id is null) OR " +
             "(p.propertyType = 'RENTAL' AND (c.id IS NULL OR c.isActive = false))")
     List<PropertyEntity> findAllAvailableProperty();
@@ -27,7 +27,7 @@ public interface PropertyRepository extends JpaRepository<PropertyEntity, Long> 
 
     @Query("SELECT p FROM PropertyEntity p " +
             "LEFT JOIN  TransactionEntity t on p.id = t.propertyId " +
-            "LEFT JOIN ContractEntity c on c.propertyId = p.id " +
+            "LEFT JOIN ContractEntity c on c.property = p " +
             "LEFT JOIN PropertySurfaceAreaEntity se on se.property = p " +
             "WHERE (p.listingStatus = 'ACTIVE') " +
             "AND p.listingType = :listingType " +

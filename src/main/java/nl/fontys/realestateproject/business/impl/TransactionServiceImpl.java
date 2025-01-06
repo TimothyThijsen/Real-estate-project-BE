@@ -35,7 +35,7 @@ public class TransactionServiceImpl implements TransactionService {
         PropertyEntity property = propertyRepository.getReferenceById(request.getPropertyId());
         ContractEntity contractEntity = ContractEntity.builder()
                 .customerId(request.getCustomerId())
-                .propertyId(property.getId())
+                .property(property)
                 .isActive(true)
                 .startDate(LocalDateTime.now())
                 .minimumContractEndDate(LocalDateTime.now().plusYears(1))

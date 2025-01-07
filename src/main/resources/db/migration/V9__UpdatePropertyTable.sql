@@ -1,6 +1,6 @@
 ALTER TABLE property
     ADD COLUMN listing_status varchar(50);
-ALTER TABLE property ALTER COLUMN description varchar(500) NOT NULL;
+ALTER TABLE property MODIFY COLUMN description varchar(500) NOT NULL;
 
 CREATE TABLE request
 (

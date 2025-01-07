@@ -1,0 +1,1 @@
+INSERT INTO account (id, email, first_name, last_name, password) VALUES (1, 'agent@mail.com', 'agent', 'test', '$2a$10$RCX1/YHrVxyfINiTtqAnwO4MpTYZ9X00H19XwoAlA778ITBJCFEh2')

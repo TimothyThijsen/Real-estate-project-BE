@@ -5,6 +5,6 @@ CREATE TABLE transaction
     customer_id int      NOT NULL,
     date        DATETIME NOT NULL,
     PRIMARY KEY (id),
-    FOREIGN KEY (property_id) REFERENCES property (id),
+    FOREIGN KEY (property_id) REFERENCES address (id),
     FOREIGN KEY (customer_id) REFERENCES account (id)
 );

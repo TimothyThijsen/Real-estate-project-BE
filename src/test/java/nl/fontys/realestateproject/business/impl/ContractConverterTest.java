@@ -2,7 +2,9 @@ package nl.fontys.realestateproject.business.impl;
 
 import nl.fontys.realestateproject.business.impl.contract.ContractConverter;
 import nl.fontys.realestateproject.domain.Contract;
+import nl.fontys.realestateproject.persistence.entity.AccountEntity;
 import nl.fontys.realestateproject.persistence.entity.ContractEntity;
+import nl.fontys.realestateproject.persistence.entity.PropertyEntity;
 import nl.fontys.realestateproject.persistence.entity.TransactionEntity;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,10 +28,19 @@ class ContractConverterTest {
     @Test
     void convert_ShouldConvertContractEntityToContract() {
 
+        AccountEntity customerEntity = AccountEntity.builder()
+                .id(1L)
+                .email("mail")
+                .build();
+
+        PropertyEntity propertyEntity = PropertyEntity.builder()
+                .id(1L)
+                .build();
+
         ContractEntity contractEntity = ContractEntity.builder()
                 .id(1L)
-                .customerId(1L)
-                .propertyId(1L)
+                .customer(customerEntity)
+                .property(propertyEntity)
                 .isActive(true)
                 .minimumContractEndDate(LocalDate.now().atStartOfDay())
                 .startDate(LocalDate.now().atStartOfDay())

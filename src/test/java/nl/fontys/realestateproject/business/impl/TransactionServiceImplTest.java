@@ -6,12 +6,8 @@ import nl.fontys.realestateproject.business.dto.transaction.MakeTransactionRespo
 import nl.fontys.realestateproject.business.exceptions.TransactionException;
 import nl.fontys.realestateproject.domain.Transaction;
 import nl.fontys.realestateproject.domain.enums.ListingType;
-import nl.fontys.realestateproject.persistence.ContractRepository;
-import nl.fontys.realestateproject.persistence.PropertyRepository;
-import nl.fontys.realestateproject.persistence.TransactionRepository;
-import nl.fontys.realestateproject.persistence.entity.ContractEntity;
-import nl.fontys.realestateproject.persistence.entity.PropertyEntity;
-import nl.fontys.realestateproject.persistence.entity.TransactionEntity;
+import nl.fontys.realestateproject.persistence.*;
+import nl.fontys.realestateproject.persistence.entity.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -19,6 +15,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -36,6 +33,10 @@ class TransactionServiceImplTest {
     ContractRepository contractRepository;
     @Mock
     PropertyRepository propertyRepository;
+    @Mock
+    UserRepository userRepository;
+    @Mock
+    RequestRepository requestRepository;
     @InjectMocks
     TransactionServiceImpl transactionService;
 
@@ -51,6 +52,8 @@ class TransactionServiceImplTest {
         when(transactionRepositoryMock.save(any(TransactionEntity.class))).thenReturn(transactionEntity);
         when(contractRepository.save(any(ContractEntity.class))).thenReturn(ContractEntity.builder().build());
         when(propertyRepository.getReferenceById(1L)).thenReturn(new PropertyEntity().builder().id(1L).build());
+        when(userRepository.getReferenceById(1L)).thenReturn(new AccountEntity().builder().id(1L).build());
+        when(requestRepository.findPendingPropertyByCustomerIdAndPropertyId(1L, 1L)).thenReturn(Optional.of(RequestEntity.builder().build()));
         MakeTransactionResponse actual = transactionService.makeTransaction(request);
 
         verify(transactionRepositoryMock).save(any(TransactionEntity.class));
@@ -67,6 +70,8 @@ class TransactionServiceImplTest {
         when(transactionRepositoryMock.save(any(TransactionEntity.class))).thenThrow(new RuntimeException());
         when(contractRepository.save(any(ContractEntity.class))).thenReturn(ContractEntity.builder().build());
         when(propertyRepository.getReferenceById(1L)).thenReturn(new PropertyEntity().builder().id(1L).build());
+        when(userRepository.getReferenceById(1L)).thenReturn(new AccountEntity().builder().id(1L).build());
+        when(requestRepository.findPendingPropertyByCustomerIdAndPropertyId(1L, 1L)).thenReturn(Optional.of(RequestEntity.builder().build()));
         assertThrows(TransactionException.class, () -> transactionService.makeTransaction(request));
     }
 
@@ -81,6 +86,8 @@ class TransactionServiceImplTest {
         when(transactionRepositoryMock.save(any(TransactionEntity.class))).thenReturn(transactionEntity);
         when(contractRepository.save(any(ContractEntity.class))).thenReturn(ContractEntity.builder().build());
         PropertyEntity propertyEntity = new PropertyEntity().builder().id(1L).listingType(ListingType.SALE).build();
+        when(userRepository.getReferenceById(1L)).thenReturn(new AccountEntity().builder().id(1L).build());
+        when(requestRepository.findPendingPropertyByCustomerIdAndPropertyId(1L, 1L)).thenReturn(Optional.of(RequestEntity.builder().build()));
         when(propertyRepository.getReferenceById(1L)).thenReturn(propertyEntity);
         MakeTransactionResponse actual = transactionService.makeTransaction(request);
 

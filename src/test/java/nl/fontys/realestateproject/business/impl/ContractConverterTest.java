@@ -1,5 +1,6 @@
 package nl.fontys.realestateproject.business.impl;
 
+import nl.fontys.realestateproject.business.impl.account.AccountConverter;
 import nl.fontys.realestateproject.business.impl.contract.ContractConverter;
 import nl.fontys.realestateproject.domain.Contract;
 import nl.fontys.realestateproject.persistence.entity.AccountEntity;
@@ -22,6 +23,11 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class ContractConverterTest {
     @Mock
     TransactionConverter transactionConverter;
+    @Mock
+    PropertyConverter propertyConverter;
+    @Mock
+    AccountConverter accountConverter;
+
     @InjectMocks
     ContractConverter contractConverter;
 

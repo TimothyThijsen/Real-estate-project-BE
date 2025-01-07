@@ -7,4 +7,7 @@ public class TransactionException extends ResponseStatusException {
     public TransactionException() {
         super(HttpStatus.BAD_REQUEST, "Transaction failed");
     }
+    public TransactionException(String message) {
+        super(HttpStatus.BAD_REQUEST, message);
+    }
 }

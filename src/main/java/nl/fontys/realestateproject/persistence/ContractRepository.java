@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface ContractRepository extends JpaRepository<ContractEntity, Long> {
     @Query("SELECT c FROM ContractEntity c " +
-            "LEFT JOIN PropertyEntity p on p.id = c.propertyId " +
+            "LEFT JOIN PropertyEntity p on p = c.property " +
             "WHERE p.account.id = :agentId")
     List<ContractEntity> findAllByAgentId(long agentId);
 
@@ -18,5 +18,7 @@ public interface ContractRepository extends JpaRepository<ContractEntity, Long> 
     @Modifying
     @Query("UPDATE ContractEntity c SET c.isActive = false WHERE c.id = :id")
     void cancelContract(long id);
+
+    List<ContractEntity> findByPropertyId(long propertyId);
 
 }

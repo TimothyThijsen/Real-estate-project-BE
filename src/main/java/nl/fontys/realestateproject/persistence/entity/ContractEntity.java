@@ -1,10 +1,7 @@
 package nl.fontys.realestateproject.persistence.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -12,6 +9,7 @@ import java.util.List;
 @Entity
 @Table(name = "contract")
 @Data
+@ToString(exclude = {"property", "customer", "transactions"})
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -21,10 +19,12 @@ public class ContractEntity {
     @Column(name = "id")
     private Long id;
 
+    @ManyToOne
     @JoinColumn(name = "property_id")
-    private Long propertyId;
+    private PropertyEntity property;
+    @ManyToOne
     @JoinColumn(name = "customer_id")
-    private Long customerId;
+    private AccountEntity customer;
     @Column(name = "is_active")
     private boolean isActive;
     @Column(name = "minimum_contract_end_date")

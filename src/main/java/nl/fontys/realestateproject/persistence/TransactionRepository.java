@@ -9,4 +9,5 @@ public interface TransactionRepository extends JpaRepository<TransactionEntity, 
     List<TransactionEntity> findAllByCustomerId(long userId);
 
     List<TransactionEntity> findAllByPropertyId(long propertyId);
+    TransactionEntity findByPropertyId(long propertyId);
 }

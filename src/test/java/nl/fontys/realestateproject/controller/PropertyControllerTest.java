@@ -2,8 +2,11 @@ package nl.fontys.realestateproject.controller;
 
 import nl.fontys.realestateproject.business.dto.property.CreatePropertyResponse;
 import nl.fontys.realestateproject.business.dto.property.GetAllPropertiesResponse;
+import nl.fontys.realestateproject.business.dto.property.GetPropertyResponse;
+import nl.fontys.realestateproject.business.dto.property.UpdatePropertyRequest;
 import nl.fontys.realestateproject.business.impl.PropertyServiceImpl;
 import nl.fontys.realestateproject.configuration.security.auth.RequestAuthenticatedUserProvider;
+import nl.fontys.realestateproject.configuration.security.token.impl.AccessTokenImpl;
 import nl.fontys.realestateproject.domain.Account;
 import nl.fontys.realestateproject.domain.Address;
 import nl.fontys.realestateproject.domain.Property;
@@ -156,4 +159,130 @@ class PropertyControllerTest {
                         """));
         verify(propertyService).getAllProperties();
     }
-}
+
+    @Test
+    void getPropertyById_shouldReturn200ResponseWithProperty() throws Exception {
+        GetPropertyResponse response = GetPropertyResponse.builder().property(Property.builder()
+                .id(1)
+                .description("Nice room located near centrum.")
+                .price(BigDecimal.valueOf(1200))
+                .propertyType(PropertyType.RESIDENTIAL)
+                .listingType(ListingType.RENTAL)
+                .surfaceAreas(List.of(
+                        PropertySurfaceArea.builder()
+                                .nameOfSurfaceArea("Living Area")
+                                .areaInSquareMetre(18.0)
+                                .build()
+                ))
+                .address(Address.builder()
+                        .street("Boschdijk 4D")
+                        .city("Eindhoven")
+                        .postalCode("5612AB")
+                        .country("The netherlands")
+                        .build())
+                .agent(Account.builder().id(1L).roles(List.of(UserRole.AGENT)).email("agent@mail.com").lastName("agent").firstName("agent").build())
+                .build()).build();
+
+        when(propertyService.getProperty(1L)).thenReturn(response);
+        mockMvc.perform(get("/properties/1"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(header().string("Content-Type", APPLICATION_JSON_VALUE))
+                .andExpect(content().json("""
+                            {
+                                "property":
+                                    {
+                                        "id": 1,
+                                        "description": "Nice room located near centrum.",
+                                        "price": 1200,
+                                        "listingType": "RENTAL",
+                                        "propertyType": "RESIDENTIAL",
+                                        "surfaceAreas": [
+                                            {
+                                                "nameOfSurfaceArea": "Living Area",
+                                                "areaInSquareMetre": 18.0
+                                            }
+                                        ],
+                                        "address": {
+                                            "street": "Boschdijk 4D",
+                                            "city": "Eindhoven",
+                                            "postalCode": "5612AB",
+                                            "country": "The netherlands"
+                                        },
+                                        "agent": {
+                                            "id": 1,
+                                            "email": "agent@mail.com",
+                                            "firstName": "agent",
+                                            "lastName": "agent",
+                                            "roles": ["AGENT"]
+                                        },
+                                        "imageUrl": null
+                                    }
+                            }
+                        """));
+        verify(propertyService).getProperty(1L);
+    }
+
+    @Test
+    @WithMockUser(username = "test@mail.com", roles = {"AGENT"})
+    void deleteProperty_ShouldDeleteProperty() throws Exception {
+        AccessTokenImpl accessToken = new AccessTokenImpl("user", 1L, List.of("AGENT"));
+        when(requestAuthenticatedUserProvider.getAuthenticatedUserInRequest()).thenReturn(accessToken);
+        mockMvc.perform(delete("/properties/1"))
+                .andDo(print())
+                .andExpect(status().isNoContent());
+        verify(propertyService).deleteProperty(1L, 1L);
+    }
+    @Test
+    @WithMockUser(username = "test@mail.com", roles = {"AGENT"})
+    void updateProperty_ShouldUpdateProperty() throws Exception {
+        AccessTokenImpl accessToken = new AccessTokenImpl("user", 1L, List.of("AGENT"));
+        when(requestAuthenticatedUserProvider.getAuthenticatedUserInRequest()).thenReturn(accessToken);
+        UpdatePropertyRequest request = UpdatePropertyRequest.builder()
+                .id(1)
+                .description("Nice room located near centrum.")
+                .price(BigDecimal.valueOf(1200))
+                .propertyType("RESIDENTIAL")
+                .listingType("RENTAL")
+                .surfaceAreas(List.of(
+                        PropertySurfaceArea.builder()
+                                .nameOfSurfaceArea("Living Area")
+                                .areaInSquareMetre(18.0)
+                                .build()
+                ))
+
+                .street("Boschdijk 4D")
+                .city("Eindhoven")
+                .postalCode("5612AB")
+                .country("The netherlands")
+                .agentId(1L)
+                .imageUrl(null)
+                .build();
+        doNothing().when(propertyService).updateProperty(request);
+        mockMvc.perform(put("/properties")
+                        .contentType(APPLICATION_JSON_VALUE)
+                        .content("""
+                                {
+                                               "id": 1,
+                                               "description": "Nice room located near centrum.",
+                                               "price": 1200,
+                                               "propertyType": "RESIDENTIAL",
+                                               "listingType": "RENTAL",
+                                               "surfaceAreas": [
+                                                   {
+                                                       "nameOfSurfaceArea": "Living Area",
+                                                       "areaInSquareMetre": 18.0
+                                                   }
+                                               ],
+                                               "street": "Boschdijk 4D",
+                                               "city": "Eindhoven",
+                                               "postalCode": "5612AB",
+                                               "country": "The netherlands",
+                                               "agentId": 1,
+                                               "imageUrl": null
+ }
+                                """))
+                .andDo(print())
+                .andExpect(status().isNoContent());
+        verify(propertyService).updateProperty(request);
+    }}

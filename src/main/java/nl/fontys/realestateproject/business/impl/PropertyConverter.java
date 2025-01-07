@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @AllArgsConstructor
-final class PropertyConverter {
+public final class PropertyConverter {
     private final AccountConverter accountConverter;
     PropertySurfaceAreaConverter propertySurfaceAreaConverter;
     AddressConverter addressConverter;

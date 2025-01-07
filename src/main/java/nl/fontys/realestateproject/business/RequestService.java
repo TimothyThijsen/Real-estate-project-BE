@@ -1,18 +1,17 @@
 package nl.fontys.realestateproject.business;
 
-import nl.fontys.realestateproject.business.dto.request.UpdateRequestRequest;
-import nl.fontys.realestateproject.business.dto.request.CreateRequestRequest;
-import nl.fontys.realestateproject.business.dto.request.GetAllRequestResponse;
-import nl.fontys.realestateproject.business.dto.request.GetRequestResponse;
+import nl.fontys.realestateproject.business.dto.request.*;
 
 public interface RequestService {
     void createRequest(CreateRequestRequest request);
 
-    GetAllRequestResponse getAllRequests();
+    GetAllRequestResponse getAllByAgentId(long agentId);
+    GetAllRequestResponse getAllByCustomerId(long customerId);
 
     GetRequestResponse getRequest(long id);
 
     void updateRequest(UpdateRequestRequest request);
 
     void deleteRequest(long id);
+    GetActiveRequestsResponse getActiveRequests(long customerId, long propertyId);
 }

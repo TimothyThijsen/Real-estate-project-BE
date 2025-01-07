@@ -39,9 +39,10 @@ public class WebSecurityConfig {
                         configurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(registry ->
                         registry.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                                .requestMatchers(HttpMethod.POST, "/accounts", "/accounts/login").permitAll()
+                                .requestMatchers(HttpMethod.POST, "/accounts", "/accounts/login", "/auth/refreshToken").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/properties", "/properties/**", "/accounts", "/contract/**").permitAll()
                                 .requestMatchers(SWAGGER_UI_RESOURCES).permitAll()
+                                .requestMatchers("/ws/**").permitAll()
                                 .anyRequest().authenticated()
                 )
                 .exceptionHandling(configure -> configure.authenticationEntryPoint(authenticationEntryPoint))

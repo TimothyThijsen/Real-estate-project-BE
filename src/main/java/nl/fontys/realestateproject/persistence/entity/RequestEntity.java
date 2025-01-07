@@ -20,15 +20,17 @@ public class RequestEntity {
     @Column(name = "id")
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "property_id")
     private PropertyEntity property;
 
-    @JoinColumn(name = "customer_id")
-    private Long customerId;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "account_id")
+    private AccountEntity account;
 
     @Column(name = "date")
     private LocalDateTime requestDate;
+
     @Column (name = "status")
     private String requestStatus;
 }

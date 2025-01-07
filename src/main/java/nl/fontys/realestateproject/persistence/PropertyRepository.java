@@ -16,7 +16,7 @@ public interface PropertyRepository extends JpaRepository<PropertyEntity, Long> 
             "left join  TransactionEntity t on p.id = t.propertyId " +
             "left join ContractEntity c on c.property = p " +
             "WHERE (t.id is null) OR " +
-            "(p.propertyType = 'RENTAL' AND (c.id IS NULL OR c.isActive = false))")
+            "(p.listingType = 'RENTAL' AND (c.id IS NULL OR c.isActive = false))")
     List<PropertyEntity> findAllAvailableProperty();
 
     List<PropertyEntity> findAllByAccountId(long accountId);

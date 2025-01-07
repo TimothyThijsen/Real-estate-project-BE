@@ -3,6 +3,7 @@ package nl.fontys.realestateproject.business.impl.contract;
 import lombok.AllArgsConstructor;
 import nl.fontys.realestateproject.business.impl.PropertyConverter;
 import nl.fontys.realestateproject.business.impl.TransactionConverter;
+import nl.fontys.realestateproject.business.impl.account.AccountConverter;
 import nl.fontys.realestateproject.domain.Contract;
 import nl.fontys.realestateproject.persistence.entity.ContractEntity;
 import nl.fontys.realestateproject.persistence.entity.TransactionEntity;
@@ -15,11 +16,12 @@ import java.util.Comparator;
 public final class ContractConverter {
     private final TransactionConverter transactionConverter;
     PropertyConverter propertyConverter;
+    AccountConverter accountConverter;
     public Contract convert(ContractEntity contractEntity) {
         return Contract.builder()
                 .id(contractEntity.getId())
                 .active(contractEntity.isActive())
-                .customerId(contractEntity.getCustomerId())
+                .customer(accountConverter.convert(contractEntity.getCustomer()))
                 .property(propertyConverter.convert(contractEntity.getProperty()))
                 .startDate(contractEntity.getStartDate())
                 .minimumContractEndDate(contractEntity.getMinimumContractEndDate())

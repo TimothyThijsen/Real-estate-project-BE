@@ -16,12 +16,11 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         config.enableSimpleBroker("/topic", "/user");
         config.setUserDestinationPrefix("/user");
     }
-/*
     @Value("${cors.allowedOrigins}")
-    private String[] allowedOrigins;*/
+    private String[] allowedOrigins;
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/ws").setAllowedOrigins("http://localhost:5173");
+        registry.addEndpoint("/ws").setAllowedOrigins(allowedOrigins);
     }
 
 }

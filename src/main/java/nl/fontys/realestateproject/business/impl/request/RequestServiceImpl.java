@@ -1,7 +1,6 @@
 package nl.fontys.realestateproject.business.impl.request;
 
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import nl.fontys.realestateproject.business.RequestService;
 
 import nl.fontys.realestateproject.business.dto.request.*;
@@ -30,21 +29,21 @@ public class RequestServiceImpl implements RequestService {
 
     @Override
     public void createRequest(CreateRequestRequest request) {
-
         Optional<PropertyEntity> property = propertyRepository.findById(request.getPropertyId());
-        AccountEntity account = userRepository.getReferenceById(request.getAccountId());
-        Optional<RequestEntity> alreadyExistingRequest = requestRepository.findPendingPropertyByCustomerIdAndPropertyId(account.getId(), property.get().getId());
-        if(alreadyExistingRequest.isPresent()) {
-            throw new AlreadyExistingRequestException();
-        }
-        RequestEntity requestEntity = RequestEntity.builder()
-                .requestStatus(RequestStatus.PENDING.name())
-                .requestDate(LocalDateTime.now())
-                .property(property.get())
-                .account(account)
-                .build();
-        requestRepository.save(requestEntity);
 
+        if (property.isPresent()) {
+            AccountEntity account = userRepository.getReferenceById(request.getAccountId());
+            Optional<RequestEntity> alreadyExistingRequest = requestRepository.findPendingPropertyByCustomerIdAndPropertyId(account.getId(), property.get().getId());
+            if(alreadyExistingRequest.isPresent()) {
+                throw new AlreadyExistingRequestException();
+            }
+            RequestEntity requestEntity = RequestEntity.builder()
+                    .requestStatus(RequestStatus.PENDING.name())
+                    .requestDate(LocalDateTime.now())
+                    .property(property.get())
+                    .account(account)
+                    .build();
+            requestRepository.save(requestEntity);}
     }
 
     @Override

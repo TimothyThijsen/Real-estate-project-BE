@@ -15,7 +15,7 @@ import java.util.List;
 public class Contract {
     private long id;
     private Property property;
-    private long customerId;
+    private Account customer;
     private boolean active;
     private LocalDateTime minimumContractEndDate;
     private LocalDateTime startDate;

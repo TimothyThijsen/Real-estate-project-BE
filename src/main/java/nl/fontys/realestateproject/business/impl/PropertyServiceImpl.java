@@ -57,7 +57,12 @@ public class PropertyServiceImpl implements PropertyService {
     }
 
     private PropertyEntity createNewProperty(CreatePropertyRequest request) {
-        AddressEntity address = saveAddress(request.getCity(), request.getCountry(), request.getPostalCode(), request.getStreet());
+        AddressEntity address = AddressEntity.builder()
+                .city(request.getCity())
+                .country(request.getCountry())
+                .postalCode(request.getPostalCode())
+                .street(request.getStreet())
+                .build();
         addressRepository.save(address);
         AccountEntity account = userRepository.getReferenceById(request.getAgentId());
         PropertyEntity newProperty = PropertyEntity.builder()
@@ -121,20 +126,32 @@ public class PropertyServiceImpl implements PropertyService {
     @Override
     @Transactional
     public void updateProperty(UpdatePropertyRequest request) {
+
         if (!propertyRepository.existsById(request.getId())) {
             throw new InvalidPropertyException();
         }
+
         propertyRepository.save(getUpdatedPropertyEntity(request));
     }
 
     private PropertyEntity getUpdatedPropertyEntity(UpdatePropertyRequest request) {
-        AddressEntity address = saveAddress(request.getCity(), request.getCountry(), request.getPostalCode(), request.getStreet());
+        PropertyEntity existingProperty = propertyRepository.findById(request.getId()).orElseThrow(InvalidPropertyException::new);
+        AddressEntity address = AddressEntity.builder()
+                .id(existingProperty.getAddress().getId())
+                .city(request.getCity())
+                .country(request.getCountry())
+                .postalCode(request.getPostalCode())
+                .street(request.getStreet())
+                .build();
+
         addressRepository.save(address);//change so that street is key
 
+        surfaceAreaRepository.deleteAllByPropertyId(request.getId());
         List<PropertySurfaceAreaEntity> surfaceAreas = request.getSurfaceAreas().stream()
                 .map(surfaceArea -> PropertySurfaceAreaEntity.builder()
                         .nameOfSurfaceArea(surfaceArea.getNameOfSurfaceArea())
                         .areaInSquareMetre(surfaceArea.getAreaInSquareMetre())
+                        .property(propertyRepository.getReferenceById(request.getId()))
                         .build())
                 .toList();
 
@@ -142,12 +159,13 @@ public class PropertyServiceImpl implements PropertyService {
         return PropertyEntity.builder()
                 .id(request.getId())
                 .description(request.getDescription())
-
                 .price(request.getPrice())
                 .address(address)
                 .propertyType(PropertyType.valueOf(request.getPropertyType()))
                 .listingType(ListingType.valueOf(request.getListingType()))
                 .surfaceAreas(surfaceAreas)
+                .account(userRepository.getReferenceById(request.getAgentId()))
+                .listingStatus(existingProperty.getListingStatus())
                 .build();
     }
 

@@ -12,6 +12,7 @@ import nl.fontys.realestateproject.persistence.UserRepository;
 import nl.fontys.realestateproject.persistence.entity.AccountEntity;
 import nl.fontys.realestateproject.persistence.entity.AddressEntity;
 import nl.fontys.realestateproject.persistence.entity.PropertyEntity;
+import nl.fontys.realestateproject.persistence.entity.PropertySurfaceAreaEntity;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -155,11 +156,16 @@ class PropertyServiceImplTest {
                 .propertyType("RESIDENTIAL")
                 .listingType("SALE")
                 .surfaceAreas(List.of(PropertySurfaceArea.builder().nameOfSurfaceArea("Living Room").areaInSquareMetre(100.0).build()))
+                .agentId(1L)
                 .build();
+        AddressEntity addressEntity = AddressEntity.builder().id(1L).build();
 
 
-        when(propertyRepositoryMock.existsById(1L)).thenReturn(true);
-
+        when(propertyRepositoryMock.findById(1L)).thenReturn(Optional.of(PropertyEntity.builder().id(1L).address(addressEntity).build()));
+        when(addressRepositoryMock.save(any(AddressEntity.class))).thenReturn(AddressEntity.builder().id(1L).build());
+        doNothing().when(propertySurfaceAreaRepositoryMock).deleteAllByPropertyId(1L);
+        when(propertySurfaceAreaRepositoryMock.saveAll(anyList())).thenReturn(List.of(PropertySurfaceAreaEntity.builder().nameOfSurfaceArea("test").areaInSquareMetre(12.0).build()));
+        when(userRepositoryMock.getReferenceById(1L)).thenReturn(AccountEntity.builder().id(1L).build());
         propertyService.updateProperty(request);
 
         verify(propertyRepositoryMock).save(any(PropertyEntity.class));

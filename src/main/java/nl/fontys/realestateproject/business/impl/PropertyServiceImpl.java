@@ -4,7 +4,10 @@ import lombok.AllArgsConstructor;
 import nl.fontys.realestateproject.business.PropertyService;
 import nl.fontys.realestateproject.business.dto.property.*;
 import nl.fontys.realestateproject.business.exceptions.InvalidPropertyException;
+import nl.fontys.realestateproject.domain.DemandByRoomSize;
+import nl.fontys.realestateproject.domain.ListingByRoomSize;
 import nl.fontys.realestateproject.domain.Property;
+import nl.fontys.realestateproject.domain.enums.ListingStatus;
 import nl.fontys.realestateproject.domain.enums.ListingType;
 import nl.fontys.realestateproject.domain.enums.PropertyType;
 import nl.fontys.realestateproject.persistence.AddressRepository;
@@ -25,8 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 
 @Service
@@ -57,7 +59,12 @@ public class PropertyServiceImpl implements PropertyService {
     }
 
     private PropertyEntity createNewProperty(CreatePropertyRequest request) {
-        AddressEntity address = saveAddress(request.getCity(), request.getCountry(), request.getPostalCode(), request.getStreet());
+        AddressEntity address = AddressEntity.builder()
+                .city(request.getCity())
+                .country(request.getCountry())
+                .postalCode(request.getPostalCode())
+                .street(request.getStreet())
+                .build();
         addressRepository.save(address);
         AccountEntity account = userRepository.getReferenceById(request.getAgentId());
         PropertyEntity newProperty = PropertyEntity.builder()
@@ -68,7 +75,7 @@ public class PropertyServiceImpl implements PropertyService {
                 .listingType(ListingType.valueOf(request.getListingType()))
                 .account(account)
                 .imageUrl(request.getImageUrl())
-                .listingStatus("ACTIVE")
+                .listingStatus(ListingStatus.ACTIVE.toString())
                 .build();
 
         List<PropertySurfaceAreaEntity> surfaceAreas = request.getSurfaceAreas().stream()
@@ -83,15 +90,6 @@ public class PropertyServiceImpl implements PropertyService {
         surfaceAreaRepository.saveAll(surfaceAreas);
 
         return propertyRepository.save(newProperty);
-    }
-
-    private AddressEntity saveAddress(String city, String country, String postalCode, String street) {
-        return AddressEntity.builder()
-                .city(city)
-                .country(country)
-                .postalCode(postalCode)
-                .street(street)
-                .build();
     }
 
     @Override
@@ -121,20 +119,31 @@ public class PropertyServiceImpl implements PropertyService {
     @Override
     @Transactional
     public void updateProperty(UpdatePropertyRequest request) {
-        if (!propertyRepository.existsById(request.getId())) {
+        PropertyEntity existingProperty = propertyRepository.findById(request.getId()).orElseThrow(InvalidPropertyException::new);
+        if (!existingProperty.getId().equals(request.getId())) {
             throw new InvalidPropertyException();
         }
-        propertyRepository.save(getUpdatedPropertyEntity(request));
+
+        propertyRepository.save(getUpdatedPropertyEntity(request, existingProperty));
     }
 
-    private PropertyEntity getUpdatedPropertyEntity(UpdatePropertyRequest request) {
-        AddressEntity address = saveAddress(request.getCity(), request.getCountry(), request.getPostalCode(), request.getStreet());
-        addressRepository.save(address);//change so that street is key
+    private PropertyEntity getUpdatedPropertyEntity(UpdatePropertyRequest request, PropertyEntity existingProperty) {
+        AddressEntity address = AddressEntity.builder()
+                .id(existingProperty.getAddress().getId())
+                .city(request.getCity())
+                .country(request.getCountry())
+                .postalCode(request.getPostalCode())
+                .street(request.getStreet())
+                .build();
 
+        addressRepository.save(address);
+
+        surfaceAreaRepository.deleteAllByPropertyId(request.getId());
         List<PropertySurfaceAreaEntity> surfaceAreas = request.getSurfaceAreas().stream()
                 .map(surfaceArea -> PropertySurfaceAreaEntity.builder()
                         .nameOfSurfaceArea(surfaceArea.getNameOfSurfaceArea())
                         .areaInSquareMetre(surfaceArea.getAreaInSquareMetre())
+                        .property(propertyRepository.getReferenceById(request.getId()))
                         .build())
                 .toList();
 
@@ -142,12 +151,13 @@ public class PropertyServiceImpl implements PropertyService {
         return PropertyEntity.builder()
                 .id(request.getId())
                 .description(request.getDescription())
-
                 .price(request.getPrice())
                 .address(address)
                 .propertyType(PropertyType.valueOf(request.getPropertyType()))
                 .listingType(ListingType.valueOf(request.getListingType()))
                 .surfaceAreas(surfaceAreas)
+                .account(userRepository.getReferenceById(request.getAgentId()))
+                .listingStatus(existingProperty.getListingStatus())
                 .build();
     }
 
@@ -195,6 +205,39 @@ public class PropertyServiceImpl implements PropertyService {
         response.setProperties(properties);
         response.setTotalPages(results.getTotalPages());
         return response;
+    }
+
+    @Override
+    public GetRoomSizeDemandResponse getRoomSizeDemand(long agentId) {
+        List<DemandByRoomSize> results = propertyRepository.getAllRoomSizeByDemand(agentId);
+
+        return GetRoomSizeDemandResponse.builder()
+                .demandsByRoomSize(results)
+                .build();
+    }
+
+    @Override
+    public GetListingStatusByRoomSizeResponse getListingStatusByRoomSize(long agentId) {
+        List<Double> roomSizes = propertyRepository.getRoomSizes(agentId);
+        List<ListingByRoomSize> listingByRoomSizes = new ArrayList<>();
+
+        for (Double roomSize : roomSizes) {
+            Map<String, Long> results = new HashMap<>();
+            Long activeListingStatusCount = propertyRepository.getListingStatusByRoomSize(agentId, roomSize, "ACTIVE");
+            Long soldListingStatusCount = propertyRepository.getListingStatusByRoomSize(agentId, roomSize, "SOLD");
+            Long rentedListingStatusCount = propertyRepository.getListingStatusByRoomSize(agentId, roomSize, "RENTED");
+            results.put("ACTIVE", activeListingStatusCount);
+            results.put("SOLD", soldListingStatusCount);
+            results.put("RENTED", rentedListingStatusCount);
+
+            listingByRoomSizes.add(ListingByRoomSize.builder()
+                    .roomSize(roomSize)
+                    .amountOfListing(results)
+                    .build());
+        }
+        return GetListingStatusByRoomSizeResponse.builder()
+                .demandsByRoomSize(listingByRoomSizes)
+                .build();
     }
 
 

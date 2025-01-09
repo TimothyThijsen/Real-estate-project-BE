@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import nl.fontys.realestateproject.business.PropertyService;
 import nl.fontys.realestateproject.business.dto.property.*;
 import nl.fontys.realestateproject.business.exceptions.InvalidPropertyException;
+import nl.fontys.realestateproject.domain.DemandByRoomSize;
+import nl.fontys.realestateproject.domain.ListingByRoomSize;
 import nl.fontys.realestateproject.domain.Property;
 import nl.fontys.realestateproject.domain.enums.ListingType;
 import nl.fontys.realestateproject.domain.enums.PropertyType;
@@ -25,8 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 
 @Service
@@ -88,15 +89,6 @@ public class PropertyServiceImpl implements PropertyService {
         surfaceAreaRepository.saveAll(surfaceAreas);
 
         return propertyRepository.save(newProperty);
-    }
-
-    private AddressEntity saveAddress(String city, String country, String postalCode, String street) {
-        return AddressEntity.builder()
-                .city(city)
-                .country(country)
-                .postalCode(postalCode)
-                .street(street)
-                .build();
     }
 
     @Override
@@ -213,6 +205,40 @@ public class PropertyServiceImpl implements PropertyService {
         response.setProperties(properties);
         response.setTotalPages(results.getTotalPages());
         return response;
+    }
+
+    @Override
+    public GetRoomSizeDemandResponse getRoomSizeDemand(long agentId) {
+        List<DemandByRoomSize> results = propertyRepository.getAllRoomSizeByDemand(agentId);
+        /*results.sort(Comparator.comparing(DemandByRoomSize::getRoomSize));*/
+
+        return GetRoomSizeDemandResponse.builder()
+                .demandsByRoomSize(results)
+                .build();
+    }
+
+    @Override
+    public GetListingStatusByRoomSizeResponse getListingStatusByRoomSize(long agentId) {
+        List<Double> roomSizes = propertyRepository.getRoomSizes(agentId);
+        List<ListingByRoomSize> listingByRoomSizes = new ArrayList<>();
+
+        for (Double roomSize : roomSizes) {
+            Map<String, Long> results = new HashMap<>();
+            Long activeListingStatusCount = propertyRepository.getListingStatusByRoomSize(agentId, roomSize, "ACTIVE");
+            Long soldListingStatusCount = propertyRepository.getListingStatusByRoomSize(agentId, roomSize, "SOLD");
+            Long rentedListingStatusCount = propertyRepository.getListingStatusByRoomSize(agentId, roomSize, "RENTED");
+            results.put("ACTIVE", activeListingStatusCount);
+            results.put("SOLD", soldListingStatusCount);
+            results.put("RENTED", rentedListingStatusCount);
+
+            listingByRoomSizes.add(ListingByRoomSize.builder()
+                    .roomSize(roomSize)
+                    .amountOfListing(results)
+                    .build());
+        }
+        return GetListingStatusByRoomSizeResponse.builder()
+                .demandsByRoomSize(listingByRoomSizes)
+                .build();
     }
 
 

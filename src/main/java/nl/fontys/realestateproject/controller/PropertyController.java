@@ -68,12 +68,12 @@ public class PropertyController {
 
     @GetMapping("/search")
     public ResponseEntity<GetAllPropertiesResponse> getAllPropertiesBySearch(@RequestParam(required = false) String searchTerm,
-                                                                            @RequestParam(required = false) String listingType,
-                                                                            @RequestParam(required = false) BigDecimal minPrice,
-                                                                            @RequestParam(required = false) BigDecimal maxPrice,
-                                                                            @RequestParam(required = false) Double minSize,
-                                                                            @RequestParam(required = false) Integer currentPage,
-                                                                            @RequestParam(required = false) Integer pageSize) {
+                                                                             @RequestParam(required = false) String listingType,
+                                                                             @RequestParam(required = false) BigDecimal minPrice,
+                                                                             @RequestParam(required = false) BigDecimal maxPrice,
+                                                                             @RequestParam(required = false) Double minSize,
+                                                                             @RequestParam(required = false) Integer currentPage,
+                                                                             @RequestParam(required = false) Integer pageSize) {
         GetAllPropertiesBySearchRequest request = GetAllPropertiesBySearchRequest.builder()
                 .searchTerm(searchTerm)
                 .listingType(listingType)
@@ -84,6 +84,27 @@ public class PropertyController {
                 .pageSize(pageSize)
                 .build();
         GetAllPropertiesResponse response = propertyService.getAllPropertiesBySearch(request);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @GetMapping("/room-size-demand/{agentId}")
+ /*   @RolesAllowed({"ADMIN", "AGENT"})*/
+    public ResponseEntity<GetRoomSizeDemandResponse> getRoomSizeDemand(@PathVariable Long agentId) {
+        /*AccessToken accessToken = requestAuthenticatedUserProvider.getAuthenticatedUserInRequest();
+        if (!Objects.equals(accessToken.getUserId(), agentId) && !accessToken.getRoles().contains("ADMIN")) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }*/
+        GetRoomSizeDemandResponse response = propertyService.getRoomSizeDemand(agentId);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+    @GetMapping("/listingStatus-bySize/{agentId}")
+    /*   @RolesAllowed({"ADMIN", "AGENT"})*/
+    public ResponseEntity<GetListingStatusByRoomSizeResponse> getListingStatusByRoomSize(@PathVariable Long agentId) {
+        /*AccessToken accessToken = requestAuthenticatedUserProvider.getAuthenticatedUserInRequest();
+        if (!Objects.equals(accessToken.getUserId(), agentId) && !accessToken.getRoles().contains("ADMIN")) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }*/
+        GetListingStatusByRoomSizeResponse response = propertyService.getListingStatusByRoomSize(agentId);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 }

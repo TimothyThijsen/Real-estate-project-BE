@@ -7,6 +7,7 @@ import nl.fontys.realestateproject.business.exceptions.InvalidPropertyException;
 import nl.fontys.realestateproject.domain.DemandByRoomSize;
 import nl.fontys.realestateproject.domain.ListingByRoomSize;
 import nl.fontys.realestateproject.domain.Property;
+import nl.fontys.realestateproject.domain.enums.ListingStatus;
 import nl.fontys.realestateproject.domain.enums.ListingType;
 import nl.fontys.realestateproject.domain.enums.PropertyType;
 import nl.fontys.realestateproject.persistence.AddressRepository;
@@ -74,7 +75,7 @@ public class PropertyServiceImpl implements PropertyService {
                 .listingType(ListingType.valueOf(request.getListingType()))
                 .account(account)
                 .imageUrl(request.getImageUrl())
-                .listingStatus("ACTIVE")
+                .listingStatus(ListingStatus.ACTIVE.toString())
                 .build();
 
         List<PropertySurfaceAreaEntity> surfaceAreas = request.getSurfaceAreas().stream()
@@ -210,7 +211,6 @@ public class PropertyServiceImpl implements PropertyService {
     @Override
     public GetRoomSizeDemandResponse getRoomSizeDemand(long agentId) {
         List<DemandByRoomSize> results = propertyRepository.getAllRoomSizeByDemand(agentId);
-        /*results.sort(Comparator.comparing(DemandByRoomSize::getRoomSize));*/
 
         return GetRoomSizeDemandResponse.builder()
                 .demandsByRoomSize(results)

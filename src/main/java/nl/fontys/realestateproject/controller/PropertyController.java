@@ -7,6 +7,7 @@ import nl.fontys.realestateproject.business.PropertyService;
 import nl.fontys.realestateproject.business.dto.property.*;
 import nl.fontys.realestateproject.configuration.security.auth.RequestAuthenticatedUserProvider;
 import nl.fontys.realestateproject.configuration.security.token.AccessToken;
+import nl.fontys.realestateproject.domain.enums.UserRole;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -53,7 +54,7 @@ public class PropertyController {
     @RolesAllowed({"ADMIN", "AGENT"})
     public ResponseEntity<Void> updateProperty(@RequestBody @Valid UpdatePropertyRequest request) {
         AccessToken accessToken = requestAuthenticatedUserProvider.getAuthenticatedUserInRequest();
-        if (!Objects.equals(accessToken.getUserId(), request.getAgentId()) && !accessToken.getRoles().contains("ADMIN")) {
+        if (!Objects.equals(accessToken.getUserId(), request.getAgentId()) && !accessToken.getRoles().contains(UserRole.ADMIN.toString())) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
         propertyService.updateProperty(request);
@@ -90,20 +91,20 @@ public class PropertyController {
     @GetMapping("/room-size-demand/{agentId}")
  /*   @RolesAllowed({"ADMIN", "AGENT"})*/
     public ResponseEntity<GetRoomSizeDemandResponse> getRoomSizeDemand(@PathVariable Long agentId) {
-        /*AccessToken accessToken = requestAuthenticatedUserProvider.getAuthenticatedUserInRequest();
-        if (!Objects.equals(accessToken.getUserId(), agentId) && !accessToken.getRoles().contains("ADMIN")) {
+        AccessToken accessToken = requestAuthenticatedUserProvider.getAuthenticatedUserInRequest();
+        if (!Objects.equals(accessToken.getUserId(), agentId) && !accessToken.getRoles().contains(UserRole.ADMIN.toString())) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
-        }*/
+        }
         GetRoomSizeDemandResponse response = propertyService.getRoomSizeDemand(agentId);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
     @GetMapping("/listingStatus-bySize/{agentId}")
-    /*   @RolesAllowed({"ADMIN", "AGENT"})*/
+       @RolesAllowed({"ADMIN", "AGENT"})
     public ResponseEntity<GetListingStatusByRoomSizeResponse> getListingStatusByRoomSize(@PathVariable Long agentId) {
-        /*AccessToken accessToken = requestAuthenticatedUserProvider.getAuthenticatedUserInRequest();
-        if (!Objects.equals(accessToken.getUserId(), agentId) && !accessToken.getRoles().contains("ADMIN")) {
+        AccessToken accessToken = requestAuthenticatedUserProvider.getAuthenticatedUserInRequest();
+        if (!Objects.equals(accessToken.getUserId(), agentId) && !accessToken.getRoles().contains(UserRole.ADMIN.toString())) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
-        }*/
+        }
         GetListingStatusByRoomSizeResponse response = propertyService.getListingStatusByRoomSize(agentId);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }

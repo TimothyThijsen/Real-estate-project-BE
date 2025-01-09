@@ -119,16 +119,15 @@ public class PropertyServiceImpl implements PropertyService {
     @Override
     @Transactional
     public void updateProperty(UpdatePropertyRequest request) {
-
-        if (!propertyRepository.existsById(request.getId())) {
+        PropertyEntity existingProperty = propertyRepository.findById(request.getId()).orElseThrow(InvalidPropertyException::new);
+        if (!existingProperty.getId().equals(request.getId())) {
             throw new InvalidPropertyException();
         }
 
-        propertyRepository.save(getUpdatedPropertyEntity(request));
+        propertyRepository.save(getUpdatedPropertyEntity(request, existingProperty));
     }
 
-    private PropertyEntity getUpdatedPropertyEntity(UpdatePropertyRequest request) {
-        PropertyEntity existingProperty = propertyRepository.findById(request.getId()).orElseThrow(InvalidPropertyException::new);
+    private PropertyEntity getUpdatedPropertyEntity(UpdatePropertyRequest request, PropertyEntity existingProperty) {
         AddressEntity address = AddressEntity.builder()
                 .id(existingProperty.getAddress().getId())
                 .city(request.getCity())
@@ -137,7 +136,7 @@ public class PropertyServiceImpl implements PropertyService {
                 .street(request.getStreet())
                 .build();
 
-        addressRepository.save(address);//change so that street is key
+        addressRepository.save(address);
 
         surfaceAreaRepository.deleteAllByPropertyId(request.getId());
         List<PropertySurfaceAreaEntity> surfaceAreas = request.getSurfaceAreas().stream()

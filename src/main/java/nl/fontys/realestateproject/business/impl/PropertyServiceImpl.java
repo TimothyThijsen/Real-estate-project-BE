@@ -158,6 +158,7 @@ public class PropertyServiceImpl implements PropertyService {
                 .surfaceAreas(surfaceAreas)
                 .account(userRepository.getReferenceById(request.getAgentId()))
                 .listingStatus(existingProperty.getListingStatus())
+                .imageUrl(request.getImageUrl())
                 .build();
     }
 

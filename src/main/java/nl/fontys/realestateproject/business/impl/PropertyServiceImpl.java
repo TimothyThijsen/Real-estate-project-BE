@@ -194,7 +194,9 @@ public class PropertyServiceImpl implements PropertyService {
                 pageable,
                 request.getMinPrice() != null ? request.getMinPrice() : BigDecimal.ZERO,
                 request.getMaxPrice() != null ? request.getMaxPrice() : BigDecimal.ZERO,
-                request.getSearchTerm() != null ? request.getSearchTerm() : "",
+                request.getSearchTerm() != null ?
+                        request.getSearchTerm().replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")
+                        : "",
                 request.getMinTotalArea() != null ? request.getMinTotalArea() : 0.0);
 
         final GetAllPropertiesResponse response = new GetAllPropertiesResponse();

@@ -1,10 +1,7 @@
 package nl.fontys.realestateproject.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import nl.fontys.realestateproject.business.TransactionService;
 import nl.fontys.realestateproject.business.dto.transaction.MakeTransactionRequest;
-import nl.fontys.realestateproject.business.dto.transaction.MakeTransactionResponse;
-import nl.fontys.realestateproject.business.dto.transaction.GetAllTransactionResponse;
 import nl.fontys.realestateproject.business.impl.TransactionServiceImpl;
 import nl.fontys.realestateproject.configuration.security.auth.RequestAuthenticatedUserProvider;
 import nl.fontys.realestateproject.configuration.security.token.impl.AccessTokenImpl;

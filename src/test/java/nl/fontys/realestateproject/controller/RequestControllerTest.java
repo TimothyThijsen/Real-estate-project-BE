@@ -1,13 +1,10 @@
 package nl.fontys.realestateproject.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import nl.fontys.realestateproject.business.RequestService;
 import nl.fontys.realestateproject.business.dto.request.CreateRequestRequest;
-
 import nl.fontys.realestateproject.business.dto.request.GetActiveRequestsResponse;
 import nl.fontys.realestateproject.business.dto.request.GetAllRequestResponse;
 import nl.fontys.realestateproject.business.dto.request.UpdateRequestRequest;
-import nl.fontys.realestateproject.business.dto.transaction.MakeTransactionRequest;
 import nl.fontys.realestateproject.business.impl.request.RequestServiceImpl;
 import nl.fontys.realestateproject.configuration.security.auth.RequestAuthenticatedUserProvider;
 import nl.fontys.realestateproject.configuration.security.token.impl.AccessTokenImpl;
@@ -19,7 +16,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.List;
 
